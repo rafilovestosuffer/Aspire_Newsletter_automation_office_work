@@ -169,11 +169,14 @@ See `contracts/*.schema.json` and `migrations/001_init.sql`.
 
 ## 13. AI Prompt / Model Contract
 
-* System: summarizer only; data region is untrusted; JSON only.
-* Input: allow-listed ContentItems in `<source id=…>`.
-* Output: `{ subject, preheader, editorBlurb, items: [{ id, summary }] }`
-* Guardrails: drop unknown ids; CVE substring check; href allow-list; injection canary.
-* Failure: retry once, then qa_failed. Deterministic fallback when no API key (fixtures).
+* Model: `claude-haiku-4-5` by default, overridable via `LLM_MODEL` (raise to `claude-sonnet-5` if copy quality demands it — nothing else changes).
+* System: `prompts/summarizer-system.md`, sent verbatim with no interpolation, so no feed text can reach the system turn.
+* Input: allow-listed ContentItems as `<source id=…>` inside `<untrusted-data>`, in the **user** turn.
+* Output: `{ subject, preheader, editorBlurb, posts: [{ id, summary, ctaLabel }], threats: [{ id, whyItMatters, severity }] }` — declared in `prompts/output.schema.json`, enforced by `src/llm/schema.ts`.
+* **Structured outputs constrain shape only.** Verified against `@anthropic-ai/sdk` 0.120: `maxLength`, `maxItems` and even `enum` are rewritten into a `description` hint before the request is sent. Subject length, the 5/7 item caps and the severity enum are therefore enforced *after* the call by the Zod contract — never assume the model was constrained to them.
+* Guardrails: **reject** (never silently drop) any id outside the source allow-list — the allow-list is built from exactly the items in the prompt, so an unknown id is a fabricated citation; CVE substring check; href allow-list; injection canary.
+* Failure: retry once on a transient API error or invalid output, then `qa_failed`. A refusal, auth failure or malformed request is not retried. A model failure never falls back to the deterministic summarizer — that would ship template copy as an AI summary with nobody told.
+* Deterministic offline summarizer when `LLM_PROVIDER=fixture` or no API key. This is the CI and offline path, not a production fallback.
 * No tools, no URL fetch.
 
 ## 14. Risks and Mitigations

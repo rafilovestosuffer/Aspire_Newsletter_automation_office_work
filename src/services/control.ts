@@ -190,6 +190,7 @@ export async function assembleIssue(opts: {
       publicBaseUrl: opts.env.PUBLIC_BASE_URL,
       llmProvider: opts.env.LLM_PROVIDER,
       llmApiKey: opts.env.LLM_API_KEY ?? "",
+      llmModel: opts.env.LLM_MODEL ?? "",
     });
     await opts.store.updateIssue(opts.issueKey, {
       revision,
