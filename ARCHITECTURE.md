@@ -36,8 +36,13 @@ Clock / operator
 
 ### Domain (`src/domain`)
 
-* Responsibility: issueKey, hash/CSRF, keyed mutex, dual-control / kill policy
+* Responsibility: issueKey, hash/CSRF, keyed mutex, dual-control / kill policy,
+  lifecycle state machine (`lifecycle.ts`)
 * No I/O except pure functions
+* `lifecycle.ts` decides which status transitions reconcile may write. Reconcile
+  observes GHL; it must never become a second path to sending, so no state that
+  has not already been approved and drained can reach a sending status through
+  it, and `sent` is terminal.
 
 ### Ingest (`src/ingest`)
 
@@ -49,7 +54,17 @@ Clock / operator
 
 ### GHL adapter (`src/ghl/client.ts`)
 
-* `GhlClient` v3 create/schedule; rejects rss + outbound; env-gated audience; sandbox spike refuses `APP_ENV=production`
+* `GhlClient` v3 create/schedule/get; rejects rss + outbound; env-gated audience; sandbox spike refuses `APP_ENV=production`
+* Live HTTP is still refused. Every method short-circuits under DRY_RUN or a
+  missing PIT and otherwise throws, until the sandbox spike fills the
+  UNVERIFIED rows in `docs/BINDING-DECISIONS.md`.
+
+### Paths (`src/paths.ts`)
+
+* One place that resolves the app root, so prompts, templates and migrations
+  are found identically from `src/` in development and from `dist/` in the
+  built image. Four modules previously derived this from their own file depth,
+  which only worked while everything ran from `src/`.
 
 ### n8n (`n8n/`)
 
@@ -73,10 +88,39 @@ Clock / operator
 
 ## 5. Failure Handling
 
-* API/GHL fail: outbox attempts++, audit, notify placeholder, no silent loop
+* API/GHL fail: transient errors retry with exponential backoff (4 attempts,
+  60s doubling to a 1h cap) while the row stays `pending`; refusals that would
+  recur identically — empty recipients, placeholder brand config, missing frozen
+  artifact, any `GhlBanError` — dead-letter on the first attempt so the watchdog
+  escalates immediately rather than 15 minutes later
+* Dead letter: outbox `failed` + issue `failed` + `outbox_dead_letter` event;
+  recovery is re-assemble and re-approve, never a hand-edited outbox row
+* Reconcile: per-issue errors are recorded and the batch continues
+* Watchdog: escalates overdue approvals and dead letters by notification only —
+  it has no write path toward a sending state
 * Model bad JSON: retry once, qa_failed
 * Invalid/malicious ingest: drop item or fail QA
 * Network slow: fetch timeouts
 * Database fail: collect/assemble 503
 * Kill L1/L2: no clock / no outbox
 * Missing GHL creds: DRY_RUN success, spike script exits with instructions
+
+## 6. Deployment shape
+
+* **Build.** `scripts/build.mjs` bundles `src/` to `dist/` with esbuild;
+  `node_modules` stay external. Bundling rather than a `tsc` emit because the
+  source uses extensionless relative imports and Node's ESM loader requires
+  explicit `.js` extensions — bundling resolves them at build time instead of
+  rewriting every import in the repo.
+* **Image.** Two stages. The build stage typechecks and compiles; the runtime
+  stage carries production dependencies, `dist/`, and the runtime assets only —
+  no TypeScript, no `tsx`, no toolchain. Runs as the base image's unprivileged
+  `node` user, base pinned by digest.
+* **`dist/` sits at `src/`'s depth** so `src/paths.ts` resolves the app root the
+  same way in both, and the asset layout matches the dev tree.
+* **Healthcheck** reads the `ok` field of `/health`, not just HTTP 200, so a
+  reachable API with a dead database fails it.
+* **Migrations** run as a separate one-shot service (`node dist/migrate.js`)
+  that must complete before the API starts.
+* **Backups** are cron-driven (`deploy/backup.crontab`): daily `pg_dump` +
+  frozen artifacts with checksums, weekly restore drill into a scratch database.
