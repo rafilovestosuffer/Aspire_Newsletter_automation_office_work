@@ -3,10 +3,10 @@ import { loadConfig } from "../src/config";
 import { loadEnv } from "../src/env";
 import { GhlClient } from "../src/ghl/client";
 import { reconcileIssues } from "../src/services/control";
-import { DRY_RUN_CAMPAIGN_ID } from "../src/domain/lifecycle";
+import { DRY_RUN_CAMPAIGN_ID, canReconcileTransition } from "../src/domain/lifecycle";
 import { MemoryStore } from "../src/store/memory";
 import type { IssueRow } from "../src/store/types";
-import { ISSUE_SCHEMA_VERSION } from "../src/types";
+import { ISSUE_SCHEMA_VERSION, type IssueStatus } from "../src/types";
 
 function testEnv(overrides: Record<string, string> = {}) {
   return loadEnv({
@@ -59,6 +59,48 @@ class StubGhl extends GhlClient {
     return { id: campaignId, status: this.answer.status, dryRun: this.answer.dryRun ?? false };
   }
 }
+
+describe("canReconcileTransition", () => {
+  const PRE_OUTBOX: IssueStatus[] = [
+    "collecting",
+    "assembled",
+    "qa_failed",
+    "pending_approval",
+    "rejected",
+    "approved",
+    "queued_outbox",
+    "skipped",
+  ];
+  const SENDING: IssueStatus[] = ["scheduled", "processing", "sent"];
+
+  // Human POST-approval is the only path to a send. Reconcile reads GHL and
+  // must never become a second one, so no state that has not already been
+  // approved and drained may reach a sending status through it.
+  it.each(PRE_OUTBOX)("refuses to move %s into any sending state", (from) => {
+    for (const to of SENDING) {
+      expect(canReconcileTransition(from, to)).toBe(false);
+    }
+  });
+
+  it("refuses every transition out of sent, which is terminal", () => {
+    for (const to of ["scheduled", "processing", "failed", "cancelled", "paused"] as IssueStatus[]) {
+      expect(canReconcileTransition("sent", to)).toBe(false);
+    }
+  });
+
+  it("allows the observations reconcile is actually for", () => {
+    expect(canReconcileTransition("scheduled", "processing")).toBe(true);
+    expect(canReconcileTransition("scheduled", "sent")).toBe(true);
+    expect(canReconcileTransition("processing", "sent")).toBe(true);
+    expect(canReconcileTransition("processing", "failed")).toBe(true);
+    expect(canReconcileTransition("scheduled", "cancelled")).toBe(true);
+    expect(canReconcileTransition("paused", "sent")).toBe(true);
+  });
+
+  it("treats a no-op as not a transition", () => {
+    expect(canReconcileTransition("scheduled", "scheduled")).toBe(false);
+  });
+});
 
 describe("reconcile", () => {
   it("moves a scheduled issue to sent when GHL reports sent, and only then counts it", async () => {
@@ -176,6 +218,46 @@ describe("reconcile", () => {
       expect(res.checked).toBe(0);
       expect((await store.getIssue(row.issueKey))?.status).toBe(status);
     }
+  });
+
+  // The test above proves the *query* filters those issues out. This one proves
+  // the guard behind it, by handing reconcile a store that ignores the status
+  // filter entirely — exactly what a future refactor widening the query would
+  // do. Without canReconcileTransition, a GHL "sent" response would mark an
+  // unapproved issue sent, which is the one thing no API answer may ever cause.
+  it("refuses to transition an unapproved issue even if the status filter stops protecting it", async () => {
+    const env = testEnv();
+    const config = loadConfig();
+
+    for (const status of ["collecting", "assembled", "pending_approval", "approved", "queued_outbox", "rejected"] as const) {
+      const store = new MemoryStore();
+      const row = scheduledIssue({ status, ghlCampaignId: "camp-x" });
+      store.issues.set(row.issueKey, row);
+      // Hand back the issue regardless of what reconcile asked for.
+      store.listIssuesByStatus = async () => [{ ...row }];
+
+      const res = await reconcileIssues({ store, env, config, ghl: new StubGhl({ status: "sent" }) });
+
+      expect(res.checked).toBe(1);
+      expect(res.refused).toBe(1);
+      expect(res.transitioned).toBe(0);
+      expect((await store.getIssue(row.issueKey))?.status).toBe(status);
+      expect(store.events.some((e) => e.eventType === "reconcile_refused")).toBe(true);
+    }
+  });
+
+  it("refuses to move a sent issue backwards even if the filter stops protecting it", async () => {
+    const env = testEnv();
+    const config = loadConfig();
+    const store = new MemoryStore();
+    const row = scheduledIssue({ status: "sent", ghlCampaignId: "camp-x" });
+    store.issues.set(row.issueKey, row);
+    store.listIssuesByStatus = async () => [{ ...row }];
+
+    const res = await reconcileIssues({ store, env, config, ghl: new StubGhl({ status: "cancelled" }) });
+
+    expect(res.refused).toBe(1);
+    expect((await store.getIssue(row.issueKey))?.status).toBe("sent");
   });
 
   it("treats sent as terminal: reconcile never looks at it again", async () => {
