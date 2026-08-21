@@ -49,6 +49,7 @@ export async function assembleFromItems(opts: {
   publicBaseUrl: string;
   llmProvider: string;
   llmApiKey: string;
+  llmModel?: string;
 }): Promise<AssembleResult> {
   const selected = selectContent(opts.items, opts.now, opts.config.relevance);
   const archiveUrl = `${opts.publicBaseUrl.replace(/\/$/, "")}/archive/${issueKeyToPath(opts.issue.issueKey)}/r/${opts.issue.revision}`;
@@ -71,6 +72,7 @@ export async function assembleFromItems(opts: {
     threats: selected.threats,
     provider: opts.llmProvider,
     apiKey: opts.llmApiKey,
+    model: opts.llmModel,
   });
   const untrustedPrompt = untrustedDataRegion(selected.posts, selected.threats);
   const issueLabel = `${opts.issue.isoWeek} · r${opts.issue.revision}`;
