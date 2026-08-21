@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import mjml2html from "mjml";
+import { templatesDir } from "../paths";
 import type { BrandConfig, ContentItem, LlmOutput } from "../types";
 
-const shellPath = join(dirname(fileURLToPath(import.meta.url)), "../../templates/brand-shell.mjml");
+const shellPath = join(templatesDir(), "brand-shell.mjml");
 
 export function escapeHtml(s: string): string {
   return s

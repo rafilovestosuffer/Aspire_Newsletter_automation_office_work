@@ -12,3 +12,4 @@ backups/
 Thumbs.db
 .vscode/
 .idea/
+dist

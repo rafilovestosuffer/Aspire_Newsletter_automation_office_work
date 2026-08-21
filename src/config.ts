@@ -1,10 +1,10 @@
 import { readFileSync, existsSync } from "node:fs";
-import { dirname, isAbsolute, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { isAbsolute, join } from "node:path";
 import YAML from "yaml";
+import { appRoot } from "./paths";
 import type { AppConfig, ApproverConfig, BrandConfig, FeedConfig, RelevanceConfig, ScheduleConfig } from "./types";
 
-const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const root = appRoot();
 
 export function configRoot(): string {
   return root;

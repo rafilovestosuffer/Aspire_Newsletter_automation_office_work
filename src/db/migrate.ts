@@ -1,9 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import pg from "pg";
-
-const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
+import { migrationsDir } from "../paths";
 
 export async function migrate(databaseUrl: string): Promise<void> {
   if (!databaseUrl) {
@@ -16,7 +14,7 @@ export async function migrate(databaseUrl: string): Promise<void> {
       id text PRIMARY KEY,
       applied_at timestamptz NOT NULL DEFAULT now()
     )`);
-    const dir = join(root, "migrations");
+    const dir = migrationsDir();
     const files = readdirSync(dir)
       .filter((f) => f.endsWith(".sql"))
       .sort();

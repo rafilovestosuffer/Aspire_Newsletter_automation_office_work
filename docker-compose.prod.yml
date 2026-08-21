@@ -29,7 +29,7 @@ services:
       - .env
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-newsletter}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-newsletter}
-    command: ["npx", "tsx", "src/db/migrate.ts"]
+    command: ["node", "dist/migrate.js"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,7 +66,7 @@ services:
           "CMD",
           "node",
           "-e",
-          "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+          "fetch('http://127.0.0.1:8787/health').then(r=>r.json()).then(j=>process.exit(j.ok?0:1)).catch(()=>process.exit(1))",
         ]
       interval: 10s
       timeout: 5s

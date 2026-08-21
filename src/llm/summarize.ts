@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import Anthropic, {
   APIConnectionError,
   InternalServerError,
@@ -11,8 +10,9 @@ import { ZodError } from "zod";
 import { sha256Hex } from "../domain/hash";
 import type { ContentItem, LlmOutput } from "../types";
 import { LlmContractError, assertIdsAllowed, llmCanaryFail, parseLlmJson } from "./schema";
+import { promptsDir } from "../paths";
 
-const promptsDir = join(dirname(fileURLToPath(import.meta.url)), "../../prompts");
+
 
 /** Small bounded JSON object; nowhere near needing a streaming request. */
 const MAX_OUTPUT_TOKENS = 4096;
@@ -29,13 +29,13 @@ export class LlmRefusalError extends Error {
 
 let cachedSystemPrompt: string | undefined;
 function systemPrompt(): string {
-  cachedSystemPrompt ??= readFileSync(join(promptsDir, "summarizer-system.md"), "utf8");
+  cachedSystemPrompt ??= readFileSync(join(promptsDir(), "summarizer-system.md"), "utf8");
   return cachedSystemPrompt;
 }
 
 let cachedOutputSchema: unknown;
 function outputSchema(): unknown {
-  cachedOutputSchema ??= JSON.parse(readFileSync(join(promptsDir, "output.schema.json"), "utf8"));
+  cachedOutputSchema ??= JSON.parse(readFileSync(join(promptsDir(), "output.schema.json"), "utf8"));
   return cachedOutputSchema;
 }
 

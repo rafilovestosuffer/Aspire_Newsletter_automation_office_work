@@ -2,7 +2,7 @@
   "name": "e02-weekly-authority-newsletter",
   "version": "1.0.0",
   "private": true,
-  "description": "E-02 Weekly Authority Newsletter — control plane, assemble pipeline, GHL adapter (DRY_RUN default).",
+  "description": "E-02 Weekly Authority Newsletter \u2014 control plane, assemble pipeline, GHL adapter (DRY_RUN default).",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -18,7 +18,10 @@
     "migrate": "tsx src/db/migrate.ts",
     "assemble:fixture": "tsx src/cli/assemble-fixture.ts",
     "approve:dummy": "tsx src/cli/dummy-approve.ts",
-    "ghl:spike": "tsx scripts/ghl-spike.ts"
+    "ghl:spike": "tsx scripts/ghl-spike.ts",
+    "build": "node scripts/build.mjs",
+    "start:dist": "node dist/index.js",
+    "migrate:dist": "node dist/migrate.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.120.0",
@@ -29,7 +32,6 @@
     "mjml": "^4.15.3",
     "pg": "^8.23.0",
     "sanitize-html": "^2.14.0",
-    "tsx": "^4.19.3",
     "yaml": "^2.9.0",
     "zod": "^3.24.2"
   },
@@ -39,6 +41,8 @@
     "@types/node": "^22.13.4",
     "@types/pg": "^8.23.1",
     "@types/sanitize-html": "^2.13.0",
+    "esbuild": "^0.28.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.7.3",
     "vitest": "^3.0.6"
   }
