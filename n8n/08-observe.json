@@ -1,0 +1,19 @@
+{
+  "name": "E-02 08 Observe",
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    { "parameters": {}, "id": "a8000000-0008-4000-8000-000000000001", "name": "Manual Trigger", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [0, 0] },
+    { "parameters": { "rule": { "interval": [{ "field": "cronExpression", "expression": "0 10 * * *" }] } }, "id": "a8000000-0008-4000-8000-000000000002", "name": "Cron T+24h", "type": "n8n-nodes-base.scheduleTrigger", "typeVersion": 1.2, "position": [0, 220], "disabled": true },
+    { "parameters": { "assignments": { "assignments": [{ "id": "k", "name": "issueKey", "value": "aspire-America/New_York-2026-W34", "type": "string" }] }, "options": {} }, "id": "a8000000-0008-4000-8000-000000000003", "name": "Dummy Payload", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [240, 0] },
+    { "parameters": { "method": "POST", "url": "={{$env.CONTROL_PLANE_URL}}/internal/observe", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{$env.WORKER_TOKEN}}" }] }, "sendBody": true, "specifyBody": "json", "jsonBody": "={{JSON.stringify({ issueKey: $json.issueKey })}}" }, "id": "a8000000-0008-4000-8000-000000000004", "name": "POST observe", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [480, 0], "onError": "continueErrorOutput" },
+    { "parameters": { "method": "POST", "url": "={{$env.ONCALL_WEBHOOK_URL}}", "sendBody": true, "specifyBody": "json", "jsonBody": "={{JSON.stringify({ workflow: '08-observe', error: $json })}}" }, "id": "a8000000-0008-4000-8000-000000000005", "name": "Notify On-Call (placeholder)", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [720, 180], "disabled": true }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Cron T+24h": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Dummy Payload": { "main": [[{ "node": "POST observe", "type": "main", "index": 0 }]] },
+    "POST observe": { "main": [[], [{ "node": "Notify On-Call (placeholder)", "type": "main", "index": 0 }]] }
+  },
+  "pinData": { "Dummy Payload": [{ "json": { "issueKey": "aspire-America/New_York-2026-W34" } }] }
+}

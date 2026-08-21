@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: newsletter
+      POSTGRES_PASSWORD: newsletter
+      POSTGRES_DB: newsletter
+    ports:
+      - "5432:5432"
+    volumes:
+      - newsletter_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U newsletter -d newsletter"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  api:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run migrate && npm run dev"
+    environment:
+      DATABASE_URL: postgres://newsletter:newsletter@postgres:5432/newsletter
+      APP_ENV: development
+      DRY_RUN: "true"
+      KILL_SWITCH: "0"
+      PORT: "8787"
+      PUBLIC_BASE_URL: http://127.0.0.1:8787
+    ports:
+      - "8787:8787"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  n8n:
+    profiles: ["n8n"]
+    image: n8nio/n8n:1.82.1
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_SECURE_COOKIE: "false"
+      GENERIC_TIMEZONE: UTC
+      CONTROL_PLANE_URL: http://api:8787
+      WORKER_TOKEN: replace-with-worker-bearer-token
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  newsletter_pg:
+  n8n_data:

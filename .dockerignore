@@ -1,0 +1,17 @@
+node_modules
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+artifacts
+coverage
+dist
+n8n
+*.log
+agent-transcripts
+.cursor
+docs
+TASKS.md
+PRD.md
+ARCHITECTURE.md

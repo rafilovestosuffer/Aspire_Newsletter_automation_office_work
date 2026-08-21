@@ -1,0 +1,10 @@
+# TODO: confirm audience IANA timezone, send weekday/hour, skip weeks, ops timezone.
+schemaVersion: "1.0.0"
+audienceTimeZone: "America/New_York" # TODO: confirm — used for issueKey ISO week
+opsTimeZone: "America/New_York" # TODO: confirm T-48h clock TZ
+sendWeekday: 3 # TODO: 1=Mon … 7=Sun (ISO)
+sendHour: 9 # TODO: local hour in audienceTimeZone
+assembleLeadHours: 48
+approvalSlaHours: 4
+skipWeeks: [] # e.g. ["2026-W52"]
+holidayCalendar: [] # ISO dates YYYY-MM-DD

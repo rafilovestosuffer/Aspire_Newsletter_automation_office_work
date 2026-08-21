@@ -1,0 +1,23 @@
+# TODO: real approver emails / ids. Delegates for OOO.
+schemaVersion: "1.0.0"
+requireTwoApprovers: false # overridden to true for first DUAL_CONTROL_FIRST_N production issues
+dualControlFirstN: 4
+approvers:
+  - id: approver-primary
+    email: "TODO-approver@example.invalid"
+    name: "TODO primary approver"
+  - id: approver-backup
+    email: "TODO-backup@example.invalid"
+    name: "TODO backup approver"
+delegates:
+  - from: approver-primary
+    to: approver-backup
+sandboxAudience:
+  kind: contactIds
+  # TODO: sandbox seed contact IDs only — never the full list
+  contactIds: []
+productionAudience:
+  kind: filter
+  # UNVERIFIED filter schema — do not fill with guessed GHL JSON
+  filter: {}
+  note: "TODO: newsletter-weekly smart list / tag after sandbox spike"

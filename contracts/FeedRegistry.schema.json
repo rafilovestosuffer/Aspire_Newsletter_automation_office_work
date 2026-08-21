@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aspire.local/schemas/FeedRegistry.schema.json",
+  "title": "FeedRegistry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "cms", "threatFeeds"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "cms": {
+      "type": "object",
+      "required": ["originHost", "rssUrl"],
+      "properties": {
+        "originHost": { "type": "string" },
+        "rssUrl": { "type": "string" }
+      }
+    },
+    "threatFeeds": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "url", "allowHost"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string", "enum": ["kev-json", "rss"] },
+          "url": { "type": "string" },
+          "allowHost": { "type": "string" }
+        }
+      }
+    }
+  }
+}

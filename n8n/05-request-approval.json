@@ -1,0 +1,17 @@
+{
+  "name": "E-02 05 Request Approval",
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    { "parameters": {}, "id": "a5000000-0005-4000-8000-000000000001", "name": "Manual Trigger", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [0, 0] },
+    { "parameters": { "assignments": { "assignments": [{ "id": "k", "name": "issueKeyPath", "value": "aspire-America~New_York-2026-W34", "type": "string" }] }, "options": {} }, "id": "a5000000-0005-4000-8000-000000000002", "name": "Dummy Payload", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [240, 0] },
+    { "parameters": { "method": "POST", "url": "={{$env.CONTROL_PLANE_URL}}/internal/issues/{{$json.issueKeyPath}}/request-approval", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{$env.WORKER_TOKEN}}" }] }, "options": { "timeout": 15000 } }, "id": "a5000000-0005-4000-8000-000000000003", "name": "POST request-approval", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [480, 0], "onError": "continueErrorOutput", "notes": "Mints SHA-256 tokens. Approval itself is the control-plane app (no workflow 06)." },
+    { "parameters": { "method": "POST", "url": "={{$env.ONCALL_WEBHOOK_URL}}", "sendBody": true, "specifyBody": "json", "jsonBody": "={{JSON.stringify({ workflow: '05-request-approval', error: $json })}}" }, "id": "a5000000-0005-4000-8000-000000000004", "name": "Notify On-Call (placeholder)", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [720, 180], "disabled": true }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Dummy Payload": { "main": [[{ "node": "POST request-approval", "type": "main", "index": 0 }]] },
+    "POST request-approval": { "main": [[], [{ "node": "Notify On-Call (placeholder)", "type": "main", "index": 0 }]] }
+  },
+  "pinData": { "Dummy Payload": [{ "json": { "issueKeyPath": "aspire-America~New_York-2026-W34" } }] }
+}

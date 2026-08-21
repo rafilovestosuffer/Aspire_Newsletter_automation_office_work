@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aspire.local/contracts/newsletter-issue.v1.json",
+  "title": "NewsletterIssue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "issueKey",
+    "brandSlug",
+    "audienceTz",
+    "isoWeek",
+    "revision",
+    "status"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "issueKey": { "type": "string", "minLength": 3 },
+    "brandSlug": { "type": "string" },
+    "audienceTz": { "type": "string" },
+    "isoWeek": { "type": "string", "pattern": "^[0-9]{4}-W[0-9]{2}$" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "status": {
+      "type": "string",
+      "enum": [
+        "collecting",
+        "assembled",
+        "qa_failed",
+        "pending_approval",
+        "rejected",
+        "approved",
+        "queued_outbox",
+        "scheduled",
+        "processing",
+        "sent",
+        "failed",
+        "cancelled",
+        "paused",
+        "skipped"
+      ]
+    },
+    "subject": { "type": "string" },
+    "preheader": { "type": "string" },
+    "htmlSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "textSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "postIds": { "type": "array", "items": { "type": "string" } },
+    "threatIds": { "type": "array", "items": { "type": "string" } },
+    "ghlCampaignId": { "type": ["string", "null"] },
+    "ghlSourceId": { "type": ["string", "null"] },
+    "ghlTraceId": { "type": ["string", "null"] },
+    "archivePath": { "type": ["string", "null"] }
+  }
+}

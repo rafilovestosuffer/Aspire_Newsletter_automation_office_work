@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NewsletterLlmOutput",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["subject", "preheader", "editorBlurb", "posts", "threats"],
+  "properties": {
+    "subject": { "type": "string", "maxLength": 60 },
+    "preheader": { "type": "string", "minLength": 1, "maxLength": 140 },
+    "editorBlurb": { "type": "string", "minLength": 1, "maxLength": 400 },
+    "posts": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summary", "ctaLabel"],
+        "properties": {
+          "id": { "type": "string" },
+          "summary": { "type": "string" },
+          "ctaLabel": { "type": "string" }
+        }
+      }
+    },
+    "threats": {
+      "type": "array",
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "whyItMatters", "severity"],
+        "properties": {
+          "id": { "type": "string" },
+          "whyItMatters": { "type": "string" },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          }
+        }
+      }
+    }
+  }
+}

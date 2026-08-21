@@ -1,0 +1,17 @@
+{
+  "name": "E-02 02 Ingest Posts",
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    { "parameters": {}, "id": "a2000000-0002-4000-8000-000000000001", "name": "Manual Trigger", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [0, 0] },
+    { "parameters": { "assignments": { "assignments": [{ "id": "k", "name": "issueKeyPath", "value": "aspire-America~New_York-2026-W34", "type": "string" }, { "id": "f", "name": "fixture", "value": true, "type": "boolean" }] }, "options": {} }, "id": "a2000000-0002-4000-8000-000000000002", "name": "Dummy Payload", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [240, 0] },
+    { "parameters": { "method": "POST", "url": "={{$env.CONTROL_PLANE_URL}}/internal/issues/{{$json.issueKeyPath}}/ingest-posts", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{$env.WORKER_TOKEN}}" }] }, "sendBody": true, "specifyBody": "json", "jsonBody": "={{JSON.stringify({ fixture: $json.fixture })}}", "options": { "timeout": 20000 } }, "id": "a2000000-0002-4000-8000-000000000003", "name": "POST ingest-posts", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [480, 0], "onError": "continueErrorOutput", "notes": "Allowlisted SSRF fetch happens in the API. Dummy uses fixtures." },
+    { "parameters": { "method": "POST", "url": "={{$env.ONCALL_WEBHOOK_URL}}", "sendBody": true, "specifyBody": "json", "jsonBody": "={{JSON.stringify({ workflow: '02-ingest-posts', error: $json })}}" }, "id": "a2000000-0002-4000-8000-000000000004", "name": "Notify On-Call (placeholder)", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [720, 180], "disabled": true }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Dummy Payload": { "main": [[{ "node": "POST ingest-posts", "type": "main", "index": 0 }]] },
+    "POST ingest-posts": { "main": [[], [{ "node": "Notify On-Call (placeholder)", "type": "main", "index": 0 }]] }
+  },
+  "pinData": { "Dummy Payload": [{ "json": { "issueKeyPath": "aspire-America~New_York-2026-W34", "fixture": true } }] }
+}

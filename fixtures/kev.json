@@ -1,0 +1,22 @@
+{
+  "catalogVersion": "2026.08.20",
+  "vulnerabilities": [
+    {
+      "cveID": "CVE-2026-12345",
+      "vendorProject": "Microsoft",
+      "product": "Exchange",
+      "vulnerabilityName": "Microsoft Exchange known exploited issue (fixture)",
+      "shortDescription": "Fixture KEV row for tests. Not a real advisory.",
+      "dateAdded": "2026-08-18",
+      "knownRansomwareCampaignUse": "Unknown"
+    },
+    {
+      "cveID": "CVE-2026-22222",
+      "vendorProject": "Cisco",
+      "product": "IOS",
+      "vulnerabilityName": "Cisco fixture KEV row",
+      "shortDescription": "Second fixture row so threat cap and scoring have data.",
+      "dateAdded": "2026-08-19"
+    }
+  ]
+}

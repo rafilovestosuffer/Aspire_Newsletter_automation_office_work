@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aspire.local/schemas/Brand.schema.json",
+  "title": "Brand",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "slug", "displayName"],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "slug": { "type": "string" },
+    "displayName": { "type": "string" },
+    "legalName": { "type": "string" },
+    "postalAddress": { "type": "string" },
+    "fromName": { "type": "string" },
+    "fromEmail": { "type": "string" },
+    "replyTo": { "type": "string" },
+    "primaryColor": { "type": "string" },
+    "backgroundColor": { "type": "string" },
+    "textColor": { "type": "string" },
+    "logoUrl": { "type": "string" },
+    "siteUrl": { "type": "string" },
+    "archiveBaseUrl": { "type": "string" },
+    "unsubscribeUrl": { "type": "string" },
+    "preferenceUrl": { "type": "string" },
+    "ghlUnsubscribeMergeTag": { "type": "string" },
+    "advertisementNotice": { "type": "string" },
+    "cdnHost": { "type": "string" }
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Company blog</title>
+    <item>
+      <title>Hardening remote access for operators</title>
+      <link>https://cdn.example.com/blog/hardening-remote-access</link>
+      <pubDate>Mon, 17 Aug 2026 10:00:00 GMT</pubDate>
+      <description>A published post on MFA, jump hosts, and session recording for operators.</description>
+    </item>
+    <item>
+      <title>How we think about weekly threat briefings</title>
+      <link>https://cdn.example.com/blog/weekly-threat-briefings</link>
+      <pubDate>Wed, 19 Aug 2026 10:00:00 GMT</pubDate>
+      <description>Why public KEV items belong next to our own writing, not instead of it.</description>
+    </item>
+  </channel>
+</rss>

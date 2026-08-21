@@ -1,0 +1,23 @@
+# TODO: confirm legal entity, postal address, from-address, brand kit.
+# Values here are placeholders for local fixtures — not client facts.
+
+schemaVersion: "1.0.0"
+slug: aspire
+displayName: "Aspire" # TODO: public brand display name
+legalName: "TODO: legal / trade name"
+postalAddress: "TODO: valid physical postal address (CAN-SPAM)"
+fromName: "TODO: from display name"
+fromEmail: "newsletter@TODO.example.invalid"
+replyTo: "hello@TODO.example.invalid"
+primaryColor: "#4F8CFF"
+backgroundColor: "#0B1220"
+textColor: "#F4F7FB"
+logoUrl: "https://cdn.TODO.example.invalid/logo.png"
+siteUrl: "https://TODO.example.invalid"
+archiveBaseUrl: "http://localhost:8787/archive"
+unsubscribeUrl: "https://TODO.example.invalid/unsubscribe"
+preferenceUrl: "https://TODO.example.invalid/preferences"
+# UNVERIFIED GHL merge token — confirm in sandbox
+ghlUnsubscribeMergeTag: "{{unsubscribe_link}}"
+advertisementNotice: "TODO: advertisement identification if primary purpose is commercial"
+cdnHost: "cdn.TODO.example.invalid"

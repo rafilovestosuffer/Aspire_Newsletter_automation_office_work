@@ -1,0 +1,18 @@
+{
+  "validScheduled": {
+    "action": "scheduled",
+    "approverId": "approver-primary",
+    "comment": ""
+  },
+  "validImmediate": {
+    "action": "immediate",
+    "approverId": "approver-primary",
+    "comment": ""
+  },
+  "reject": {
+    "action": "reject",
+    "approverId": "approver-primary",
+    "comment": "Subject does not match the threat lead."
+  },
+  "notes": "Raw token t and csrf HMAC are minted at runtime. GET must not use these as a send switch."
+}
