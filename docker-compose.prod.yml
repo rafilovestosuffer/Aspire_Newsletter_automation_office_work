@@ -43,6 +43,10 @@ services:
       APP_ENV: ${APP_ENV:-staging}
       DRY_RUN: "true"
       FIXTURE_MODE: "true"
+      # Never echo approval tokens on a reachable host. Redundant with the
+      # APP_ENV=development check in requestApproval, but stated explicitly
+      # because this overlay also sets FIXTURE_MODE=true.
+      ALLOW_TOKEN_ECHO: "0"
       DATABASE_URL: postgres://${POSTGRES_USER:-newsletter}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-newsletter}
       ARTIFACT_DIR: /data/artifacts
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://127.0.0.1:8787}

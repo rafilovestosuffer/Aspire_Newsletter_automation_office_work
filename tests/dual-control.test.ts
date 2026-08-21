@@ -19,6 +19,7 @@ describe("dual-control approvals", () => {
       APP_ENV: "development",
       DRY_RUN: "true",
       FIXTURE_MODE: "true",
+      ALLOW_TOKEN_ECHO: "1",
       APP_SECRET: "test-secret-at-least-32-bytes-long",
       WORKER_TOKEN: "test-worker",
       PUBLIC_BASE_URL: "http://localhost:8787",

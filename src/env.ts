@@ -13,6 +13,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().optional().default(""),
   APP_SECRET: z.string().default(DEV_APP_SECRET),
   WORKER_TOKEN: z.string().default(DEV_WORKER_TOKEN),
+  ALLOW_TOKEN_ECHO: z.string().default("0"),
   KILL_SWITCH: z.string().default("0"),
   KILL_OUTBOX: z.string().default("0"),
   DUAL_CONTROL_FIRST_N: z.string().default("4"),
@@ -45,6 +46,8 @@ export type Env = z.infer<typeof envSchema> & {
   appEnv: AppEnv;
   dryRun: boolean;
   fixtureMode: boolean;
+  /** Echo raw approval tokens in the request body. Development only. */
+  allowTokenEcho: boolean;
   port: number;
   dualControlFirstN: number;
 };
@@ -56,6 +59,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): Env {
     appEnv: parsed.APP_ENV,
     dryRun: truthy(parsed.DRY_RUN),
     fixtureMode: truthy(parsed.FIXTURE_MODE),
+    allowTokenEcho: truthy(parsed.ALLOW_TOKEN_ECHO),
     port: Number(parsed.PORT) || 8787,
     dualControlFirstN: Number(parsed.DUAL_CONTROL_FIRST_N) || 4,
   };

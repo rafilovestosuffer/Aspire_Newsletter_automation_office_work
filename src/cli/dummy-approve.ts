@@ -14,6 +14,7 @@ async function main() {
     APP_ENV: "development",
     DRY_RUN: "true",
     FIXTURE_MODE: "true",
+    ALLOW_TOKEN_ECHO: "1",
     APP_SECRET: process.env.APP_SECRET || "dev-only-not-for-production-use-32b",
     WORKER_TOKEN: process.env.WORKER_TOKEN || "dev-worker-token",
     LOG_LEVEL: process.env.LOG_LEVEL || "silent",
