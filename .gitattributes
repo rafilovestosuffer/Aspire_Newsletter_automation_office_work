@@ -1,0 +1,25 @@
+# Line endings are a correctness concern here, not a style preference.
+#
+# scripts/backup.sh shipped with CRLF. On the Linux VPS the runbook targets,
+# both invocation paths died before doing any work:
+#   ./scripts/backup.sh  -> env: 'bash\r': No such file or directory
+#   bash scripts/backup.sh -> set: pipefail: invalid option name  (exit 2)
+# `set` is a special builtin, so its failure aborts the script outright — the
+# backup silently never ran and -e/-u/pipefail never activated.
+#
+# The frozen-artifact model is the second reason. Issue HTML is hashed and the
+# archive signature is bound to those bytes, so a CRLF checkout of the MJML
+# templates would freeze a different htmlSha256 than an LF checkout of the same
+# commit. Pinning eol=lf keeps the artifact hash a property of the commit.
+
+# Normalize every text file to LF in the repository and on checkout.
+* text=auto eol=lf
+
+# Belt and braces for the files where a stray CR is a runtime failure rather
+# than a cosmetic diff.
+*.sh        text eol=lf
+Dockerfile  text eol=lf
+Caddyfile   text eol=lf
+*.sql       text eol=lf
+*.yaml      text eol=lf
+*.yml       text eol=lf
