@@ -40,6 +40,7 @@ describe.skipIf(!databaseUrl)("Postgres E2E (set DATABASE_URL)", () => {
       APP_ENV: "development",
       DRY_RUN: "true",
       FIXTURE_MODE: "true",
+      ALLOW_TOKEN_ECHO: "1",
       DATABASE_URL: databaseUrl,
       APP_SECRET: "test-secret-at-least-32-bytes-long",
       WORKER_TOKEN: "test-worker",

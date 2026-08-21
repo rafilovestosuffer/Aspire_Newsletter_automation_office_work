@@ -14,6 +14,7 @@ function testEnv(overrides: Record<string, string> = {}) {
     APP_ENV: "development",
     DRY_RUN: "true",
     FIXTURE_MODE: "true",
+    ALLOW_TOKEN_ECHO: "1",
     APP_SECRET: "test-secret-at-least-32-bytes-long",
     WORKER_TOKEN: "test-worker",
     PUBLIC_BASE_URL: "http://localhost:8787",
@@ -95,6 +96,45 @@ describe("approval GET inert / POST consume", () => {
       expect((await store.getIssue(tick.issueKey))?.status).toBe("approved");
     } finally {
       await app.close();
+    }
+  });
+
+  // Regression: the echo condition was `fixtureMode || appEnv !== "production"`.
+  // docker-compose.prod.yml sets APP_ENV=staging alongside FIXTURE_MODE=true,
+  // so a reachable staging host handed a live, unconsumed approval token to
+  // any caller holding WORKER_TOKEN.
+  it.each(["staging", "production"])(
+    "never echoes raw approval tokens when APP_ENV=%s, even in fixture mode",
+    async (appEnv) => {
+      const env = testEnv({ APP_ENV: appEnv, FIXTURE_MODE: "true", ALLOW_TOKEN_ECHO: "1" });
+      const config = loadConfig();
+      const store = new MemoryStore();
+      const tick = await clockTick({ store, env, config, now });
+      await ingestFixtures(store, config);
+      await assembleIssue({ store, env, config, issueKey: tick.issueKey, now });
+
+      const minted = await requestApproval({ store, env, config, issueKey: tick.issueKey });
+
+      // Tokens were still minted and persisted; they are simply not returned.
+      expect(minted.issued).toBeGreaterThan(0);
+      expect(minted.tokens).toBeUndefined();
+      expect(JSON.stringify(minted)).not.toContain("token");
+    },
+  );
+
+  it("echoes tokens in development only when explicitly opted in", async () => {
+    const config = loadConfig();
+    for (const [allow, expectEcho] of [
+      ["1", true],
+      ["0", false],
+    ] as const) {
+      const env = testEnv({ ALLOW_TOKEN_ECHO: allow });
+      const store = new MemoryStore();
+      const tick = await clockTick({ store, env, config, now });
+      await ingestFixtures(store, config);
+      await assembleIssue({ store, env, config, issueKey: tick.issueKey, now });
+      const minted = await requestApproval({ store, env, config, issueKey: tick.issueKey });
+      expect(Boolean(minted.tokens)).toBe(expectEcho);
     }
   });
 

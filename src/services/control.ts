@@ -255,8 +255,12 @@ export async function requestApproval(opts: {
     eventType: "approval_requested",
     payload: { count: raws.length, notify: opts.env.STAFF_NOTIFY_WEBHOOK ? "webhook" : "none" },
   });
-  const leak = opts.env.fixtureMode || opts.env.appEnv !== "production";
-  return { issued: raws.length, ...(leak ? { tokens: raws } : {}) };
+  // Echoing raw tokens is a local affordance for `npm run approve:dummy`. It
+  // must never key off fixtureMode: docker-compose.prod.yml sets
+  // FIXTURE_MODE=true alongside APP_ENV=staging, so the old condition handed
+  // live approval tokens to anyone holding the worker bearer on a public host.
+  const echoTokens = opts.env.appEnv === "development" && opts.env.allowTokenEcho;
+  return { issued: raws.length, ...(echoTokens ? { tokens: raws } : {}) };
 }
 
 export async function previewApproval(opts: {
