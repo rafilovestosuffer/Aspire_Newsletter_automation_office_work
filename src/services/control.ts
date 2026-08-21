@@ -9,6 +9,7 @@ import { dualControlRequired, envKill, mergeKill, outboxIdempotencyKey } from ".
 import type { IssueStore } from "../store/types";
 import type { IssueRow } from "../store/types";
 import { assembleFromItems, loadFrozenHtml } from "../assemble/pipeline";
+import { brandCompletenessProblems } from "../qa/gates";
 import { parseRssPosts } from "../ingest/rss";
 import { parseKevJson } from "../ingest/kev";
 import { GhlClient } from "../ghl/client";
@@ -191,6 +192,7 @@ export async function assembleIssue(opts: {
       llmProvider: opts.env.LLM_PROVIDER,
       llmApiKey: opts.env.LLM_API_KEY ?? "",
       llmModel: opts.env.LLM_MODEL ?? "",
+      requireCompleteBrand: opts.env.appEnv !== "development",
     });
     await opts.store.updateIssue(opts.issueKey, {
       revision,
@@ -468,6 +470,18 @@ export async function drainOutbox(opts: {
     try {
       if (!audience.ok) {
         throw new Error(audience.reason);
+      }
+      // Second layer behind the QA gate. QA runs at assemble time; config can
+      // be edited between assemble and drain, and this is the last point before
+      // the list is addressed. Sandbox is exempt: seed sends during the spike
+      // legitimately run on scaffolding.
+      if (slot === "production") {
+        const brandProblems = brandCompletenessProblems(opts.config.brand);
+        if (brandProblems.length) {
+          throw new Error(
+            `refusing production send with incomplete brand config: ${brandProblems.join("; ")}`,
+          );
+        }
       }
       const html = loadFrozenHtml({
         artifactsRoot: artifactsRoot(opts.env.ARTIFACT_DIR),

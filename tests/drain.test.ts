@@ -17,6 +17,7 @@ import { csrfForToken } from "../src/domain/hash";
 import { GhlClient, type CreateCampaignBody, type ScheduleCampaignBody } from "../src/ghl/client";
 import { resolveDrainRecipients } from "../src/ghl/audience";
 import { MemoryStore } from "../src/store/memory";
+import { withCompleteBrand } from "./support/config";
 import type { AppConfig } from "../src/types";
 
 const now = new Date("2026-08-20T19:00:00.000Z");
@@ -198,7 +199,9 @@ describe("drainOutbox audience + frozen HTML", () => {
       APP_SECRET: "prod-secret-at-least-32-bytes-ok",
       WORKER_TOKEN: "prod-worker-token-16",
     });
-    const config = withAudience(loadConfig(), {
+    // A production drain refuses placeholder brand config, so this fixture has
+    // to carry brand facts that would really be sendable.
+    const config = withAudience(withCompleteBrand(), {
       contactIds: ["seed-fixture"],
       filter: { TODO_unverified: "do-not-invent-ghl-keys" },
     });
@@ -217,5 +220,61 @@ describe("drainOutbox audience + frozen HTML", () => {
     expect(result.processed).toBe(1);
     expect(ghl.lastRecipients).toEqual({ filter: { TODO_unverified: "do-not-invent-ghl-keys" } });
     expect(ghl.lastRecipients).not.toHaveProperty("contactIds");
+  });
+
+  // QA runs at assemble time, but config can be edited between assemble and
+  // drain, and this is the last point before the real list is addressed.
+  it("refuses a production send with placeholder brand config, without calling GHL", async () => {
+    const queueEnv = testEnv();
+    const drainEnv = testEnv({
+      APP_ENV: "production",
+      DRY_RUN: "false",
+      APP_SECRET: "prod-secret-at-least-32-bytes-ok",
+      WORKER_TOKEN: "prod-worker-token-16",
+    });
+    // loadConfig() is the shipped example brand: TODO legal name, TODO postal
+    // address, TODO.example.invalid unsubscribe link.
+    const config = withAudience(loadConfig(), {
+      contactIds: ["seed-fixture"],
+      filter: { TODO_unverified: "do-not-invent-ghl-keys" },
+    });
+    const store = new MemoryStore();
+    const ghl = new RecordingGhl({
+      appEnv: "production",
+      dryRun: false,
+      kill: { l1: false, l2: false },
+      baseUrl: drainEnv.GHL_BASE_URL,
+      version: drainEnv.GHL_API_VERSION,
+      sandbox: { locationId: "", userId: "", pit: "" },
+      production: { locationId: "", userId: "", pit: "" },
+    });
+    await queueIssue({ env: queueEnv, config, store });
+
+    const result = await drainOutbox({ store, env: drainEnv, config, limit: 10, ghl });
+
+    expect(result.processed).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(ghl.createCalls).toBe(0);
+    expect([...store.outbox.values()][0]?.lastError).toMatch(/incomplete brand config/);
+  });
+
+  it("allows a sandbox seed send on placeholder brand config", async () => {
+    // Seed sends during the GHL spike legitimately run on scaffolding — the
+    // gate is about addressing the real list, not about every send.
+    const env = testEnv();
+    const config = withAudience(loadConfig(), { contactIds: ["seed-fixture"] });
+    const store = new MemoryStore();
+    const ghl = new RecordingGhl({
+      appEnv: env.appEnv,
+      dryRun: true,
+      kill: { l1: false, l2: false },
+      baseUrl: env.GHL_BASE_URL,
+      version: env.GHL_API_VERSION,
+      sandbox: { locationId: "", userId: "", pit: "" },
+      production: { locationId: "", userId: "", pit: "" },
+    });
+    await queueIssue({ env, config, store });
+    const result = await drainOutbox({ store, env, config, limit: 10, ghl });
+    expect(result.processed).toBe(1);
   });
 });

@@ -35,6 +35,59 @@ export function hrefAllowList(opts: {
   return set;
 }
 
+const PLACEHOLDER_MARKERS = [/\bTODO\b/i, /example\.invalid/i, /\breplace-with\b/i];
+
+/**
+ * Must carry a real value before this brand can send.
+ *
+ * postalAddress and legalName are CAN-SPAM obligations; the rest render into
+ * the issue, where a placeholder is visible to every recipient.
+ */
+const REQUIRED_BRAND_FIELDS: ReadonlyArray<keyof BrandConfig> = [
+  "displayName",
+  "legalName",
+  "postalAddress",
+  "fromName",
+  "fromEmail",
+  "siteUrl",
+  "unsubscribeUrl",
+  "preferenceUrl",
+];
+
+/** May legitimately be empty, but must never carry a placeholder. */
+const OPTIONAL_BRAND_FIELDS: ReadonlyArray<keyof BrandConfig> = [
+  "replyTo",
+  "logoUrl",
+  "archiveBaseUrl",
+  "advertisementNotice",
+  "cdnHost",
+];
+
+/**
+ * Catch a brand config that is still carrying scaffolding.
+ *
+ * The unsubscribe gate below only checks that the word "unsubscribe" appears in
+ * the HTML, which `https://TODO.example.invalid/unsubscribe` satisfies — so
+ * without this the pipeline happily froze and offered for approval an email
+ * with no real postal address, no real sender and a dead unsubscribe link.
+ */
+export function brandCompletenessProblems(brand: BrandConfig): string[] {
+  const problems: string[] = [];
+  const check = (field: keyof BrandConfig, required: boolean): void => {
+    const value = String(brand[field] ?? "").trim();
+    if (!value) {
+      if (required) problems.push(`brand.${field} is empty`);
+      return;
+    }
+    if (PLACEHOLDER_MARKERS.some((re) => re.test(value))) {
+      problems.push(`brand.${field} is still a placeholder: ${value}`);
+    }
+  };
+  for (const field of REQUIRED_BRAND_FIELDS) check(field, true);
+  for (const field of OPTIONAL_BRAND_FIELDS) check(field, false);
+  return problems;
+}
+
 function hostOf(url: string): string | undefined {
   try {
     return new URL(url).hostname.toLowerCase();
@@ -60,6 +113,11 @@ export function runQa(opts: {
   archiveUrl: string;
   /** MJML compile errors. A template that failed to render is not sendable. */
   renderErrors?: string[];
+  /**
+   * Fail on placeholder brand config rather than warn. Set outside development,
+   * where fixtures legitimately run on scaffolding.
+   */
+  requireCompleteBrand?: boolean;
 }): QaReport {
   const failures: string[] = [];
   const warnings: string[] = [];
@@ -158,6 +216,10 @@ export function runQa(opts: {
   for (const err of opts.renderErrors ?? []) {
     failures.push(`MJML render error: ${err}`);
   }
+
+  // Visible in development so the gap is obvious long before it blocks a send.
+  const brandProblems = brandCompletenessProblems(opts.brand);
+  (opts.requireCompleteBrand ? failures : warnings).push(...brandProblems);
 
   const blob = `${opts.html}\n${opts.text}\n${JSON.stringify(opts.llm)}`;
   for (const m of blob.toUpperCase().match(CVE_RE) ?? []) {

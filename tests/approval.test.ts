@@ -6,6 +6,7 @@ import { csrfForToken, sha256Hex } from "../src/domain/hash";
 import { issueKeyToPath } from "../src/domain/issueKey";
 import { assembleIssue, clockTick, ingestFixtures, requestApproval } from "../src/services/control";
 import { MemoryStore } from "../src/store/memory";
+import { withCompleteBrand } from "./support/config";
 
 const now = new Date("2026-08-20T19:00:00.000Z");
 
@@ -107,7 +108,9 @@ describe("approval GET inert / POST consume", () => {
     "never echoes raw approval tokens when APP_ENV=%s, even in fixture mode",
     async (appEnv) => {
       const env = testEnv({ APP_ENV: appEnv, FIXTURE_MODE: "true", ALLOW_TOKEN_ECHO: "1" });
-      const config = loadConfig();
+      // Outside development the compliance gate fails placeholder brand config,
+      // so this path needs brand facts that would really be sendable.
+      const config = withCompleteBrand();
       const store = new MemoryStore();
       const tick = await clockTick({ store, env, config, now });
       await ingestFixtures(store, config);

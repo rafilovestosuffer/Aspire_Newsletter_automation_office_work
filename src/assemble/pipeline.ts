@@ -50,6 +50,8 @@ export async function assembleFromItems(opts: {
   llmProvider: string;
   llmApiKey: string;
   llmModel?: string;
+  /** Outside development, placeholder brand config fails QA instead of warning. */
+  requireCompleteBrand?: boolean;
 }): Promise<AssembleResult> {
   const selected = selectContent(opts.items, opts.now, opts.config.relevance);
   const archiveUrl = `${opts.publicBaseUrl.replace(/\/$/, "")}/archive/${issueKeyToPath(opts.issue.issueKey)}/r/${opts.issue.revision}`;
@@ -102,6 +104,7 @@ export async function assembleFromItems(opts: {
     relevance: opts.config.relevance,
     archiveUrl,
     renderErrors: errors,
+    requireCompleteBrand: opts.requireCompleteBrand,
   });
 
   const htmlSha256 = html ? sha256Hex(html) : undefined;
