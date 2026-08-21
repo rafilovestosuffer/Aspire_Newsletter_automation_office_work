@@ -1,5 +1,6 @@
 import { canLoadProductionAudience, type KillFlags } from "../domain/policy";
-import type { AppEnv } from "../types";
+import { DRY_RUN_CAMPAIGN_ID } from "../domain/lifecycle";
+import type { AppEnv, AudienceSlot } from "../types";
 
 export class GhlBanError extends Error {
   override name = "GhlBanError";
@@ -65,7 +66,8 @@ export interface ScheduleCampaignBody {
   abTestConfig?: unknown;
 }
 
-export type AudienceSlot = "sandbox" | "production";
+/** Canonical definition lives in ../types alongside the issue row that stores it. */
+export type { AudienceSlot } from "../types";
 
 export interface GhlEnv {
   appEnv: AppEnv;
@@ -172,7 +174,32 @@ export class GhlClient {
     const path = this.createCampaignPath(this.locationFor(slot).locationId);
     this.assertNotForbiddenPath(path);
     if (this.env.dryRun || !this.locationFor(slot).pit) {
-      return { id: "dry-run-campaign", status: "draft", traceId: "dry-run", dryRun: true };
+      return { id: DRY_RUN_CAMPAIGN_ID, status: "draft", traceId: "dry-run", dryRun: true };
+    }
+    throw new GhlBanError("Live GHL HTTP is not enabled in this build without an explicit future spike runner");
+  }
+
+  campaignPath(locationId: string, campaignId: string): string {
+    return `/emails/locations/${locationId}/campaigns/emails/${campaignId}`;
+  }
+
+  /**
+   * Read one campaign's current status, for reconciliation.
+   *
+   * Read-only: there is no body and no send here, so unlike create/schedule it
+   * carries no audience-slot gate. It still refuses live HTTP, because the
+   * response shape is UNVERIFIED until the spike — reconcile treats a dry-run
+   * campaign as unobservable rather than inventing a lifecycle for it.
+   */
+  async getCampaign(
+    slot: AudienceSlot,
+    campaignId: string,
+  ): Promise<{ id: string; status: string; dryRun: boolean }> {
+    const loc = this.locationFor(slot);
+    const path = this.campaignPath(loc.locationId, campaignId);
+    this.assertNotForbiddenPath(path);
+    if (this.env.dryRun || !loc.pit) {
+      return { id: campaignId, status: "draft", dryRun: true };
     }
     throw new GhlBanError("Live GHL HTTP is not enabled in this build without an explicit future spike runner");
   }
