@@ -5,7 +5,7 @@ import { loadFixtureItems } from "../src/services/control";
 import { MemoryStore } from "../src/store/memory";
 
 function recordingFetch(sink: string[]): typeof fetch {
-  return (async (input: RequestInfo | URL) => {
+  return (async (input: Parameters<typeof fetch>[0]) => {
     sink.push(String(input));
     return new Response("{}", { status: 200, headers: { "content-type": "application/json" } });
   }) as typeof fetch;
