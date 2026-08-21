@@ -45,7 +45,15 @@ export interface IssueStore {
   updateIssue(issueKey: string, patch: Partial<IssueRow>): Promise<void>;
   countProductionSent(): Promise<number>;
   upsertContent(item: ContentItem): Promise<void>;
+  /** Every content item. Admin/diagnostic use — unbounded, not for assemble. */
   listContent(): Promise<ContentItem[]>;
+  /** Items published at or after `cutoff`. The selection window for assemble. */
+  listContentSince(cutoff: Date): Promise<ContentItem[]>;
+  /**
+   * Delete content published before `before` that no issue references.
+   * Returns rows removed.
+   */
+  pruneContent(before: Date): Promise<number>;
   setIssueItems(issueId: string, items: Array<{ contentItemId: string; role: string; sortOrder: number }>): Promise<void>;
   appendEvent(event: {
     issueKey: string;

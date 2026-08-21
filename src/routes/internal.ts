@@ -10,6 +10,7 @@ import {
   collectIssue,
   drainOutbox,
   ingestContent,
+  pruneContent,
   requestApproval,
 } from "../services/control";
 import { workerAuthorized } from "./approval";
@@ -90,6 +91,10 @@ export async function registerInternal(
       limit: req.body?.limit ?? 10,
     });
   });
+
+  app.post("/internal/retention/prune", async () =>
+    pruneContent({ store: ctx.store, config: ctx.config, now: new Date() }),
+  );
 
   app.post("/internal/observe", async () => {
     return { updated: 0, note: "DRY_RUN observe: no live GHL stats" };

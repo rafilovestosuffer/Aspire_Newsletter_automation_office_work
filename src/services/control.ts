@@ -177,7 +177,10 @@ export async function assembleIssue(opts: {
     }
     const revision =
       existing.status === "rejected" || existing.status === "qa_failed" ? existing.revision + 1 : existing.revision;
-    const items = await opts.store.listContent();
+    // Only the selection window. This used to read every content item ever
+    // ingested and filter in memory, so cost grew without bound over time.
+    const cutoff = new Date(opts.now.getTime() - opts.config.relevance.postLookbackDays * 86_400_000);
+    const items = await opts.store.listContentSince(cutoff);
     const result = await assembleFromItems({
       issue: { ...existing, revision },
       items,
@@ -530,6 +533,27 @@ export async function drainOutbox(opts: {
     }
   }
   return { processed, skipped, failed };
+}
+
+/**
+ * Retention keeps a generous multiple of the selection window so a late
+ * re-assemble or a backdated collect still has its source material.
+ */
+export const RETENTION_WINDOW_MULTIPLE = 4;
+
+/**
+ * Drop content older than the retention window. Items cited by any issue are
+ * never removed, so frozen issues stay reproducible from their sources.
+ */
+export async function pruneContent(opts: {
+  store: IssueStore;
+  config: AppConfig;
+  now: Date;
+}): Promise<{ removed: number; before: string; retentionDays: number }> {
+  const retentionDays = opts.config.relevance.postLookbackDays * RETENTION_WINDOW_MULTIPLE;
+  const before = new Date(opts.now.getTime() - retentionDays * 86_400_000);
+  const removed = await opts.store.pruneContent(before);
+  return { removed, before: before.toISOString(), retentionDays };
 }
 
 export function signArchive(env: Env, issueKey: string, revision: number, htmlSha256: string): string {

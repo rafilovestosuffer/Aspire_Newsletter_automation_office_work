@@ -60,6 +60,27 @@ export class MemoryStore implements IssueStore {
     return [...this.content.values()];
   }
 
+  async listContentSince(cutoff: Date): Promise<ContentItem[]> {
+    const floor = cutoff.getTime();
+    return [...this.content.values()].filter((i) => Date.parse(i.publishedAt) >= floor);
+  }
+
+  async pruneContent(before: Date): Promise<number> {
+    const floor = before.getTime();
+    const referenced = new Set<string>();
+    for (const items of this.issueItems.values()) {
+      for (const it of items) referenced.add(it.contentItemId);
+    }
+    let removed = 0;
+    for (const [id, item] of this.content) {
+      if (referenced.has(id)) continue;
+      if (Date.parse(item.publishedAt) >= floor) continue;
+      this.content.delete(id);
+      removed += 1;
+    }
+    return removed;
+  }
+
   async setIssueItems(
     issueId: string,
     items: Array<{ contentItemId: string; role: string; sortOrder: number }>,

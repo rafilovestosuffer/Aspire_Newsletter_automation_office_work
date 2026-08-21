@@ -166,21 +166,45 @@ export class PostgresStore implements IssueStore {
   }
 
   async listContent(): Promise<ContentItem[]> {
-    const { rows } = await this.q().query("SELECT * FROM content_items");
+    return this.mapContentRows(await this.q().query("SELECT * FROM content_items"));
+  }
+
+  async listContentSince(cutoff: Date): Promise<ContentItem[]> {
+    return this.mapContentRows(
+      await this.q().query(
+        "SELECT * FROM content_items WHERE published_at >= $1 ORDER BY published_at DESC",
+        [cutoff.toISOString()],
+      ),
+    );
+  }
+
+  /** Never deletes a row an issue still cites — sent issues stay reproducible. */
+  async pruneContent(before: Date): Promise<number> {
+    const { rowCount } = await this.q().query(
+      `DELETE FROM content_items c
+        WHERE c.published_at < $1
+          AND NOT EXISTS (SELECT 1 FROM issue_items i WHERE i.content_item_id = c.id)`,
+      [before.toISOString()],
+    );
+    return rowCount ?? 0;
+  }
+
+  private mapContentRows(result: { rows: Array<Record<string, unknown>> }): ContentItem[] {
+    const { rows } = result;
     return rows.map((r) => {
       const extra = (r.extra ?? {}) as ContentItem;
       return {
         schemaVersion: CONTENT_SCHEMA_VERSION,
         id: String(r.id),
-        kind: r.kind,
-        sourceId: r.source_id,
-        canonicalUrl: r.canonical_url,
-        title: r.title,
-        excerpt: r.excerpt,
+        kind: r.kind as ContentItem["kind"],
+        sourceId: String(r.source_id),
+        canonicalUrl: String(r.canonical_url),
+        title: String(r.title),
+        excerpt: String(r.excerpt),
         publishedAt: new Date(r.published_at as string).toISOString(),
-        cveIds: r.cve_ids ?? [],
-        rawHash: r.raw_hash,
-        score: r.score ?? undefined,
+        cveIds: (r.cve_ids as string[] | null) ?? [],
+        rawHash: String(r.raw_hash),
+        score: (r.score as number | null) ?? undefined,
         severity: extra.severity,
         vendorProduct: extra.vendorProduct,
         knownRansomware: extra.knownRansomware,
