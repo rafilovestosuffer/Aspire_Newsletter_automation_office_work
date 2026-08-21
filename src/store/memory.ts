@@ -1,6 +1,6 @@
 import { KeyedMutex } from "../domain/lock";
 import type { KillFlags } from "../domain/policy";
-import type { ContentItem } from "../types";
+import type { ContentItem, IssueStatus } from "../types";
 import type { ApprovalRecord, ApprovalTokenRow, IssueRow, IssueStore, OutboxRow } from "./types";
 
 export class MemoryStore implements IssueStore {
@@ -47,9 +47,17 @@ export class MemoryStore implements IssueStore {
   async countProductionSent(): Promise<number> {
     let n = 0;
     for (const i of this.issues.values()) {
-      if (i.status === "sent") n += 1;
+      // Sandbox and DRY_RUN sends must not graduate dual control.
+      if (i.status === "sent" && i.audienceSlot === "production" && i.sendWasDryRun === false) {
+        n += 1;
+      }
     }
     return n;
+  }
+
+  async listIssuesByStatus(statuses: IssueStatus[]): Promise<IssueRow[]> {
+    const want = new Set(statuses);
+    return [...this.issues.values()].filter((i) => want.has(i.status));
   }
 
   async upsertContent(item: ContentItem): Promise<void> {
@@ -139,8 +147,15 @@ export class MemoryStore implements IssueStore {
     return "inserted";
   }
 
-  async listOutboxPending(limit: number): Promise<OutboxRow[]> {
-    return [...this.outbox.values()].filter((o) => o.status === "pending").slice(0, limit);
+  async listOutboxPending(limit: number, now: Date = new Date()): Promise<OutboxRow[]> {
+    return [...this.outbox.values()]
+      .filter((o) => o.status === "pending")
+      .filter((o) => !o.nextAttemptAt || Date.parse(o.nextAttemptAt) <= now.getTime())
+      .slice(0, limit);
+  }
+
+  async listOutboxFailed(limit: number): Promise<OutboxRow[]> {
+    return [...this.outbox.values()].filter((o) => o.status === "failed").slice(0, limit);
   }
 
   async updateOutbox(id: string, patch: Partial<OutboxRow>): Promise<void> {

@@ -3,7 +3,7 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { advisoryLockSql } from "../domain/lock";
 import type { KillFlags } from "../domain/policy";
 import { uuidV4 } from "../domain/hash";
-import type { ContentItem } from "../types";
+import type { ContentItem, IssueStatus } from "../types";
 import type { ApprovalRecord, ApprovalTokenRow, IssueRow, IssueStore, OutboxRow } from "./types";
 import { CONTENT_SCHEMA_VERSION, ISSUE_SCHEMA_VERSION } from "../types";
 
@@ -30,9 +30,29 @@ function rowToIssue(r: Record<string, unknown>): IssueRow {
     ghlSourceId: r.ghl_source_id ? String(r.ghl_source_id) : null,
     ghlTraceId: r.ghl_trace_id ? String(r.ghl_trace_id) : null,
     archivePath: r.archive_path ? String(r.archive_path) : null,
+    audienceSlot: (r.audience_slot as IssueRow["audienceSlot"]) ?? null,
+    sendWasDryRun: r.send_was_dry_run === null || r.send_was_dry_run === undefined
+      ? null
+      : Boolean(r.send_was_dry_run),
+    sentAt: r.sent_at ? (r.sent_at as Date).toISOString() : null,
+    ghlStatus: r.ghl_status ? String(r.ghl_status) : null,
     freezeJson: r.freeze_json,
     createdAt: (r.created_at as Date).toISOString(),
     updatedAt: (r.updated_at as Date).toISOString(),
+  };
+}
+
+function rowToOutbox(r: Record<string, unknown>): OutboxRow {
+  return {
+    id: String(r.id),
+    idempotencyKey: String(r.idempotency_key),
+    issueKey: String(r.issue_key),
+    revision: Number(r.revision),
+    payload: r.payload,
+    status: r.status as OutboxRow["status"],
+    attempts: Number(r.attempts),
+    lastError: (r.last_error as string | null) ?? null,
+    nextAttemptAt: r.next_attempt_at ? (r.next_attempt_at as Date).toISOString() : null,
   };
 }
 
@@ -113,6 +133,7 @@ export class PostgresStore implements IssueStore {
       `UPDATE issues SET
         revision=$2, status=$3, subject=$4, preheader=$5, html_sha256=$6, text_sha256=$7,
         freeze_json=$8, ghl_campaign_id=$9, ghl_source_id=$10, ghl_trace_id=$11, archive_path=$12,
+        audience_slot=$13, send_was_dry_run=$14, sent_at=$15, ghl_status=$16,
         updated_at=now()
       WHERE issue_key=$1`,
       [
@@ -128,12 +149,19 @@ export class PostgresStore implements IssueStore {
         next.ghlSourceId ?? null,
         next.ghlTraceId ?? null,
         next.archivePath ?? null,
+        next.audienceSlot ?? null,
+        next.sendWasDryRun ?? null,
+        next.sentAt ?? null,
+        next.ghlStatus ?? null,
       ],
     );
   }
 
   async countProductionSent(): Promise<number> {
-    const { rows } = await this.q().query(`SELECT count(*)::int AS n FROM issues WHERE status = 'sent'`);
+    const { rows } = await this.q().query(
+      `SELECT count(*)::int AS n FROM issues
+        WHERE status = 'sent' AND audience_slot = 'production' AND send_was_dry_run = false`,
+    );
     return Number((rows[0] as { n: number }).n);
   }
 
@@ -341,21 +369,14 @@ export class PostgresStore implements IssueStore {
     }
   }
 
-  async listOutboxPending(limit: number): Promise<OutboxRow[]> {
+  async listOutboxPending(limit: number, now: Date = new Date()): Promise<OutboxRow[]> {
     const { rows } = await this.q().query(
-      `SELECT * FROM outbox WHERE status='pending' ORDER BY created_at ASC LIMIT $1`,
-      [limit],
+      `SELECT * FROM outbox
+        WHERE status='pending' AND (next_attempt_at IS NULL OR next_attempt_at <= $2)
+        ORDER BY created_at ASC LIMIT $1`,
+      [limit, now.toISOString()],
     );
-    return rows.map((r) => ({
-      id: String(r.id),
-      idempotencyKey: String(r.idempotency_key),
-      issueKey: String(r.issue_key),
-      revision: Number(r.revision),
-      payload: r.payload,
-      status: r.status,
-      attempts: Number(r.attempts),
-      lastError: r.last_error,
-    }));
+    return rows.map((r) => rowToOutbox(r as Record<string, unknown>));
   }
 
   async updateOutbox(id: string, patch: Partial<OutboxRow>): Promise<void> {
@@ -364,15 +385,31 @@ export class PostgresStore implements IssueStore {
       | undefined;
     if (!cur) return;
     await this.q().query(
-      `UPDATE outbox SET status=$2, attempts=$3, last_error=$4, processed_at=$5 WHERE id=$1`,
+      `UPDATE outbox SET status=$2, attempts=$3, last_error=$4, processed_at=$5, next_attempt_at=$6
+       WHERE id=$1`,
       [
         id,
         patch.status ?? cur.status,
         patch.attempts ?? cur.attempts,
         patch.lastError === undefined ? cur.last_error : patch.lastError,
         patch.status === "done" || patch.status === "failed" ? new Date().toISOString() : cur.processed_at,
+        patch.nextAttemptAt === undefined ? cur.next_attempt_at : patch.nextAttemptAt,
       ],
     );
+  }
+
+  async listOutboxFailed(limit: number): Promise<OutboxRow[]> {
+    const { rows } = await this.q().query(
+      `SELECT * FROM outbox WHERE status='failed' ORDER BY created_at ASC LIMIT $1`,
+      [limit],
+    );
+    return rows.map((r) => rowToOutbox(r as Record<string, unknown>));
+  }
+
+  async listIssuesByStatus(statuses: IssueStatus[]): Promise<IssueRow[]> {
+    if (!statuses.length) return [];
+    const { rows } = await this.q().query(`SELECT * FROM issues WHERE status = ANY($1)`, [statuses]);
+    return rows.map((r) => rowToIssue(r as Record<string, unknown>));
   }
 
   async listInFlight(): Promise<IssueRow[]> {

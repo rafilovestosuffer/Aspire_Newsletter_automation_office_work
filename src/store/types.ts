@@ -27,6 +27,8 @@ export interface OutboxRow {
   status: "pending" | "processing" | "done" | "failed";
   attempts: number;
   lastError: string | null;
+  /** Earliest time a retry may run. Null means eligible now. */
+  nextAttemptAt?: string | null;
 }
 
 export interface ApprovalRecord {
@@ -43,7 +45,15 @@ export interface IssueStore {
   getIssue(issueKey: string): Promise<IssueRow | undefined>;
   insertIssue(row: IssueRow): Promise<void>;
   updateIssue(issueKey: string, patch: Partial<IssueRow>): Promise<void>;
+  /**
+   * Issues genuinely sent to the production audience for real.
+   *
+   * Feeds dual-control graduation, so it must exclude sandbox and DRY_RUN
+   * sends: counting those would drop the second-approver requirement without a
+   * single real production issue having gone out.
+   */
   countProductionSent(): Promise<number>;
+  listIssuesByStatus(statuses: IssueStatus[]): Promise<IssueRow[]>;
   upsertContent(item: ContentItem): Promise<void>;
   /** Every content item. Admin/diagnostic use — unbounded, not for assemble. */
   listContent(): Promise<ContentItem[]>;
@@ -70,7 +80,10 @@ export interface IssueStore {
   getKill(): Promise<KillFlags>;
   setKill(level: "L1" | "L2", enabled: boolean, reason: string): Promise<void>;
   putOutbox(row: OutboxRow): Promise<"inserted" | "exists">;
-  listOutboxPending(limit: number): Promise<OutboxRow[]>;
+  /** Pending rows whose backoff has elapsed, oldest first. */
+  listOutboxPending(limit: number, now?: Date): Promise<OutboxRow[]>;
+  /** Dead-lettered rows, for the watchdog to escalate. */
+  listOutboxFailed(limit: number): Promise<OutboxRow[]>;
   updateOutbox(id: string, patch: Partial<OutboxRow>): Promise<void>;
   listInFlight(): Promise<IssueRow[]>;
 }
