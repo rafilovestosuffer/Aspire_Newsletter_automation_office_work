@@ -6,6 +6,16 @@ import { ISSUE_SCHEMA_VERSION, TERMINAL_NOOP_STATUSES } from "../types";
 import { archiveSig, csrfForToken, randomTokenHex, safeEqualHex, sha256Hex, uuidV4 } from "../domain/hash";
 import { buildIssueKey, issueKeyToPath, parseIssueKey } from "../domain/issueKey";
 import { dualControlRequired, envKill, mergeKill, outboxIdempotencyKey } from "../domain/policy";
+import {
+  DRY_RUN_CAMPAIGN_ID,
+  canReconcileTransition,
+  mapGhlStatus,
+  outboxBackoffMs,
+  outboxShouldDeadLetter,
+  isPermanentSendError,
+  PermanentSendError,
+  RECONCILABLE_FROM,
+} from "../domain/lifecycle";
 import type { IssueStore } from "../store/types";
 import type { IssueRow } from "../store/types";
 import { assembleFromItems, loadFrozenHtml } from "../assemble/pipeline";
@@ -409,37 +419,41 @@ export async function consumeApproval(opts: {
   });
 }
 
+/** One place to build the client, so drain and reconcile cannot drift apart. */
+function ghlClientFor(env: Env, kill: { l1: boolean; l2: boolean }): GhlClient {
+  return new GhlClient({
+    appEnv: env.appEnv,
+    dryRun: env.dryRun,
+    kill,
+    baseUrl: env.GHL_BASE_URL,
+    version: env.GHL_API_VERSION,
+    sandbox: {
+      locationId: env.GHL_SANDBOX_LOCATION_ID ?? "",
+      userId: env.GHL_SANDBOX_USER_ID ?? "",
+      pit: env.GHL_SANDBOX_PIT ?? "",
+    },
+    production: {
+      locationId: env.GHL_PROD_LOCATION_ID ?? "",
+      userId: env.GHL_PROD_USER_ID ?? "",
+      pit: env.GHL_PROD_PIT ?? "",
+    },
+  });
+}
+
 export async function drainOutbox(opts: {
   store: IssueStore;
   env: Env;
   config: AppConfig;
   limit: number;
   ghl?: GhlClient;
-}): Promise<{ processed: number; skipped: number; failed: number }> {
+}): Promise<{ processed: number; skipped: number; failed: number; retried: number }> {
   let processed = 0;
   let skipped = 0;
   let failed = 0;
+  let retried = 0;
   const kill = combinedKill(opts.env, await opts.store.getKill());
   const jobs = await opts.store.listOutboxPending(opts.limit);
-  const ghl =
-    opts.ghl ??
-    new GhlClient({
-      appEnv: opts.env.appEnv,
-      dryRun: opts.env.dryRun,
-      kill,
-      baseUrl: opts.env.GHL_BASE_URL,
-      version: opts.env.GHL_API_VERSION,
-      sandbox: {
-        locationId: opts.env.GHL_SANDBOX_LOCATION_ID ?? "",
-        userId: opts.env.GHL_SANDBOX_USER_ID ?? "",
-        pit: opts.env.GHL_SANDBOX_PIT ?? "",
-      },
-      production: {
-        locationId: opts.env.GHL_PROD_LOCATION_ID ?? "",
-        userId: opts.env.GHL_PROD_USER_ID ?? "",
-        pit: opts.env.GHL_PROD_PIT ?? "",
-      },
-    });
+  const ghl = opts.ghl ?? ghlClientFor(opts.env, kill);
   const twenty = new TwentyClient({
     apiUrl: opts.env.TWENTY_API_URL ?? "",
     apiKey: opts.env.TWENTY_API_KEY ?? "",
@@ -469,7 +483,7 @@ export async function drainOutbox(opts: {
     });
     try {
       if (!audience.ok) {
-        throw new Error(audience.reason);
+        throw new PermanentSendError(audience.reason);
       }
       // Second layer behind the QA gate. QA runs at assemble time; config can
       // be edited between assemble and drain, and this is the last point before
@@ -478,17 +492,22 @@ export async function drainOutbox(opts: {
       if (slot === "production") {
         const brandProblems = brandCompletenessProblems(opts.config.brand);
         if (brandProblems.length) {
-          throw new Error(
+          throw new PermanentSendError(
             `refusing production send with incomplete brand config: ${brandProblems.join("; ")}`,
           );
         }
       }
-      const html = loadFrozenHtml({
-        artifactsRoot: artifactsRoot(opts.env.ARTIFACT_DIR),
-        issueKey: issue.issueKey,
-        revision: issue.revision,
-        expectedSha256: issue.htmlSha256,
-      });
+      let html: string;
+      try {
+        html = loadFrozenHtml({
+          artifactsRoot: artifactsRoot(opts.env.ARTIFACT_DIR),
+          issueKey: issue.issueKey,
+          revision: issue.revision,
+          expectedSha256: issue.htmlSha256,
+        });
+      } catch (err) {
+        throw new PermanentSendError(err instanceof Error ? err.message : String(err));
+      }
       ghl.assertAudienceSlot(slot);
       const created = await ghl.createCampaign(slot, {
         name: `${issue.issueKey} r${issue.revision}`,
@@ -528,8 +547,18 @@ export async function drainOutbox(opts: {
         ghlCampaignId: scheduled.campaignId,
         ghlSourceId: scheduled.sourceId,
         ghlTraceId: scheduled.traceId ?? created.traceId,
+        // Provenance for the dual-control count. Recorded here because this is
+        // the only place that knows which audience was actually addressed and
+        // whether the call was real; reconcile later reads it rather than
+        // re-deriving it from an environment that may since have changed.
+        audienceSlot: slot,
+        sendWasDryRun: scheduled.dryRun,
       });
-      await opts.store.updateOutbox(job.id, { status: "done", attempts: job.attempts + 1 });
+      await opts.store.updateOutbox(job.id, {
+        status: "done",
+        attempts: job.attempts + 1,
+        nextAttemptAt: null,
+      });
       await twenty.upsertNewsletterIssue({
         issueKey: job.issueKey,
         status: "scheduled",
@@ -538,16 +567,234 @@ export async function drainOutbox(opts: {
       });
       processed += 1;
     } catch (err) {
-      failed += 1;
-      await opts.store.updateOutbox(job.id, {
-        status: "failed",
-        attempts: job.attempts + 1,
-        lastError: err instanceof Error ? err.message : String(err),
-      });
-      await opts.store.updateIssue(job.issueKey, { status: "failed" });
+      // Retry with backoff before giving up. Previously the first error marked
+      // both the row and the issue `failed`, so one transient GHL blip burned
+      // the issue and needed an operator to rebuild it by hand.
+      const attempts = job.attempts + 1;
+      const message = err instanceof Error ? err.message : String(err);
+      // A refusal fails the same way every time, so escalate it immediately
+      // rather than spending the retry budget on it.
+      const permanent = isPermanentSendError(err);
+      const deadLetter = permanent || outboxShouldDeadLetter(attempts);
+
+      if (deadLetter) {
+        failed += 1;
+        await opts.store.updateOutbox(job.id, {
+          status: "failed",
+          attempts,
+          lastError: message,
+          nextAttemptAt: null,
+        });
+        // Only now does the issue itself fail; the watchdog escalates from here.
+        await opts.store.updateIssue(job.issueKey, { status: "failed" });
+        await opts.store.appendEvent({
+          issueKey: job.issueKey,
+          revision: job.revision,
+          eventType: "outbox_dead_letter",
+          payload: { attempts, error: message, permanent },
+        });
+      } else {
+        retried += 1;
+        const nextAttemptAt = new Date(Date.now() + outboxBackoffMs(attempts)).toISOString();
+        // Row stays `pending` and the issue stays `queued_outbox`, so the next
+        // drain picks it up once the backoff elapses.
+        await opts.store.updateOutbox(job.id, {
+          status: "pending",
+          attempts,
+          lastError: message,
+          nextAttemptAt,
+        });
+        await opts.store.appendEvent({
+          issueKey: job.issueKey,
+          revision: job.revision,
+          eventType: "outbox_retry_scheduled",
+          payload: { attempts, nextAttemptAt, error: message },
+        });
+      }
     }
   }
-  return { processed, skipped, failed };
+  return { processed, skipped, failed, retried };
+}
+
+export interface ReconcileResult {
+  checked: number;
+  transitioned: number;
+  matched: number;
+  /** In flight but not observable: no campaign, or a DRY_RUN placeholder. */
+  unobservable: number;
+  /** GHL reported a status with no local meaning (draft, archived). */
+  unmapped: number;
+  /** A mapped status the state machine refused to apply. */
+  refused: number;
+  errors: number;
+}
+
+/**
+ * Bring issue status back in line with what GHL actually did.
+ *
+ * This is the only path that reaches `sent`, and therefore the only thing that
+ * makes countProductionSent() meaningful. It strictly *observes*: the state
+ * machine in domain/lifecycle.ts forbids reaching a sending state from anything
+ * that has not already been approved and drained, so no GHL response can pull
+ * an unapproved or rejected issue toward a send.
+ */
+export async function reconcileIssues(opts: {
+  store: IssueStore;
+  env: Env;
+  config: AppConfig;
+  ghl?: GhlClient;
+  now?: Date;
+}): Promise<ReconcileResult> {
+  const now = opts.now ?? new Date();
+  const kill = combinedKill(opts.env, await opts.store.getKill());
+  const ghl = opts.ghl ?? ghlClientFor(opts.env, kill);
+  const result: ReconcileResult = {
+    checked: 0,
+    transitioned: 0,
+    matched: 0,
+    unobservable: 0,
+    unmapped: 0,
+    refused: 0,
+    errors: 0,
+  };
+
+  const issues = await opts.store.listIssuesByStatus([...RECONCILABLE_FROM]);
+  for (const issue of issues) {
+    result.checked += 1;
+
+    // A dry-run send produced no campaign to read. Inventing a lifecycle for it
+    // would fabricate `sent` rows and, before the provenance columns, would
+    // have graduated dual control off nothing at all.
+    if (!issue.ghlCampaignId || issue.ghlCampaignId === DRY_RUN_CAMPAIGN_ID) {
+      result.unobservable += 1;
+      continue;
+    }
+
+    const slot = issue.audienceSlot ?? "sandbox";
+    try {
+      const remote = await ghl.getCampaign(slot, issue.ghlCampaignId);
+      if (remote.dryRun) {
+        result.unobservable += 1;
+        continue;
+      }
+
+      const target = mapGhlStatus(remote.status);
+      if (!target) {
+        result.unmapped += 1;
+        await opts.store.appendEvent({
+          issueKey: issue.issueKey,
+          revision: issue.revision,
+          eventType: "reconcile_unmapped",
+          payload: { ghlStatus: remote.status, localStatus: issue.status },
+        });
+        continue;
+      }
+      if (target === issue.status) {
+        result.matched += 1;
+        continue;
+      }
+      if (!canReconcileTransition(issue.status, target)) {
+        result.refused += 1;
+        await opts.store.appendEvent({
+          issueKey: issue.issueKey,
+          revision: issue.revision,
+          eventType: "reconcile_refused",
+          payload: { from: issue.status, to: target, ghlStatus: remote.status },
+        });
+        continue;
+      }
+
+      await opts.store.updateIssue(issue.issueKey, {
+        status: target,
+        ghlStatus: remote.status,
+        ...(target === "sent" ? { sentAt: now.toISOString() } : {}),
+      });
+      await opts.store.appendEvent({
+        issueKey: issue.issueKey,
+        revision: issue.revision,
+        eventType: "reconcile_transition",
+        payload: { from: issue.status, to: target, ghlStatus: remote.status, slot },
+      });
+      result.transitioned += 1;
+    } catch (err) {
+      result.errors += 1;
+      await opts.store.appendEvent({
+        issueKey: issue.issueKey,
+        revision: issue.revision,
+        eventType: "reconcile_error",
+        payload: { error: err instanceof Error ? err.message : String(err) },
+      });
+    }
+  }
+  return result;
+}
+
+export interface WatchdogResult {
+  escalated: number;
+  staleApprovals: number;
+  deadLetters: number;
+}
+
+/**
+ * Escalate what is stuck. Notification only — never a send.
+ *
+ * The watchdog deliberately has no write path toward a sending state: it
+ * appends events and notifies staff. An automated nudge that could send would
+ * defeat the mandatory human POST-approval that the whole design rests on.
+ */
+export async function runWatchdog(opts: {
+  store: IssueStore;
+  env: Env;
+  config: AppConfig;
+  now?: Date;
+  limit?: number;
+}): Promise<WatchdogResult> {
+  const now = opts.now ?? new Date();
+  const limit = opts.limit ?? 50;
+  const slaMs = opts.config.schedule.approvalSlaHours * 60 * 60 * 1000;
+  const result: WatchdogResult = { escalated: 0, staleApprovals: 0, deadLetters: 0 };
+
+  const pending = await opts.store.listIssuesByStatus(["pending_approval"]);
+  for (const issue of pending) {
+    const waitedMs = now.getTime() - Date.parse(issue.updatedAt);
+    if (waitedMs < slaMs) continue;
+    result.staleApprovals += 1;
+    result.escalated += 1;
+    await opts.store.appendEvent({
+      issueKey: issue.issueKey,
+      revision: issue.revision,
+      eventType: "watchdog_approval_overdue",
+      payload: { waitedHours: Math.floor(waitedMs / 3_600_000), slaHours: opts.config.schedule.approvalSlaHours },
+    });
+    await notifyStaff(opts.env, {
+      event: "approval_overdue",
+      issueKey: issue.issueKey,
+      revision: issue.revision,
+      subject: issue.subject ?? "",
+      note: "Past approval SLA. Watchdog never sends; a human must still POST.",
+    });
+  }
+
+  const dead = await opts.store.listOutboxFailed(limit);
+  for (const job of dead) {
+    result.deadLetters += 1;
+    result.escalated += 1;
+    await opts.store.appendEvent({
+      issueKey: job.issueKey,
+      revision: job.revision,
+      eventType: "watchdog_outbox_dead_letter",
+      payload: { attempts: job.attempts, lastError: job.lastError },
+    });
+    await notifyStaff(opts.env, {
+      event: "outbox_dead_letter",
+      issueKey: job.issueKey,
+      revision: job.revision,
+      subject: "",
+      note: `Outbox gave up after ${job.attempts} attempts: ${job.lastError ?? "unknown"}`,
+    });
+  }
+
+  return result;
 }
 
 /**
