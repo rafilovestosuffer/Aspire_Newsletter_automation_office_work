@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Env } from "../env";
-import type { AppConfig, ApprovalAction, ContentItem } from "../types";
+import type { AppConfig, ApprovalAction, ContentItem, IngestScope } from "../types";
 import { ISSUE_SCHEMA_VERSION, TERMINAL_NOOP_STATUSES } from "../types";
 import { archiveSig, csrfForToken, randomTokenHex, sha256Hex, uuidV4 } from "../domain/hash";
 import { buildIssueKey, issueKeyToPath, parseIssueKey } from "../domain/issueKey";
@@ -15,6 +15,7 @@ import { GhlClient } from "../ghl/client";
 import { resolveDrainRecipients } from "../ghl/audience";
 import { TwentyClient } from "../twenty/client";
 import { artifactsRoot, configRoot } from "../config";
+import { ingestLive } from "./ingest-live";
 import { notifyStaff } from "./notify";
 
 const TOKEN_TTL_MS = 48 * 60 * 60 * 1000;
@@ -64,17 +65,53 @@ export async function clockTick(opts: {
   });
 }
 
-export function loadFixtureItems(_config: AppConfig): ContentItem[] {
+export function loadFixtureItems(_config: AppConfig, scope: IngestScope = "all"): ContentItem[] {
   const root = configRoot();
-  const posts = parseRssPosts(readFileSync(join(root, "fixtures/posts.rss"), "utf8"), "fixture-cms");
-  const threats = parseKevJson(readFileSync(join(root, "fixtures/kev.json"), "utf8"), "cisa-kev");
-  return [...posts, ...threats];
+  const items: ContentItem[] = [];
+  if (scope === "posts" || scope === "all") {
+    items.push(...parseRssPosts(readFileSync(join(root, "fixtures/posts.rss"), "utf8"), "fixture-cms"));
+  }
+  if (scope === "threats" || scope === "all") {
+    items.push(...parseKevJson(readFileSync(join(root, "fixtures/kev.json"), "utf8"), "cisa-kev"));
+  }
+  return items;
 }
 
-export async function ingestFixtures(store: IssueStore, config: AppConfig): Promise<number> {
-  const items = loadFixtureItems(config);
+export async function ingestFixtures(
+  store: IssueStore,
+  config: AppConfig,
+  scope: IngestScope = "all",
+): Promise<number> {
+  const items = loadFixtureItems(config, scope);
   for (const item of items) await store.upsertContent(item);
   return items.length;
+}
+
+export interface IngestOutcome {
+  upserted: number;
+  source: "fixtures" | "live";
+  scope: IngestScope;
+  skipped?: string[];
+  errors?: string[];
+}
+
+/**
+ * Single ingest entry point for the worker routes. `scope` selects the CMS
+ * half or the threat half so ingest-posts and ingest-threats do distinct work.
+ */
+export async function ingestContent(opts: {
+  store: IssueStore;
+  env: Env;
+  config: AppConfig;
+  scope: IngestScope;
+  forceFixture?: boolean;
+}): Promise<IngestOutcome> {
+  if (opts.env.fixtureMode || opts.forceFixture) {
+    const upserted = await ingestFixtures(opts.store, opts.config, opts.scope);
+    return { upserted, source: "fixtures", scope: opts.scope };
+  }
+  const live = await ingestLive(opts.store, opts.config, { scope: opts.scope });
+  return { ...live, source: "live" };
 }
 
 export async function assembleIssue(opts: {

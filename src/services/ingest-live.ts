@@ -1,4 +1,4 @@
-import type { AppConfig } from "../types";
+import type { AppConfig, IngestScope } from "../types";
 import type { IssueStore } from "../store/types";
 import { allowHostsFromConfig } from "../config";
 import { parseRssPosts } from "../ingest/rss";
@@ -18,12 +18,26 @@ function hostOf(url: string): string | undefined {
   }
 }
 
-/** Live allowlisted fetch. Never hits TODO.example.invalid placeholder hosts. */
+export interface LiveIngestResult {
+  upserted: number;
+  skipped: string[];
+  errors: string[];
+  scope: IngestScope;
+}
+
+/**
+ * Live allowlisted fetch. Never hits TODO.example.invalid placeholder hosts.
+ *
+ * `scope` decides which half of the feed registry runs: the CMS feed
+ * ("posts"), the threat feeds ("threats"), or both ("all"). Workflows 02 and
+ * 03 pass distinct scopes so they no longer duplicate each other's work.
+ */
 export async function ingestLive(
   store: IssueStore,
   config: AppConfig,
-  opts?: { fetchImpl?: typeof fetch },
-): Promise<{ upserted: number; skipped: string[]; errors: string[] }> {
+  opts?: { fetchImpl?: typeof fetch; scope?: IngestScope },
+): Promise<LiveIngestResult> {
+  const scope = opts?.scope ?? "all";
   const allow = allowHostsFromConfig(config.feeds, config.brand);
   const skipped: string[] = [];
   const errors: string[] = [];
@@ -46,9 +60,13 @@ export async function ingestLive(
     }
   }
 
-  await ingestUrl("cms", config.feeds.cms.rssUrl, "rss");
-  for (const feed of config.feeds.threatFeeds) {
-    await ingestUrl(feed.id, feed.url, feed.kind === "kev-json" ? "kev-json" : "rss");
+  if (scope === "posts" || scope === "all") {
+    await ingestUrl("cms", config.feeds.cms.rssUrl, "rss");
   }
-  return { upserted, skipped, errors };
+  if (scope === "threats" || scope === "all") {
+    for (const feed of config.feeds.threatFeeds) {
+      await ingestUrl(feed.id, feed.url, feed.kind === "kev-json" ? "kev-json" : "rss");
+    }
+  }
+  return { upserted, skipped, errors, scope };
 }

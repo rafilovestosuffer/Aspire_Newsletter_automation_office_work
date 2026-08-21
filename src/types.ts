@@ -28,6 +28,9 @@ export const TERMINAL_NOOP_STATUSES: ReadonlySet<IssueStatus> = new Set([
 
 export type ContentKind = "post" | "threat";
 
+/** Which half of the feed registry an ingest run covers. */
+export type IngestScope = "posts" | "threats" | "all";
+
 export type Severity = "critical" | "high" | "medium" | "low" | "unknown";
 
 export interface ContentItem {
