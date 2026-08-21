@@ -99,10 +99,8 @@ export async function assembleFromItems(opts: {
     brand: opts.config.brand,
     relevance: opts.config.relevance,
     archiveUrl,
+    renderErrors: errors,
   });
-  if (errors.length) {
-    qa.warnings.push(...errors);
-  }
 
   const htmlSha256 = html ? sha256Hex(html) : undefined;
   const textSha256 = text ? sha256Hex(text) : undefined;
