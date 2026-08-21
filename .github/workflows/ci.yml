@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# The control plane defaults to DRY_RUN=true and FIXTURE_MODE=true and ships no
+# GHL credentials, so CI cannot reach an ESP or send mail. Do not add GHL
+# secrets to this workflow.
+jobs:
+  test:
+    name: typecheck + tests + dummy path
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: newsletter
+          POSTGRES_PASSWORD: newsletter
+          POSTGRES_DB: newsletter
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U newsletter -d newsletter"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    env:
+      # Present so tests/postgres-e2e.test.ts and the Postgres retention test
+      # actually run instead of self-skipping.
+      DATABASE_URL: postgres://newsletter:newsletter@127.0.0.1:5432/newsletter
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Migrate
+        run: npm run migrate
+
+      - name: Tests (Postgres paths included)
+        run: npm test
+
+      - name: Tests again without a database
+        # The suite must stay green for contributors with no Postgres; this
+        # catches a test that silently depends on DATABASE_URL being set.
+        run: npm test
+        env:
+          DATABASE_URL: ""
+
+      - name: Assemble a frozen issue from fixtures
+        run: npm run assemble:fixture
+
+      - name: Prove GET approval is inert and POST consumes once
+        run: npm run approve:dummy
