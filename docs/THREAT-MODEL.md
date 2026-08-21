@@ -30,6 +30,23 @@
 - Double schedule of the same `issueKey` revision
 - Loading prod audience filter outside `APP_ENV=production`
 
+## Regression guard
+
+`tests/invariants.test.ts` asserts each of these directly, organised by
+invariant number, so a failure names the guarantee that broke rather than the
+feature that happened to notice. It deliberately overlaps with the feature
+tests: a refactor may legitimately delete `tests/approval.test.ts`, and the
+"GET never sends" guarantee must not leave with it.
+
+Every assertion there was mutation-tested — the guard was broken in the source,
+the test was confirmed red, and the source restored. A test that has never been
+seen to fail is not yet evidence of anything. If a change makes one of these
+red, the change is wrong; do not adjust the test to match it.
+
+Two invariants need a live database and self-gate on `DATABASE_URL`: tokens
+being hashed at rest, and the `issue_events` append-only trigger. CI runs them
+with a Postgres service container.
+
 ## Residual
 
 - Human approves a meaning-drift summary that still cites the right URL

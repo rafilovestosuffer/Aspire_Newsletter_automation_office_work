@@ -29,8 +29,9 @@ jobs:
           --health-retries 20
 
     env:
-      # Present so tests/postgres-e2e.test.ts and the Postgres retention test
-      # actually run instead of self-skipping.
+      # Present so tests/postgres-e2e.test.ts, the Postgres retention test and
+      # the DB-backed invariants (tokens hashed at rest, issue_events
+      # append-only) actually run instead of self-skipping.
       DATABASE_URL: postgres://newsletter:newsletter@127.0.0.1:5432/newsletter
 
     steps:
