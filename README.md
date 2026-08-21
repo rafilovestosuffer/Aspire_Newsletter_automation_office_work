@@ -7,8 +7,8 @@ Industry control plane for a weekly opted-in authority email: published S-02 pos
 ## Quick start (dummy, no GHL)
 
 ```bash
-cd "E:\Aspire Newslatter Automation"
-copy .env.example .env
+git clone <this repo> && cd Aspire_Newsletter_automation_office_work
+cp .env.example .env
 npm install
 npm test
 npm run typecheck
@@ -20,12 +20,15 @@ npm run approve:dummy
 
 ```bash
 docker compose up -d postgres
+export DATABASE_URL="postgres://newsletter:newsletter@127.0.0.1:5432/newsletter"
 npm run migrate
-$env:DATABASE_URL="postgres://newsletter:newsletter@127.0.0.1:5432/newsletter"
-npm test
+npm test        # the Postgres-gated tests stop self-skipping once DATABASE_URL is set
 npm run test:e2e
 npm run dev
 ```
+
+On Windows PowerShell, substitute `$env:DATABASE_URL="..."` for the `export`
+line. Everything else is identical; the deploy target and CI are both Linux.
 
 `GET /health` should show `db: true` after migrate. Approval GET stays inert; POST queues outbox; drain stays DRY_RUN (no live GHL HTTP).
 

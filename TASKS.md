@@ -147,3 +147,63 @@ Blocks below describe the factory. This implementation lands Blocks 1–6 in-rep
 **Rollback:** KILL_SWITCH=1.
 
 **Risk:** Duplicate n8n cron — Postgres is mutex.
+
+## Block 7: Lifecycle through `sent`
+
+**Goal:** Close the loop from `scheduled` to a terminal state, and make the three
+stub workers real.
+
+**Files changed:** `src/domain/lifecycle.ts`, `src/services/control.ts`,
+`src/routes/internal.ts`, `src/store/*`, `src/ghl/client.ts`,
+`migrations/003_lifecycle.sql`, `tests/reconcile.test.ts`, `tests/watchdog.test.ts`
+
+**Acceptance criteria:**
+
+* [x] `reconcile` maps GHL campaign status onto `IssueStatus` and is the only
+      path that writes `sent`
+* [x] A state machine forbids reaching a sending status from anything not
+      already approved and drained; `sent` is terminal
+* [x] `watchdog` escalates overdue approvals and dead letters, and has no write
+      path toward sending
+* [x] Outbox retries transient failures with backoff; refusals dead-letter at once
+* [x] `countProductionSent()` counts only real production sends, so sandbox and
+      DRY_RUN cannot graduate dual control
+* [ ] `observe` — deferred: GHL statistics field names are UNVERIFIED until the
+      sandbox spike
+* [ ] Kill L3 pause/cancel — deferred: no documented v3 body; UI only
+
+**Test:** `npm test` (179 with Postgres)
+
+**Rollback:** `KILL_SWITCH=1`; migration 003 is additive.
+
+**Risk:** A GHL response driving an unapproved issue toward `sent` — blocked by
+the state machine, asserted directly in `tests/reconcile.test.ts`.
+
+## Block 8: Production image, backups, runbook, docs
+
+**Goal:** Make the deployment production-shaped and the operational docs true.
+
+**Files changed:** `Dockerfile`, `scripts/build.mjs`, `src/paths.ts`,
+`scripts/backup.sh`, `scripts/restore-drill.sh`, `deploy/backup.crontab`,
+`docker-compose.prod.yml`, `docs/RUNBOOK.md`, `README.md`, `ARCHITECTURE.md`
+
+**Acceptance criteria:**
+
+* [x] Image compiles TypeScript at build time; no `tsx` in the runtime stage
+* [x] Runs as a non-root user, base image pinned by digest
+* [x] `HEALTHCHECK` reads the `ok` field, so a dead database fails it
+* [x] Backup is atomic, checksummed, verified, pruned, and can copy off-box
+* [x] Restore drill restores into a scratch database and checks schema, the
+      append-only trigger, row counts and artifacts — **executed, passing**
+* [x] Backups and the weekly drill are scheduled (`deploy/backup.crontab`)
+* [x] Runbook has an on-call table, lifecycle/worker operations, and a Gate B
+      checklist
+* [x] README/ARCHITECTURE reconciled to the code
+
+**Test:** `npm test`, `npm run build`, prod-only install boots `dist/`,
+`./scripts/backup.sh` then `./scripts/restore-drill.sh`
+
+**Rollback:** previous image tag; migration 003 is additive.
+
+**Risk:** Image not built in CI against a real Docker daemon — see the note in
+Block 8's verification below.

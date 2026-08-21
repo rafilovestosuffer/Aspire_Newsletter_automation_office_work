@@ -1,0 +1,33 @@
+# Scheduled backups for the E-02 control plane.
+#
+# Install on the VPS as the user that owns the deployment:
+#   crontab deploy/backup.crontab
+# or drop into /etc/cron.d/ with a user column added.
+#
+# Cron runs with a near-empty environment, so everything the script needs is
+# set here rather than assumed from a login shell. Point APP_DIR at the
+# checkout and fill DATABASE_URL from the same value the compose stack uses.
+
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+
+APP_DIR=/opt/aspire-newsletter
+DATABASE_URL=postgres://newsletter:CHANGEME@127.0.0.1:5432/newsletter
+ARTIFACT_DIR=/var/lib/docker/volumes/aspire_newsletter_artifacts/_data
+BACKUP_DIR=/var/backups/aspire-newsletter
+BACKUP_RETENTION_DAYS=14
+
+# Off-box target. A backup that only exists on the VPS does not survive losing
+# the VPS. Leave unset only if you have accepted that.
+# BACKUP_REMOTE=backups@offsite.example:/srv/aspire-newsletter
+
+# Daily at 03:17 UTC. Odd minute on purpose: :00 is when every other cron on
+# the box fires, and pg_dump contending with them is how backups start timing
+# out. Output goes to a log a human can actually find; cron mail is not a
+# monitoring system.
+17 3 * * * cd $APP_DIR && ./scripts/backup.sh >> /var/log/aspire-newsletter-backup.log 2>&1
+
+# Weekly restore drill, Sunday 04:30 UTC. This is the line that turns the
+# backups above into something you can rely on — an untested backup is not a
+# backup. It restores into a scratch database and never touches production.
+30 4 * * 0 cd $APP_DIR && ./scripts/restore-drill.sh >> /var/log/aspire-newsletter-restore-drill.log 2>&1
