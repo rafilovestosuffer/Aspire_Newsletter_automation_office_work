@@ -50,6 +50,35 @@ describe("QA gates", () => {
     expect(qa.failures.some((f) => f.includes("evil.example"))).toBe(true);
   });
 
+  // Regression: MJML compile errors were pushed into qa.warnings, so a
+  // template that failed to render still passed QA, froze, and became
+  // eligible for approval and broadcast.
+  it("fails when the MJML template did not render cleanly", () => {
+    const config = loadConfig();
+    const llm = fixtureSummarize([post], [threat]);
+    const html = `<html><body><a href="${post.canonicalUrl}">ok</a><a href="${threat.canonicalUrl}">t</a><a href="${config.brand.unsubscribeUrl}">Unsubscribe</a></body></html>`;
+    const text = "plain text part that is long enough to count as a semantic plaintext alternative for the issue.";
+    const args = {
+      llm,
+      html,
+      text,
+      posts: [post],
+      threats: [threat],
+      brand: config.brand,
+      relevance: config.relevance,
+      archiveUrl: "http://localhost:8787/archive/x/r/1",
+    };
+
+    // Same inputs, no render errors: passes.
+    expect(runQa(args).ok).toBe(true);
+
+    // With a render error: must fail, not merely warn.
+    const withError = runQa({ ...args, renderErrors: ["mj-column must be inside mj-section"] });
+    expect(withError.ok).toBe(false);
+    expect(withError.failures.some((f) => f.includes("MJML render error"))).toBe(true);
+    expect(withError.warnings.some((w) => w.includes("mj-column"))).toBe(false);
+  });
+
   it("fails CVE not in ingested source", () => {
     const config = loadConfig();
     const llm = fixtureSummarize([post], [threat]);

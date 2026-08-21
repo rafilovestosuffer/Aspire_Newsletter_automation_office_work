@@ -58,6 +58,8 @@ export function runQa(opts: {
   brand: BrandConfig;
   relevance: RelevanceConfig;
   archiveUrl: string;
+  /** MJML compile errors. A template that failed to render is not sendable. */
+  renderErrors?: string[];
 }): QaReport {
   const failures: string[] = [];
   const warnings: string[] = [];
@@ -151,6 +153,10 @@ export function runQa(opts: {
       void hostOf;
       failures.push(`href not on ingest/config allow-list: ${href}`);
     }
+  }
+
+  for (const err of opts.renderErrors ?? []) {
+    failures.push(`MJML render error: ${err}`);
   }
 
   const blob = `${opts.html}\n${opts.text}\n${JSON.stringify(opts.llm)}`;
