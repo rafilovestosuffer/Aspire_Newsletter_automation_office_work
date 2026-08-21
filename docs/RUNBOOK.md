@@ -64,10 +64,21 @@ VPS smoke (still DRY_RUN):
 ```bash
 export DATABASE_URL=postgres://...
 export ARTIFACT_DIR=/data/artifacts   # or ./artifacts
-bash scripts/backup.sh
+./scripts/backup.sh
 ```
 
 Postgres dump + copy of `artifacts/`. RPO: last backup. Sent revisions are immutable. Cron daily on the VPS.
+
+**Verify the script actually ran.** It exits non-zero and prints a reason on
+every failure path, but a scheduled backup only reports that if cron's output
+goes somewhere a human reads. Check for a fresh timestamped directory under
+`$BACKUP_DIR`, not just a quiet cron log.
+
+This script shipped once with CRLF line endings, which made it die at line 3
+(`set: pipefail: invalid option name`) before taking any dump — a silent
+no-op backup. `.gitattributes` now pins `*.sh` to `eol=lf`; if you ever edit
+it on Windows, confirm `file scripts/backup.sh` still says `LF` and that the
+executable bit survived.
 
 ## Kills
 
