@@ -1,0 +1,29 @@
+# TODO: replace with real editorial keywords for this audience.
+schemaVersion: "1.0.0"
+postLookbackDays: 8
+postCap: 5
+threatCap: 7
+allowThreatOnly: false
+allowPostsOnly: false
+keywords:
+  - ransomware
+  - vpn
+  - identity
+  - m365
+  - firewall
+  - zero-day
+  - kev
+shortenerHosts:
+  - bit.ly
+  - bitly.com
+  - tinyurl.com
+  - t.co
+  - ow.ly
+  - buff.ly
+  - is.gd
+  - cutt.ly
+  - rebrand.ly
+  - lnkd.in
+gmailClipBytes: 104448
+gmailWarnBytes: 81920
+subjectMaxChars: 60

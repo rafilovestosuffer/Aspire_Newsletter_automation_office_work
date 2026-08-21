@@ -1,0 +1,16 @@
+# Feed allowlist. Live CMS URL is a TODO. CISA KEV URL is the public canonical feed.
+schemaVersion: "1.0.0"
+
+cms:
+  originHost: "TODO.example.invalid" # TODO: S-02 / CMS host
+  rssUrl: "https://TODO.example.invalid/feed" # TODO: published-posts RSS or REST
+
+threatFeeds:
+  - id: cisa-kev
+    kind: kev-json
+    url: "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+    allowHost: "www.cisa.gov"
+  - id: extra-rss
+    kind: rss
+    url: "https://TODO-threat-feed.example.invalid/rss" # TODO: extra allowlisted RSS or delete this row
+    allowHost: "TODO-threat-feed.example.invalid"

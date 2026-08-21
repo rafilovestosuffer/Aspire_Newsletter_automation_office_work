@@ -1,0 +1,17 @@
+{
+  "name": "E-02 04 Assemble",
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "nodes": [
+    { "parameters": {}, "id": "a4000000-0004-4000-8000-000000000001", "name": "Manual Trigger", "type": "n8n-nodes-base.manualTrigger", "typeVersion": 1, "position": [0, 0] },
+    { "parameters": { "assignments": { "assignments": [{ "id": "k", "name": "issueKeyPath", "value": "aspire-America~New_York-2026-W34", "type": "string" }] }, "options": {} }, "id": "a4000000-0004-4000-8000-000000000002", "name": "Dummy Payload", "type": "n8n-nodes-base.set", "typeVersion": 3.4, "position": [240, 0] },
+    { "parameters": { "method": "POST", "url": "={{$env.CONTROL_PLANE_URL}}/internal/issues/{{$json.issueKeyPath}}/assemble", "sendHeaders": true, "headerParameters": { "parameters": [{ "name": "Authorization", "value": "=Bearer {{$env.WORKER_TOKEN}}" }] }, "options": { "timeout": 60000 } }, "id": "a4000000-0004-4000-8000-000000000003", "name": "POST assemble", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [480, 0], "onError": "continueErrorOutput", "notes": "Select, LLM JSON, MJML, QA, SHA256 freeze. Lock on issueKey." },
+    { "parameters": { "method": "POST", "url": "={{$env.ONCALL_WEBHOOK_URL}}", "sendBody": true, "specifyBody": "json", "jsonBody": "={{JSON.stringify({ workflow: '04-assemble', error: $json })}}" }, "id": "a4000000-0004-4000-8000-000000000004", "name": "Notify On-Call (placeholder)", "type": "n8n-nodes-base.httpRequest", "typeVersion": 4.2, "position": [720, 180], "disabled": true }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Dummy Payload": { "main": [[{ "node": "POST assemble", "type": "main", "index": 0 }]] },
+    "POST assemble": { "main": [[], [{ "node": "Notify On-Call (placeholder)", "type": "main", "index": 0 }]] }
+  },
+  "pinData": { "Dummy Payload": [{ "json": { "issueKeyPath": "aspire-America~New_York-2026-W34" } }] }
+}

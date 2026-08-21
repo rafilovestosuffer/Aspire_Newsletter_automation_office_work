@@ -1,0 +1,173 @@
+export type AppEnv = "development" | "staging" | "production";
+
+/** Matches contracts/ContentItem.schema.json and config YAML schemaVersion. */
+export const CONTENT_SCHEMA_VERSION = "1.0.0";
+export const ISSUE_SCHEMA_VERSION = "1.0.0";
+
+export type IssueStatus =
+  | "collecting"
+  | "assembled"
+  | "qa_failed"
+  | "pending_approval"
+  | "rejected"
+  | "approved"
+  | "queued_outbox"
+  | "scheduled"
+  | "processing"
+  | "sent"
+  | "failed"
+  | "cancelled"
+  | "paused"
+  | "skipped";
+
+export const TERMINAL_NOOP_STATUSES: ReadonlySet<IssueStatus> = new Set([
+  "scheduled",
+  "processing",
+  "sent",
+]);
+
+export type ContentKind = "post" | "threat";
+
+export type Severity = "critical" | "high" | "medium" | "low" | "unknown";
+
+export interface ContentItem {
+  schemaVersion: typeof CONTENT_SCHEMA_VERSION;
+  id: string;
+  kind: ContentKind;
+  sourceId: string;
+  canonicalUrl: string;
+  title: string;
+  excerpt: string;
+  publishedAt: string;
+  cveIds: string[];
+  rawHash: string;
+  score?: number;
+  severity?: Severity;
+  vendorProduct?: string;
+  knownRansomware?: boolean;
+}
+
+export interface NewsletterIssue {
+  schemaVersion: typeof ISSUE_SCHEMA_VERSION;
+  issueKey: string;
+  brandSlug: string;
+  audienceTz: string;
+  isoWeek: string;
+  revision: number;
+  status: IssueStatus;
+  subject?: string;
+  preheader?: string;
+  htmlSha256?: string;
+  textSha256?: string;
+  postIds?: string[];
+  threatIds?: string[];
+  ghlCampaignId?: string | null;
+  ghlSourceId?: string | null;
+  ghlTraceId?: string | null;
+  archivePath?: string | null;
+}
+
+export type ApprovalAction = "scheduled" | "immediate" | "reject";
+
+export interface LlmPostOut {
+  id: string;
+  summary: string;
+  ctaLabel: string;
+}
+
+export interface LlmThreatOut {
+  id: string;
+  whyItMatters: string;
+  severity: Exclude<Severity, "unknown">;
+}
+
+export interface LlmOutput {
+  subject: string;
+  preheader: string;
+  editorBlurb: string;
+  posts: LlmPostOut[];
+  threats: LlmThreatOut[];
+}
+
+export interface QaReport {
+  ok: boolean;
+  failures: string[];
+  warnings: string[];
+}
+
+export interface BrandConfig {
+  schemaVersion: string;
+  slug: string;
+  displayName: string;
+  legalName: string;
+  postalAddress: string;
+  fromName: string;
+  fromEmail: string;
+  replyTo: string;
+  primaryColor: string;
+  backgroundColor: string;
+  textColor: string;
+  logoUrl: string;
+  siteUrl: string;
+  archiveBaseUrl: string;
+  unsubscribeUrl: string;
+  preferenceUrl: string;
+  ghlUnsubscribeMergeTag: string;
+  advertisementNotice: string;
+  cdnHost: string;
+}
+
+export interface FeedConfig {
+  schemaVersion: string;
+  cms: { originHost: string; rssUrl: string };
+  threatFeeds: Array<{
+    id: string;
+    kind: "kev-json" | "rss";
+    url: string;
+    allowHost: string;
+  }>;
+}
+
+export interface RelevanceConfig {
+  schemaVersion: string;
+  postLookbackDays: number;
+  postCap: number;
+  threatCap: number;
+  allowThreatOnly: boolean;
+  allowPostsOnly: boolean;
+  keywords: string[];
+  shortenerHosts: string[];
+  gmailClipBytes: number;
+  gmailWarnBytes: number;
+  subjectMaxChars: number;
+}
+
+export interface ScheduleConfig {
+  schemaVersion: string;
+  audienceTimeZone: string;
+  opsTimeZone: string;
+  sendWeekday: number;
+  sendHour: number;
+  assembleLeadHours: number;
+  approvalSlaHours: number;
+  skipWeeks: string[];
+  holidayCalendar: string[];
+}
+
+export interface ApproverConfig {
+  schemaVersion: string;
+  requireTwoApprovers: boolean;
+  dualControlFirstN: number;
+  approvers: Array<{ id: string; email: string; name: string }>;
+  delegates: Array<{ from: string; to: string }>;
+  sandboxAudience: { kind: "contactIds"; contactIds: string[] };
+  productionAudience: { kind: "filter"; filter: Record<string, unknown>; note: string };
+}
+
+export interface AppConfig {
+  brand: BrandConfig;
+  feeds: FeedConfig;
+  relevance: RelevanceConfig;
+  schedule: ScheduleConfig;
+  approvers: ApproverConfig;
+}

@@ -1,0 +1,92 @@
+{
+  "name": "E-02 01 Clock",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "UTC"
+  },
+  "meta": { "templateCredsSetupCompleted": false },
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1000000-0001-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 9 * * 1" }] }
+      },
+      "id": "a1000000-0001-4000-8000-000000000002",
+      "name": "Cron",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 220],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "now", "name": "now", "value": "2026-08-20T15:00:00-04:00", "type": "string" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1000000-0001-4000-8000-000000000003",
+      "name": "Dummy Payload",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.CONTROL_PLANE_URL}}/internal/clock/tick",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "Authorization", "value": "=Bearer {{$env.WORKER_TOKEN}}" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({ now: $json.now })}}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "a1000000-0001-4000-8000-000000000004",
+      "name": "POST clock tick",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 0],
+      "onError": "continueErrorOutput",
+      "notes": "Idempotency: control-plane advisory lock on issueKey. Credentials: n8n env, not this JSON."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.ONCALL_WEBHOOK_URL}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{JSON.stringify({ workflow: '01-clock', error: $json })}}",
+        "options": {}
+      },
+      "id": "a1000000-0001-4000-8000-000000000005",
+      "name": "Notify On-Call (placeholder)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 180],
+      "disabled": true,
+      "notes": "Placeholder. Set ONCALL_WEBHOOK_URL in n8n env. Never hardcode secrets. Do not retry forever."
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Cron": { "main": [[{ "node": "Dummy Payload", "type": "main", "index": 0 }]] },
+    "Dummy Payload": { "main": [[{ "node": "POST clock tick", "type": "main", "index": 0 }]] },
+    "POST clock tick": { "main": [[], [{ "node": "Notify On-Call (placeholder)", "type": "main", "index": 0 }]] }
+  },
+  "pinData": {
+    "Dummy Payload": [{ "json": { "now": "2026-08-20T15:00:00-04:00" } }]
+  }
+}

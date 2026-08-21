@@ -1,0 +1,24 @@
+{
+  "clock": {
+    "now": "2026-08-20T15:00:00-04:00"
+  },
+  "collect": {
+    "issueKeyPath": "aspire-America~New_York-2026-W34"
+  },
+  "ingestPosts": {
+    "fixture": true
+  },
+  "ingestThreats": {
+    "fixture": true
+  },
+  "assemble": {},
+  "requestApproval": {},
+  "outboxDrain": {
+    "limit": 10
+  },
+  "observe": {
+    "issueKey": "aspire-America/New_York-2026-W34"
+  },
+  "watchdog": {},
+  "reconcile": {}
+}
