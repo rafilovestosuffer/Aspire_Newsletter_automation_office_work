@@ -7,6 +7,7 @@ import { envKill, mergeKill } from "../domain/policy";
 import {
   assembleIssue,
   clockTick,
+  collectIssue,
   drainOutbox,
   ingestContent,
   requestApproval,
@@ -29,20 +30,14 @@ export async function registerInternal(
     return clockTick({ store: ctx.store, env: ctx.env, config: ctx.config, now });
   });
 
-  app.post<{ Params: { issueKeyPath: string } }>("/internal/issues/:issueKeyPath/collect", async (req) => {
-    const issueKey = issueKeyFromPath(req.params.issueKeyPath);
-    return clockTick({
+  app.post<{ Params: { issueKeyPath: string } }>("/internal/issues/:issueKeyPath/collect", async (req) =>
+    collectIssue({
       store: ctx.store,
       env: ctx.env,
       config: ctx.config,
-      now: new Date(),
-    }).then(async (tick) => {
-      if (tick.issueKey && tick.issueKey !== issueKey) {
-        return { ...tick, requested: issueKey };
-      }
-      return tick.issueKey ? tick : { issueKey, status: tick.status, noOpReason: tick.noOpReason };
-    });
-  });
+      issueKey: issueKeyFromPath(req.params.issueKeyPath),
+    }),
+  );
 
   app.post<{ Body: { fixture?: boolean } }>("/internal/issues/:issueKeyPath/ingest-posts", async (req) =>
     ingestContent({

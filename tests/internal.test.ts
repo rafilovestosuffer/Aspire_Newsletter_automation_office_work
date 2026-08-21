@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildApp } from "../src/app";
 import { loadConfig } from "../src/config";
 import { loadEnv } from "../src/env";
-import { issueKeyToPath } from "../src/domain/issueKey";
+import { buildIssueKey, issueKeyToPath } from "../src/domain/issueKey";
 import { clockTick, ingestFixtures } from "../src/services/control";
 import { MemoryStore } from "../src/store/memory";
 
@@ -98,6 +98,55 @@ describe("internal worker routes", () => {
       expect(stored.every((i) => i.kind === "threat")).toBe(true);
     } finally {
       await threatApp.close();
+    }
+  });
+
+  // Regression: /collect used to call clockTick(new Date()) and ignore its own
+  // path issueKey, so a named or backdated week could not be collected — it
+  // silently opened whatever week "now" fell in.
+  it("collect opens the issue named in the path, not the current week", async () => {
+    const env = testEnv();
+    const config = loadConfig();
+    const store = new MemoryStore();
+    const app = await buildApp({ env, config, store });
+    const backdated = "aspire-America/New_York-2026-W10";
+    try {
+      const res = await app.inject({
+        method: "POST",
+        url: `/internal/issues/${issueKeyToPath(backdated)}/collect`,
+        headers: { authorization: `Bearer ${env.WORKER_TOKEN}`, "content-type": "application/json" },
+        payload: {},
+      });
+      expect(res.statusCode).toBe(200);
+      expect(res.json().issueKey).toBe(backdated);
+      expect(res.json().status).toBe("collecting");
+
+      expect(await store.getIssue(backdated)).toBeDefined();
+      // The current week must not have been opened as a side effect.
+      const current = buildIssueKey(config.brand.slug, config.schedule.audienceTimeZone, new Date());
+      if (current !== backdated) {
+        expect(await store.getIssue(current)).toBeUndefined();
+      }
+      // Audit trail attributes it to the operator, not the clock.
+      expect(store.events.some((e) => e.eventType === "collect_opened" && e.actor === "operator")).toBe(true);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("collect rejects a malformed issueKey with 400 rather than a 500", async () => {
+    const env = testEnv();
+    const app = await buildApp({ env, config: loadConfig(), store: new MemoryStore() });
+    try {
+      const res = await app.inject({
+        method: "POST",
+        url: "/internal/issues/not-a-real-key/collect",
+        headers: { authorization: `Bearer ${env.WORKER_TOKEN}`, "content-type": "application/json" },
+        payload: {},
+      });
+      expect(res.statusCode).toBe(400);
+    } finally {
+      await app.close();
     }
   });
 });

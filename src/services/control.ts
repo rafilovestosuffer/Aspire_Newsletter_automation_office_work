@@ -24,31 +24,44 @@ export function combinedKill(env: Env, db: { l1: boolean; l2: boolean }) {
   return mergeKill(envKill(env.KILL_SWITCH, env.KILL_OUTBOX), db);
 }
 
-export async function clockTick(opts: {
+export interface OpenIssueResult {
+  issueKey: string;
+  status: string;
+  noOpReason?: string;
+}
+
+/**
+ * Open (or no-op on) one specific issue under its advisory lock.
+ *
+ * Shared by the scheduled clock and by an operator collecting a named week, so
+ * both paths get identical kill, skip-week, terminal-status and idempotency
+ * behaviour rather than the clock owning it exclusively.
+ */
+export async function openIssue(opts: {
   store: IssueStore;
   env: Env;
   config: AppConfig;
-  now: Date;
-}): Promise<{ issueKey: string; status: string; noOpReason?: string }> {
+  issueKey: string;
+  actor: string;
+}): Promise<OpenIssueResult> {
   const kill = combinedKill(opts.env, await opts.store.getKill());
   if (kill.l1) {
-    return { issueKey: "", status: "noop", noOpReason: "KILL_SWITCH L1" };
+    return { issueKey: opts.issueKey, status: "noop", noOpReason: "KILL_SWITCH L1" };
   }
-  const issueKey = buildIssueKey(opts.config.brand.slug, opts.config.schedule.audienceTimeZone, opts.now);
-  const parsed = parseIssueKey(issueKey);
+  const parsed = parseIssueKey(opts.issueKey);
   if (opts.config.schedule.skipWeeks.includes(parsed.isoWeek)) {
-    return { issueKey, status: "skipped", noOpReason: "skipWeeks" };
+    return { issueKey: opts.issueKey, status: "skipped", noOpReason: "skipWeeks" };
   }
-  return opts.store.withIssueLock(issueKey, async () => {
-    const existing = await opts.store.getIssue(issueKey);
+  return opts.store.withIssueLock(opts.issueKey, async () => {
+    const existing = await opts.store.getIssue(opts.issueKey);
     if (existing && TERMINAL_NOOP_STATUSES.has(existing.status)) {
-      return { issueKey, status: existing.status, noOpReason: "already terminal" };
+      return { issueKey: opts.issueKey, status: existing.status, noOpReason: "already terminal" };
     }
     if (!existing) {
       const row: IssueRow = {
         schemaVersion: ISSUE_SCHEMA_VERSION,
         id: uuidV4(),
-        issueKey,
+        issueKey: opts.issueKey,
         brandSlug: parsed.brandSlug,
         audienceTz: parsed.audienceTz,
         isoWeek: parsed.isoWeek,
@@ -58,11 +71,46 @@ export async function clockTick(opts: {
         updatedAt: new Date().toISOString(),
       };
       await opts.store.insertIssue(row);
-      await opts.store.appendEvent({ issueKey, revision: 1, eventType: "collect_opened", actor: "clock" });
-      return { issueKey, status: "collecting" };
+      await opts.store.appendEvent({
+        issueKey: opts.issueKey,
+        revision: 1,
+        eventType: "collect_opened",
+        actor: opts.actor,
+      });
+      return { issueKey: opts.issueKey, status: "collecting" };
     }
-    return { issueKey, status: existing.status };
+    return { issueKey: opts.issueKey, status: existing.status };
   });
+}
+
+/** Scheduled entry point: derives this week's issueKey from `now`. */
+export async function clockTick(opts: {
+  store: IssueStore;
+  env: Env;
+  config: AppConfig;
+  now: Date;
+}): Promise<OpenIssueResult> {
+  const issueKey = buildIssueKey(opts.config.brand.slug, opts.config.schedule.audienceTimeZone, opts.now);
+  return openIssue({ ...opts, issueKey, actor: "clock" });
+}
+
+/**
+ * Operator entry point: collect the issue named in the request path, which may
+ * be a past week being re-run. Previously this ignored its own issueKey and
+ * silently collected whatever week "now" happened to fall in.
+ */
+export async function collectIssue(opts: {
+  store: IssueStore;
+  env: Env;
+  config: AppConfig;
+  issueKey: string;
+}): Promise<OpenIssueResult> {
+  try {
+    parseIssueKey(opts.issueKey);
+  } catch (err) {
+    throw Object.assign(new Error(err instanceof Error ? err.message : String(err)), { statusCode: 400 });
+  }
+  return openIssue({ ...opts, actor: "operator" });
 }
 
 export function loadFixtureItems(_config: AppConfig, scope: IngestScope = "all"): ContentItem[] {
