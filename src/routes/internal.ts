@@ -11,7 +11,9 @@ import {
   drainOutbox,
   ingestContent,
   pruneContent,
+  reconcileIssues,
   requestApproval,
+  runWatchdog,
 } from "../services/control";
 import { workerAuthorized } from "./approval";
 
@@ -96,17 +98,24 @@ export async function registerInternal(
     pruneContent({ store: ctx.store, config: ctx.config, now: new Date() }),
   );
 
+  // Stats field names are UNVERIFIED in docs/BINDING-DECISIONS.md, and the
+  // repo rule is that a guessed payload is worse than no payload. This stays a
+  // declared no-op until the sandbox spike reads them off a real sent campaign.
   app.post("/internal/observe", async () => {
-    return { updated: 0, note: "DRY_RUN observe: no live GHL stats" };
+    return {
+      updated: 0,
+      note: "not implemented: GHL statistics field names are UNVERIFIED until the sandbox spike",
+    };
   });
 
-  app.post("/internal/watchdog", async () => {
-    return { escalated: 0, note: "never auto-sends" };
+  app.post<{ Body: { now?: string } }>("/internal/watchdog", async (req) => {
+    const now = req.body?.now ? new Date(req.body.now) : new Date();
+    return runWatchdog({ store: ctx.store, env: ctx.env, config: ctx.config, now });
   });
 
-  app.post("/internal/reconcile", async () => {
-    const inflight = await ctx.store.listInFlight();
-    return { mismatches: 0, inflight: inflight.length };
+  app.post<{ Body: { now?: string } }>("/internal/reconcile", async (req) => {
+    const now = req.body?.now ? new Date(req.body.now) : new Date();
+    return reconcileIssues({ store: ctx.store, env: ctx.env, config: ctx.config, now });
   });
 
   app.post<{ Body: { level: "L1" | "L2"; enabled: boolean; reason: string } }>("/internal/kill", async (req) => {
