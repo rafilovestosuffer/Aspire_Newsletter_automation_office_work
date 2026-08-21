@@ -3,7 +3,7 @@ import { join } from "node:path";
 import type { Env } from "../env";
 import type { AppConfig, ApprovalAction, ContentItem, IngestScope } from "../types";
 import { ISSUE_SCHEMA_VERSION, TERMINAL_NOOP_STATUSES } from "../types";
-import { archiveSig, csrfForToken, randomTokenHex, sha256Hex, uuidV4 } from "../domain/hash";
+import { archiveSig, csrfForToken, randomTokenHex, safeEqualHex, sha256Hex, uuidV4 } from "../domain/hash";
 import { buildIssueKey, issueKeyToPath, parseIssueKey } from "../domain/issueKey";
 import { dualControlRequired, envKill, mergeKill, outboxIdempotencyKey } from "../domain/policy";
 import type { IssueStore } from "../store/types";
@@ -292,7 +292,7 @@ export async function consumeApproval(opts: {
   approverId: string;
 }): Promise<{ ok: boolean; statusCode: number; message: string; issueStatus?: string }> {
   const expectedCsrf = csrfForToken(opts.env.APP_SECRET, opts.rawToken);
-  if (expectedCsrf !== opts.csrf) {
+  if (!safeEqualHex(opts.csrf, expectedCsrf)) {
     return { ok: false, statusCode: 403, message: "invalid csrf" };
   }
   if (!["scheduled", "immediate", "reject"].includes(opts.action)) {

@@ -4,7 +4,9 @@ import { loadConfig } from "../src/config";
 import { loadEnv } from "../src/env";
 import { csrfForToken, sha256Hex } from "../src/domain/hash";
 import { issueKeyToPath } from "../src/domain/issueKey";
-import { assembleIssue, clockTick, ingestFixtures, requestApproval } from "../src/services/control";
+import { assembleIssue, clockTick, ingestFixtures, requestApproval, signArchive } from "../src/services/control";
+import { artifactsRoot } from "../src/config";
+import { frozenHtmlSha256 } from "../src/assemble/pipeline";
 import { MemoryStore } from "../src/store/memory";
 import { withCompleteBrand } from "./support/config";
 
@@ -138,6 +140,61 @@ describe("approval GET inert / POST consume", () => {
       await assembleIssue({ store, env, config, issueKey: tick.issueKey, now });
       const minted = await requestApproval({ store, env, config, issueKey: tick.issueKey });
       expect(Boolean(minted.tokens)).toBe(expectEcho);
+    }
+  });
+
+  // Regression: the archive signature was computed from issues.html_sha256,
+  // which only holds the CURRENT revision — so every earlier revision's
+  // archive URL started returning 401 the moment a new revision was assembled,
+  // even though its artifact was still on disk and immutable.
+  it("keeps an older revision's archive fetchable after a newer one lands", async () => {
+    const env = testEnv();
+    const config = loadConfig();
+    const store = new MemoryStore();
+    const app = await buildApp({ env, config, store });
+    try {
+      const tick = await clockTick({ store, env, config, now });
+      await ingestFixtures(store, config);
+      await assembleIssue({ store, env, config, issueKey: tick.issueKey, now });
+
+      const sha = frozenHtmlSha256({
+        artifactsRoot: artifactsRoot(env.ARTIFACT_DIR),
+        issueKey: tick.issueKey,
+        revision: 1,
+      });
+      expect(sha).toBeTruthy();
+      const sig = signArchive(env, tick.issueKey, 1, sha!);
+      const url = `/archive/${issueKeyToPath(tick.issueKey)}/r/1?sig=${sig}`;
+
+      expect((await app.inject({ method: "GET", url })).statusCode).toBe(200);
+
+      // A later revision lands; the issue row's hash moves on.
+      await store.updateIssue(tick.issueKey, { revision: 2, htmlSha256: "0".repeat(64) });
+
+      const after = await app.inject({ method: "GET", url });
+      expect(after.statusCode).toBe(200);
+      expect(after.body).toContain("<!doctype html");
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("archive refuses a wrong or missing signature", async () => {
+    const env = testEnv();
+    const config = loadConfig();
+    const store = new MemoryStore();
+    const app = await buildApp({ env, config, store });
+    try {
+      const tick = await clockTick({ store, env, config, now });
+      await ingestFixtures(store, config);
+      await assembleIssue({ store, env, config, issueKey: tick.issueKey, now });
+      const base = `/archive/${issueKeyToPath(tick.issueKey)}/r/1`;
+
+      expect((await app.inject({ method: "GET", url: base })).statusCode).toBe(401);
+      expect((await app.inject({ method: "GET", url: `${base}?sig=deadbeef` })).statusCode).toBe(401);
+      expect((await app.inject({ method: "GET", url: `${base}?sig=${"0".repeat(64)}` })).statusCode).toBe(401);
+    } finally {
+      await app.close();
     }
   });
 
