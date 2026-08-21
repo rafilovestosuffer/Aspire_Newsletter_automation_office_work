@@ -264,12 +264,12 @@ export async function requestApproval(opts: {
     subject: issue.subject ?? "",
     urls: raws.map((r) => ({ approverId: r.approverId, url: r.url })),
     note: "GET is inert; POST consumes",
-  });
+  }, opts.store);
   await opts.store.appendEvent({
     issueKey: opts.issueKey,
     revision: issue.revision,
     eventType: "approval_requested",
-    payload: { count: raws.length, notify: opts.env.STAFF_NOTIFY_WEBHOOK ? "webhook" : "none" },
+    payload: { count: raws.length },
   });
   // Echoing raw tokens is a local affordance for `npm run approve:dummy`. It
   // must never key off fixtureMode: docker-compose.prod.yml sets
@@ -772,7 +772,7 @@ export async function runWatchdog(opts: {
       revision: issue.revision,
       subject: issue.subject ?? "",
       note: "Past approval SLA. Watchdog never sends; a human must still POST.",
-    });
+    }, opts.store);
   }
 
   const dead = await opts.store.listOutboxFailed(limit);
@@ -791,7 +791,7 @@ export async function runWatchdog(opts: {
       revision: job.revision,
       subject: "",
       note: `Outbox gave up after ${job.attempts} attempts: ${job.lastError ?? "unknown"}`,
-    });
+    }, opts.store);
   }
 
   return result;

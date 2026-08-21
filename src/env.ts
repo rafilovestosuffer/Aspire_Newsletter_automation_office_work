@@ -33,7 +33,12 @@ const envSchema = z.object({
   LLM_PROVIDER: z.string().default("fixture"),
   LLM_API_KEY: z.string().optional().default(""),
   LLM_MODEL: z.string().optional().default(""),
+  // Staff notification. Deliberately NOT LC Email: that is the subscriber
+  // channel, and putting operational mail on the marketing domain risks its
+  // sending reputation. Any transactional provider that speaks SMTP works.
   STAFF_NOTIFY_FROM: z.string().optional().default(""),
+  STAFF_NOTIFY_TO: z.string().optional().default(""),
+  STAFF_NOTIFY_SMTP_URL: z.string().optional().default(""),
   STAFF_NOTIFY_WEBHOOK: z.string().optional().default(""),
   ONCALL_WEBHOOK_URL: z.string().optional().default(""),
 });
