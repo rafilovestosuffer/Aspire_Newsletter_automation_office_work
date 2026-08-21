@@ -4,6 +4,35 @@ This file is the go-live gate. **No production clock and no live list send until
 
 Do not mark a field VERIFIED from blog posts or guessed JSON.
 
+**This file is enforced at runtime.** `src/ghl/binding.ts` counts table rows
+still marked `UNVERIFIED`, and `GhlClient.assertAudienceSlot` refuses the
+production audience while any remain — no environment variable overrides it,
+and a missing or unreadable file counts as unverified. Gate B's central
+requirement is therefore mechanical, not a checklist line. Prose mentioning
+the word is ignored; only table rows count.
+
+## How to fill this in
+
+```bash
+# 1. Sandbox sub-account only. The runner refuses APP_ENV=production.
+cp .env.example .env    # fill GHL_SANDBOX_PIT / _LOCATION_ID / _USER_ID
+#    and put 1-2 seed contactIds you personally own in config/approvers.yaml
+
+# 2. Create a draft and read it back. No mail is sent.
+APP_ENV=staging DRY_RUN=false npm run ghl:spike
+
+# 3. Send to the seed contacts only.
+APP_ENV=staging DRY_RUN=false npm run ghl:spike -- --schedule
+```
+
+Every request/response pair lands in `artifacts/spike/` with the bearer token
+redacted, so captures can be committed as the evidence these rows cite. A
+rejected payload is evidence too — it records what the API will not accept.
+
+Two rows cannot be filled by any API call: RFC 8058 headers and DKIM alignment
+must be read from the **raw source** of the received seed message, and
+Mail-Tester needs the seed HTML sent to one of its addresses.
+
 ## Environments
 
 | Env | GHL location | Audience | Clock allowed |

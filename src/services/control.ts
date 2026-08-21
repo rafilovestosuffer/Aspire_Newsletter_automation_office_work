@@ -23,6 +23,7 @@ import { brandCompletenessProblems } from "../qa/gates";
 import { parseRssPosts } from "../ingest/rss";
 import { parseKevJson } from "../ingest/kev";
 import { GhlClient } from "../ghl/client";
+import { readBindingLog } from "../ghl/binding";
 import { resolveDrainRecipients } from "../ghl/audience";
 import { TwentyClient } from "../twenty/client";
 import { artifactsRoot, configRoot } from "../config";
@@ -437,6 +438,9 @@ function ghlClientFor(env: Env, kill: { l1: boolean; l2: boolean }): GhlClient {
       userId: env.GHL_PROD_USER_ID ?? "",
       pit: env.GHL_PROD_PIT ?? "",
     },
+    // Read fresh each time rather than cached at boot, so recording the spike
+    // evidence takes effect without a restart — and so does regressing it.
+    bindingLogGreen: readBindingLog().green,
   });
 }
 

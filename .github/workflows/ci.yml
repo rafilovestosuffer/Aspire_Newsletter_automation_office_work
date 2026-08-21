@@ -155,6 +155,17 @@ jobs:
           done
           docker logs cp; exit 1
 
+      - name: Binding-log gate is live inside the image
+        run: |
+          # The go-live gate reads docs/BINDING-DECISIONS.md at runtime. If the
+          # file were missing from the image it fails closed and production
+          # could never be enabled; if it were shipped stale the gate lies.
+          docker run --rm e02-control-plane:ci sh -c 'test -f docs/BINDING-DECISIONS.md' \
+            || { echo "binding log missing from image"; exit 1; }
+          COUNT="$(docker run --rm e02-control-plane:ci sh -c \
+            "grep -c '^|.*UNVERIFIED' docs/BINDING-DECISIONS.md || true")"
+          echo "unverified rows in image: $COUNT"
+
       - name: Backup and restore drill against the image's database
         run: |
           export DATABASE_URL=postgres://newsletter:newsletter@127.0.0.1:5432/newsletter

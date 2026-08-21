@@ -207,3 +207,39 @@ the state machine, asserted directly in `tests/reconcile.test.ts`.
 
 **Risk:** Image not built in CI against a real Docker daemon — see the note in
 Block 8's verification below.
+
+## Block 9: Approver email + live GHL client
+
+**Goal:** Close the last two unblocked gaps — real approver notification, and a
+live HTTP transport so the sandbox spike can actually be run.
+
+**Files changed:** `src/services/notify.ts`, `src/ghl/client.ts`,
+`src/ghl/binding.ts`, `scripts/ghl-spike.ts`, `src/env.ts`, `Dockerfile`,
+`tests/notify.test.ts`, `tests/ghl-live.test.ts`, `tests/invariants.test.ts`
+
+**Acceptance criteria:**
+
+* [x] Approvers notified by transactional email (SMTP, vendor-neutral, **not**
+      LC Email — that is the list channel)
+* [x] Notification failures never break approval, but always write
+      `notify_sent` / `notify_failed` to `issue_events`
+* [x] Live GHL HTTP implemented: timeouts, 429/5xx-only retries, trace ids
+* [x] Every guard runs before the request leaves; DRY_RUN and a missing PIT
+      short-circuit before any network I/O
+* [x] Request/response captured to `artifacts/spike/`, bearer token redacted
+* [x] Binding log enforced at runtime: production audience refused while any
+      `UNVERIFIED` row remains; missing file fails closed
+* [x] Spike runner performs a real create → read-back → optional seed send, and
+      refuses production and DRY_RUN
+* [ ] **Spike executed** — blocked on a GHL sandbox sub-account
+* [ ] Binding log rows filled from captures — follows the spike
+* [ ] Winning send path recorded — follows the spike
+
+**Test:** `npm test` (216 with Postgres); spike verified end to end against a
+local fake GHL server, and three guard mutations confirmed red.
+
+**Rollback:** `KILL_SWITCH=1`. The binding-log gate keeps production refused
+regardless.
+
+**Risk:** A row marked verified without a real capture would open the gate —
+which is why the captures are committed as evidence.

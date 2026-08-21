@@ -214,12 +214,52 @@ describe("drainOutbox audience + frozen HTML", () => {
       version: drainEnv.GHL_API_VERSION,
       sandbox: { locationId: "", userId: "", pit: "" },
       production: { locationId: "", userId: "", pit: "" },
+      // This test isolates audience resolution, so open the binding-log gate
+      // the same way it already opens APP_ENV and DRY_RUN. The gate itself is
+      // asserted separately below.
+      bindingLogGreen: true,
     });
     await queueIssue({ env: queueEnv, config, store });
     const result = await drainOutbox({ store, env: drainEnv, config, limit: 10, ghl });
     expect(result.processed).toBe(1);
     expect(ghl.lastRecipients).toEqual({ filter: { TODO_unverified: "do-not-invent-ghl-keys" } });
     expect(ghl.lastRecipients).not.toHaveProperty("contactIds");
+  });
+
+  // Gate B says no production send until every binding-log row is backed by a
+  // captured sandbox response. That belongs in code, not only on a checklist.
+  it("refuses a production drain while the binding log is not green", async () => {
+    const queueEnv = testEnv();
+    const drainEnv = testEnv({
+      APP_ENV: "production",
+      DRY_RUN: "false",
+      APP_SECRET: "prod-secret-at-least-32-bytes-ok",
+      WORKER_TOKEN: "prod-worker-token-16",
+    });
+    const config = withAudience(withCompleteBrand(), {
+      contactIds: ["seed-fixture"],
+      filter: { TODO_unverified: "do-not-invent-ghl-keys" },
+    });
+    const store = new MemoryStore();
+    const ghl = new RecordingGhl({
+      appEnv: "production",
+      dryRun: false,
+      kill: { l1: false, l2: false },
+      baseUrl: drainEnv.GHL_BASE_URL,
+      version: drainEnv.GHL_API_VERSION,
+      sandbox: { locationId: "", userId: "", pit: "" },
+      production: { locationId: "", userId: "", pit: "" },
+      bindingLogGreen: false,
+    });
+
+    await queueIssue({ env: queueEnv, config, store });
+    const result = await drainOutbox({ store, env: drainEnv, config, limit: 10, ghl });
+
+    expect(result.processed).toBe(0);
+    expect(result.failed).toBe(1);
+    // A policy refusal, so it dead-letters at once instead of retrying.
+    expect(ghl.lastRecipients).toBeUndefined();
+    expect((await store.getIssue(Object.keys(Object.fromEntries(store.issues))[0]!))?.status).toBe("failed");
   });
 
   // QA runs at assemble time, but config can be edited between assemble and

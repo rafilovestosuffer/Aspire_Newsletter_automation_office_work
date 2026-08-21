@@ -45,6 +45,10 @@ COPY --from=build /app/dist ./dist
 
 # Runtime assets. src/paths.ts resolves these relative to the app root, and
 # dist/ sits at the same depth src/ did, so the layout matches the dev tree.
+# The go-live gate is read at runtime, so it has to be in the image; without it
+# src/ghl/binding.ts fails closed and no production send is ever possible.
+COPY docs/BINDING-DECISIONS.md ./docs/BINDING-DECISIONS.md
+
 COPY migrations ./migrations
 COPY templates ./templates
 COPY prompts ./prompts

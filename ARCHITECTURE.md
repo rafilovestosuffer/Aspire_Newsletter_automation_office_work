@@ -55,9 +55,16 @@ Clock / operator
 ### GHL adapter (`src/ghl/client.ts`)
 
 * `GhlClient` v3 create/schedule/get; rejects rss + outbound; env-gated audience; sandbox spike refuses `APP_ENV=production`
-* Live HTTP is still refused. Every method short-circuits under DRY_RUN or a
-  missing PIT and otherwise throws, until the sandbox spike fills the
-  UNVERIFIED rows in `docs/BINDING-DECISIONS.md`.
+* Live HTTP is implemented: bearer PIT, `Version` header from `GHL_API_VERSION`,
+  20s timeout, retries only 429/5xx (a 4xx is our payload being wrong and will
+  fail identically), and every request/response pair captured to
+  `artifacts/spike/` with the bearer redacted.
+* Every guard runs *before* the request leaves, and DRY_RUN or a missing PIT
+  short-circuits earlier still, so a refusal never reaches the network.
+* **The binding log is a runtime gate.** `src/ghl/binding.ts` counts
+  `UNVERIFIED` rows in `docs/BINDING-DECISIONS.md`; while any remain, the
+  production audience is refused regardless of environment. Missing file =
+  unverified. This makes Gate B mechanical rather than a checklist line.
 
 ### Paths (`src/paths.ts`)
 

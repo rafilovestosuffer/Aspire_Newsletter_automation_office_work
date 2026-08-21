@@ -27,6 +27,7 @@ import { canLoadProductionAudience } from "../src/domain/policy";
 import { migrate } from "../src/db/migrate";
 import { GhlBanError, GhlClient, type GhlEnv } from "../src/ghl/client";
 import { resolveDrainRecipients } from "../src/ghl/audience";
+import { readBindingLog } from "../src/ghl/binding";
 import { claudeSummarize, fixtureSummarize, untrustedDataRegion } from "../src/llm/summarize";
 import { runQa } from "../src/qa/gates";
 import { PostgresStore } from "../src/store/postgres";
@@ -707,25 +708,51 @@ describe("invariant 10: nothing is claimed as verified without evidence", () => 
   const bindingLog = readFileSync(join(repoRoot, "docs/BINDING-DECISIONS.md"), "utf8");
   const stillUnverified = bindingLog.includes("UNVERIFIED");
 
-  // A tripwire on the go-live gate. While the binding log still has UNVERIFIED
-  // rows, the code must still refuse the paths those rows describe. If someone
-  // implements live sending, this test goes red until the log records the
-  // request/response that justifies it — which is exactly the review we want.
-  it("refuses live GHL HTTP while the binding log has UNVERIFIED rows", async () => {
-    if (!stillUnverified) {
-      expect(bindingLog).toMatch(/VERIFIED-SPIKE|captured|artifacts\/spike/i);
-      return;
-    }
-    const live = new GhlClient(
+  // The go-live tripwire. Sandbox calls are how the binding log gets filled, so
+  // they must work; a PRODUCTION send must not, until every row is backed by a
+  // captured response. This makes Gate B's central requirement mechanical
+  // instead of a checklist line someone can skip on a bad afternoon.
+  it("refuses the production audience while the binding log has UNVERIFIED rows", async () => {
+    const fullyGated = new GhlClient(
       ghlEnv({
-        appEnv: "staging",
+        appEnv: "production",
         dryRun: false,
-        sandbox: { locationId: "loc", userId: "user", pit: "pit-value" },
+        kill: { l1: false, l2: false },
+        production: { locationId: "loc", userId: "user", pit: "pit-value" },
+        bindingLogGreen: false,
       }),
     );
+    // Every other production gate is open here; only the binding log is not.
+    expect(() => fullyGated.assertAudienceSlot("production")).toThrow(/UNVERIFIED/);
     await expect(
-      live.createCampaign("sandbox", { name: "n", editorType: "html", timeZone: "UTC", userId: "u" }),
-    ).rejects.toThrow(/Live GHL HTTP is not enabled/);
+      fullyGated.createCampaign("production", {
+        name: "n",
+        editorType: "html",
+        timeZone: "UTC",
+        userId: "u",
+      }),
+    ).rejects.toThrow(/UNVERIFIED/);
+  });
+
+  it("fails closed when the binding log state is unknown", () => {
+    // Absent, not false: an omitted flag must not read as verified.
+    const unknown = new GhlClient(
+      ghlEnv({
+        appEnv: "production",
+        dryRun: false,
+        production: { locationId: "loc", userId: "user", pit: "pit-value" },
+      }),
+    );
+    expect(() => unknown.assertAudienceSlot("production")).toThrow(GhlBanError);
+    expect(readBindingLog("/nonexistent/BINDING-DECISIONS.md").green).toBe(false);
+  });
+
+  it("still reflects the real binding log, which is not yet green", () => {
+    // If this fails because the spike is done, that is the good failure: update
+    // it deliberately, having checked the log really does carry the evidence.
+    expect(stillUnverified).toBe(true);
+    expect(readBindingLog().green).toBe(false);
+    expect(bindingLog).toContain("UNVERIFIED");
   });
 
   it("refuses pause/cancel rather than guessing an undocumented body", async () => {

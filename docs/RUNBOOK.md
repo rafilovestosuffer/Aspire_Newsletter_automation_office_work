@@ -234,6 +234,10 @@ Do not tick anything from memory. Each line names how to verify it.
 
 - [ ] `docs/BINDING-DECISIONS.md` has **zero** UNVERIFIED rows, each filled from
       a captured sandbox request/response, not from docs or inference
+      *(enforced in code: the production audience is refused while any row is
+      unverified, so this box cannot be skipped — but a row marked verified
+      without real evidence defeats it, which is why the capture matters)*
+- [ ] Captures in `artifacts/spike/` committed as the evidence those rows cite
 - [ ] Winning send path (A/B/C) recorded with the exact accepted JSON
 - [ ] v2-vs-v3 resolved empirically, with the response that proves it
 - [ ] RFC 8058 `List-Unsubscribe` + `List-Unsubscribe-Post` confirmed in the

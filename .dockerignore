@@ -12,6 +12,9 @@ n8n
 agent-transcripts
 .cursor
 docs
+# ...except the binding log: src/ghl/binding.ts reads it at runtime to gate the
+# production audience, and a missing file fails closed.
+!docs/BINDING-DECISIONS.md
 TASKS.md
 PRD.md
 ARCHITECTURE.md
