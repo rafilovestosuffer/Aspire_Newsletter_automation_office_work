@@ -1,6 +1,6 @@
 export type AppEnv = "development" | "staging" | "production";
 
-/** Matches contracts/ContentItem.schema.json and config YAML schemaVersion. */
+/** Matches contracts/content-item.v1.schema.json and config YAML schemaVersion. */
 export const CONTENT_SCHEMA_VERSION = "1.0.0";
 export const ISSUE_SCHEMA_VERSION = "1.0.0";
 
