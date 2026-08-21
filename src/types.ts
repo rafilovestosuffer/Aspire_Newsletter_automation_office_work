@@ -68,7 +68,16 @@ export interface NewsletterIssue {
   ghlSourceId?: string | null;
   ghlTraceId?: string | null;
   archivePath?: string | null;
+  /** Which audience the send addressed. Set at drain, read by the sent count. */
+  audienceSlot?: AudienceSlot | null;
+  /** Whether that send was a dry run. Only a false here counts as a real send. */
+  sendWasDryRun?: boolean | null;
+  sentAt?: string | null;
+  /** Last status observed on the GHL campaign by reconcile. */
+  ghlStatus?: string | null;
 }
+
+export type AudienceSlot = "sandbox" | "production";
 
 export type ApprovalAction = "scheduled" | "immediate" | "reject";
 
