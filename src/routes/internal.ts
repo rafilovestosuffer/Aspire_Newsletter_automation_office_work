@@ -8,10 +8,9 @@ import {
   assembleIssue,
   clockTick,
   drainOutbox,
-  ingestFixtures,
+  ingestContent,
   requestApproval,
 } from "../services/control";
-import { ingestLive } from "../services/ingest-live";
 import { workerAuthorized } from "./approval";
 
 export async function registerInternal(
@@ -45,23 +44,25 @@ export async function registerInternal(
     });
   });
 
-  app.post<{ Body: { fixture?: boolean } }>("/internal/issues/:issueKeyPath/ingest-posts", async (req) => {
-    if (ctx.env.fixtureMode || req.body?.fixture) {
-      const n = await ingestFixtures(ctx.store, ctx.config);
-      return { upserted: n, source: "fixtures" };
-    }
-    const live = await ingestLive(ctx.store, ctx.config);
-    return { ...live, source: "live" };
-  });
+  app.post<{ Body: { fixture?: boolean } }>("/internal/issues/:issueKeyPath/ingest-posts", async (req) =>
+    ingestContent({
+      store: ctx.store,
+      env: ctx.env,
+      config: ctx.config,
+      scope: "posts",
+      forceFixture: req.body?.fixture,
+    }),
+  );
 
-  app.post<{ Body: { fixture?: boolean } }>("/internal/issues/:issueKeyPath/ingest-threats", async (req) => {
-    if (ctx.env.fixtureMode || req.body?.fixture) {
-      const n = await ingestFixtures(ctx.store, ctx.config);
-      return { upserted: n, source: "fixtures" };
-    }
-    const live = await ingestLive(ctx.store, ctx.config);
-    return { ...live, source: "live" };
-  });
+  app.post<{ Body: { fixture?: boolean } }>("/internal/issues/:issueKeyPath/ingest-threats", async (req) =>
+    ingestContent({
+      store: ctx.store,
+      env: ctx.env,
+      config: ctx.config,
+      scope: "threats",
+      forceFixture: req.body?.fixture,
+    }),
+  );
 
   app.post<{ Params: { issueKeyPath: string }; Body: { now?: string } }>(
     "/internal/issues/:issueKeyPath/assemble",

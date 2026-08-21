@@ -68,4 +68,36 @@ describe("internal worker routes", () => {
       await app.close();
     }
   });
+
+  // Regression: both endpoints used to run the same full ingest and ignore
+  // their scope, so n8n workflows 02 and 03 duplicated each other's work.
+  it("ingest-posts and ingest-threats store different content kinds", async () => {
+    const env = testEnv({ FIXTURE_MODE: "true" });
+    const auth = { authorization: `Bearer ${env.WORKER_TOKEN}`, "content-type": "application/json" };
+    const base = "/internal/issues/aspire-America~New_York-2026-W34";
+
+    const postStore = new MemoryStore();
+    const postApp = await buildApp({ env, config: loadConfig(), store: postStore });
+    try {
+      const res = await postApp.inject({ method: "POST", url: `${base}/ingest-posts`, headers: auth, payload: {} });
+      expect(res.json().scope).toBe("posts");
+      const stored = await postStore.listContent();
+      expect(stored.length).toBeGreaterThan(0);
+      expect(stored.every((i) => i.kind === "post")).toBe(true);
+    } finally {
+      await postApp.close();
+    }
+
+    const threatStore = new MemoryStore();
+    const threatApp = await buildApp({ env, config: loadConfig(), store: threatStore });
+    try {
+      const res = await threatApp.inject({ method: "POST", url: `${base}/ingest-threats`, headers: auth, payload: {} });
+      expect(res.json().scope).toBe("threats");
+      const stored = await threatStore.listContent();
+      expect(stored.length).toBeGreaterThan(0);
+      expect(stored.every((i) => i.kind === "threat")).toBe(true);
+    } finally {
+      await threatApp.close();
+    }
+  });
 });
