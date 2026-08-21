@@ -5,14 +5,17 @@ import type { Env } from "../env";
 import type { AppConfig, ApprovalAction } from "../types";
 import type { IssueStore } from "../store/types";
 import { issueKeyFromPath, issueKeyToPath } from "../domain/issueKey";
-import { csrfForToken, sha256Hex } from "../domain/hash";
+import { csrfForToken, safeEqualHex, sha256Hex } from "../domain/hash";
 import { consumeApproval, previewApproval, signArchive } from "../services/control";
 import { artifactsRoot } from "../config";
-import { artifactDirFor } from "../assemble/pipeline";
+import { artifactDirFor, frozenHtmlSha256 } from "../assemble/pipeline";
 import { escapeHtml } from "../render/compile";
 
 export function workerAuthorized(req: FastifyRequest, env: Env): boolean {
-  return req.headers.authorization === `Bearer ${env.WORKER_TOKEN}`;
+  const presented = req.headers.authorization;
+  if (typeof presented !== "string") return false;
+  // Constant-time: this compares a shared secret on every worker request.
+  return safeEqualHex(presented, `Bearer ${env.WORKER_TOKEN}`);
 }
 
 function htmlWrap(title: string, inner: string): string {
@@ -46,8 +49,15 @@ export async function registerApproval(
         ? "<p><strong>Token already consumed.</strong> GET still does not send.</p>"
         : "<p><strong>GET and HEAD do nothing.</strong> Email scanners cannot send. Submit a button to POST.</p>";
       let previewFrame = "";
-      if (preview.issue?.htmlSha256) {
-        const sig = signArchive(ctx.env, issueKey, revision, preview.issue.htmlSha256);
+      // Sign against the artifact for *this* revision, not the issue row's
+      // current hash, so an older revision's preview keeps working.
+      const previewSha = frozenHtmlSha256({
+        artifactsRoot: artifactsRoot(ctx.env.ARTIFACT_DIR),
+        issueKey,
+        revision,
+      });
+      if (previewSha) {
+        const sig = signArchive(ctx.env, issueKey, revision, previewSha);
         const src = `/archive/${issueKeyToPath(issueKey)}/r/${revision}?sig=${sig}`;
         previewFrame = `<iframe title="Frozen HTML preview" sandbox="" src="${escapeHtml(src)}" style="width:100%;min-height:480px;border:1px solid #ccc"></iframe>`;
       }
@@ -113,16 +123,20 @@ export async function registerApproval(
     async (req, reply) => {
       const issueKey = issueKeyFromPath(req.params.issueKeyPath);
       const revision = Number(req.params.revision);
-      const issue = await ctx.store.getIssue(issueKey);
-      if (!issue || !issue.htmlSha256) return reply.status(404).send("not found");
-      const expect = signArchive(ctx.env, issueKey, revision, issue.htmlSha256);
-      if (!req.query.sig || req.query.sig !== expect) return reply.status(401).send("bad sig");
       const file = join(
         artifactDirFor(artifactsRoot(ctx.env.ARTIFACT_DIR), issueKey, revision),
         "email.html",
       );
       if (!existsSync(file)) return reply.status(404).send("no artifact");
-      return reply.type("text/html").send(readFileSync(file, "utf8"));
+      const html = readFileSync(file, "utf8");
+      // Bind the signature to this revision's own bytes. Sourcing the hash from
+      // the issue row made every past revision unfetchable as soon as a new one
+      // was assembled.
+      const expected = signArchive(ctx.env, issueKey, revision, sha256Hex(html));
+      if (!req.query.sig || !safeEqualHex(req.query.sig, expected)) {
+        return reply.status(401).send("bad sig");
+      }
+      return reply.type("text/html").send(html);
     },
   );
 

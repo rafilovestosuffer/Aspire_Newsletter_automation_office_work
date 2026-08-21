@@ -23,6 +23,23 @@ export function artifactDirFor(root: string, issueKey: string, revision: number)
   return join(root, "issues", issueKeyToPath(issueKey), `r${revision}`);
 }
 
+/**
+ * SHA-256 of one revision's frozen artifact, or undefined if it is not on disk.
+ *
+ * Read from the artifact rather than issues.html_sha256, which only ever holds
+ * the *current* revision — so an archive signature minted against the row
+ * stopped validating for r1 the moment r2 was assembled.
+ */
+export function frozenHtmlSha256(opts: {
+  artifactsRoot: string;
+  issueKey: string;
+  revision: number;
+}): string | undefined {
+  const file = join(artifactDirFor(opts.artifactsRoot, opts.issueKey, opts.revision), "email.html");
+  if (!existsSync(file)) return undefined;
+  return sha256Hex(readFileSync(file, "utf8"));
+}
+
 export function loadFrozenHtml(opts: {
   artifactsRoot: string;
   issueKey: string;
