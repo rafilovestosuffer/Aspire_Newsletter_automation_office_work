@@ -1,0 +1,1759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Aspire — Weekly Authority Newsletter: Strategy &amp; Plan</title>
+<style>
+:root{
+  --ink:#12181f; --ink-soft:#3d4a58; --ink-faint:#6b7885;
+  --rule:#d7dde4; --rule-soft:#e8ecf0;
+  --accent:#1f4e9c; --accent-soft:#eef3fb;
+  --warn-bg:#fdf6e8; --warn-edge:#c8912a;
+  --stop-bg:#fdeeee; --stop-edge:#b03a3a;
+  --ok-bg:#eef7f0;  --ok-edge:#3f7d52;
+}
+@page{ size:Letter; margin:20mm 18mm 18mm 18mm; }
+*{ box-sizing:border-box; }
+html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+body{
+  margin:0; color:var(--ink);
+  font-family:"Bitstream Charter","Liberation Serif",Georgia,serif;
+  font-size:10.2pt; line-height:1.52; text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4,.sans{ font-family:"Liberation Sans","DejaVu Sans",Helvetica,Arial,sans-serif; }
+p{ margin:0 0 .62em; orphans:3; widows:3; }
+strong{ font-weight:700; }
+em{ font-style:italic; }
+code{ font-family:"Liberation Mono",monospace; font-size:.9em; background:#f4f6f8; padding:.05em .3em; border-radius:2px; }
+
+/* ---------- cover ---------- */
+.cover{ height:228mm; display:flex; flex-direction:column; page-break-after:always; }
+.cover-top{ flex:0 0 auto; }
+.cover-mid{ flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; }
+.cover-bot{ flex:0 0 auto; }
+.wordmark{ font-family:"Liberation Sans",sans-serif; font-size:26pt; font-weight:700; letter-spacing:-.02em; color:var(--accent); }
+.wordmark span{ color:var(--ink-faint); font-weight:400; }
+.cover-rule{ height:3px; background:var(--accent); width:64mm; margin:6mm 0 0; }
+.cover h1{ font-size:31pt; line-height:1.14; margin:0 0 5mm; letter-spacing:-.022em; font-weight:700; }
+.cover .sub{ font-size:13pt; color:var(--ink-soft); font-family:"Liberation Sans",sans-serif; font-weight:400; line-height:1.45; max-width:135mm; }
+.cover-meta{ border-top:1px solid var(--rule); padding-top:5mm; display:grid; grid-template-columns:repeat(3,1fr); gap:7mm; font-family:"Liberation Sans",sans-serif; font-size:8.6pt; }
+.cover-meta dt{ color:var(--ink-faint); text-transform:uppercase; letter-spacing:.09em; font-size:7.4pt; margin-bottom:1.6mm; }
+.cover-meta dd{ margin:0; color:var(--ink); font-weight:600; }
+.cover-note{ margin-top:6mm; font-size:8.6pt; color:var(--ink-faint); font-family:"Liberation Sans",sans-serif; line-height:1.5; }
+
+/* ---------- structure ---------- */
+.part-open{ page-break-before:always; padding-top:14mm; }
+.part-eyebrow{ font-family:"Liberation Sans",sans-serif; font-size:8.4pt; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700; }
+.part-open h1{ font-size:22pt; margin:2mm 0 3mm; letter-spacing:-.02em; }
+.part-open .part-lede{ font-size:11pt; color:var(--ink-soft); max-width:145mm; margin-bottom:2mm; }
+.part-open .part-rule{ height:2px; background:var(--rule); margin-top:5mm; }
+
+h2{ font-size:14pt; margin:9mm 0 2.5mm; letter-spacing:-.012em; page-break-after:avoid; }
+h2 .num{ color:var(--accent); font-weight:700; margin-right:2.4mm; }
+h3{ font-size:10.6pt; margin:5.5mm 0 1.6mm; letter-spacing:.005em; page-break-after:avoid; }
+h4{ font-size:9.4pt; margin:4mm 0 1.2mm; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); page-break-after:avoid; }
+.lede{ font-size:11pt; color:var(--ink-soft); margin-bottom:3mm; }
+
+ul,ol{ margin:0 0 .7em; padding-left:5.2mm; }
+li{ margin-bottom:.3em; padding-left:.6mm; }
+li::marker{ color:var(--accent); }
+
+/* ---------- components ---------- */
+.callout{ border-left:3px solid var(--accent); background:var(--accent-soft); padding:3.2mm 4mm; margin:3.5mm 0; page-break-inside:avoid; font-size:9.6pt; }
+.callout.stop{ border-left-color:var(--stop-edge); background:var(--stop-bg); }
+.callout.warn{ border-left-color:var(--warn-edge); background:var(--warn-bg); }
+.callout.ok{ border-left-color:var(--ok-edge); background:var(--ok-bg); }
+.callout .t{ font-family:"Liberation Sans",sans-serif; font-weight:700; font-size:8.2pt; text-transform:uppercase; letter-spacing:.09em; display:block; margin-bottom:1.4mm; }
+.callout.stop .t{ color:var(--stop-edge); } .callout.warn .t{ color:var(--warn-edge); }
+.callout.ok .t{ color:var(--ok-edge); } .callout .t{ color:var(--accent); }
+.callout p:last-child{ margin-bottom:0; }
+
+table{ width:100%; border-collapse:collapse; margin:3.5mm 0; font-size:8.9pt; page-break-inside:auto; }
+thead{ display:table-header-group; }
+tr{ page-break-inside:avoid; }
+th{ font-family:"Liberation Sans",sans-serif; font-size:7.8pt; text-transform:uppercase; letter-spacing:.07em;
+    text-align:left; color:var(--ink-faint); border-bottom:1.5px solid var(--ink); padding:0 3mm 1.6mm 0; font-weight:700; vertical-align:bottom; }
+td{ padding:1.9mm 3mm 1.9mm 0; border-bottom:1px solid var(--rule-soft); vertical-align:top; line-height:1.42; }
+td:last-child,th:last-child{ padding-right:0; }
+table.tight td{ padding:1.3mm 3mm 1.3mm 0; }
+.nowrap{ white-space:nowrap; }
+.sev{ font-family:"Liberation Sans",sans-serif; font-size:7.4pt; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:.4mm 1.6mm; border-radius:2px; white-space:nowrap; }
+.sev.hi{ background:var(--stop-bg); color:var(--stop-edge); }
+.sev.md{ background:var(--warn-bg); color:#8a6318; }
+.sev.lo{ background:var(--ok-bg); color:var(--ok-edge); }
+
+figure{ margin:5mm 0; page-break-inside:avoid; }
+figure svg{ display:block; width:100%; height:auto; }
+figcaption{ font-family:"Liberation Sans",sans-serif; font-size:8.1pt; color:var(--ink-faint); margin-top:2mm; line-height:1.45; }
+figcaption b{ color:var(--ink-soft); }
+
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:4mm 7mm; margin:3mm 0; }
+.card{ border:1px solid var(--rule); padding:3.2mm 3.6mm; page-break-inside:avoid; }
+.card h4{ margin-top:0; color:var(--accent); }
+.card p:last-child{ margin-bottom:0; }
+
+.avoid-break{ page-break-inside:avoid; }
+.new-page{ page-break-before:always; }
+
+/* ---------- toc ---------- */
+.toc{ page-break-after:always; padding-top:4mm; }
+.toc h2{ margin-top:0; font-size:16pt; }
+.toc-part{ font-family:"Liberation Sans",sans-serif; font-size:8.2pt; text-transform:uppercase; letter-spacing:.13em;
+  color:var(--accent); font-weight:700; margin:5.5mm 0 2mm; padding-bottom:1.2mm; border-bottom:1px solid var(--rule); }
+.toc-row{ display:flex; align-items:baseline; gap:2.4mm; font-size:9.6pt; padding:1.15mm 0; }
+.toc-row .n{ color:var(--accent); font-weight:700; font-family:"Liberation Sans",sans-serif; font-size:8.6pt; min-width:6mm; }
+.toc-row .t{ flex:0 1 auto; }
+.toc-row .d{ flex:1 1 auto; border-bottom:1px dotted var(--rule); transform:translateY(-1.1mm); }
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<section class="cover">
+  <div class="cover-top">
+    <div class="wordmark">Aspire<span> / Growth Operations</span></div>
+    <div class="cover-rule"></div>
+  </div>
+
+  <div class="cover-mid">
+    <h1>Weekly Authority<br>Newsletter</h1>
+    <p class="sub">Strategy, content model, operating process and build plan<br>for an automated weekly email to our opted-in audience.</p>
+  </div>
+
+  <div class="cover-bot">
+    <dl class="cover-meta">
+      <div><dt>Document type</dt><dd>Strategy &amp; implementation plan</dd></div>
+      <div><dt>Status</dt><dd>Draft for review</dd></div>
+      <div><dt>Prepared by</dt><dd>Growth Operations</dd></div>
+      <div><dt>Programme</dt><dd>E-02 Weekly Authority Newsletter</dd></div>
+      <div><dt>Audience</dt><dd>Leadership &amp; project team</dd></div>
+      <div><dt>Revision</dt><dd>1.0 — Draft</dd></div>
+    </dl>
+    <p class="cover-note">
+      This document sets out what we intend to build, why, and the order in which it gets built. It is a
+      plan for review and sign-off, not a status report. Items shown as decisions to lock require a named
+      owner before the first live send.
+    </p>
+  </div>
+</section>
+
+<!-- ============ TOC ============ -->
+<section class="toc">
+  <h2>Contents</h2>
+
+  <div class="toc-part">Front matter</div>
+  <div class="toc-row"><span class="n"></span><span class="t">Executive summary</span><span class="d"></span></div>
+
+  <div class="toc-part">Part I — Why we are doing this</div>
+  <div class="toc-row"><span class="n">1</span><span class="t">The business case</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">2</span><span class="t">Why manual does not scale, and why naive automation is dangerous</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">3</span><span class="t">What success looks like</span><span class="d"></span></div>
+
+  <div class="toc-part">Part II — What we send</div>
+  <div class="toc-row"><span class="n">4</span><span class="t">Audience and editorial promise</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">5</span><span class="t">Content strategy: two streams</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">6</span><span class="t">How an issue is selected</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">7</span><span class="t">Anatomy of an issue</span><span class="d"></span></div>
+
+  <div class="toc-part">Part III — How it runs</div>
+  <div class="toc-row"><span class="n">8</span><span class="t">The operating rhythm</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">9</span><span class="t">The approval gate</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">10</span><span class="t">Controls and stop switches</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">11</span><span class="t">Compliance and deliverability</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">12</span><span class="t">Use of AI and editorial integrity</span><span class="d"></span></div>
+
+  <div class="toc-part">Part IV — How we build it</div>
+  <div class="toc-row"><span class="n">13</span><span class="t">Build sequence</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">14</span><span class="t">Decisions to lock</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">15</span><span class="t">Verification before the first live send</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">16</span><span class="t">Risk register</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">17</span><span class="t">Success metrics</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">18</span><span class="t">Roles and responsibilities</span><span class="d"></span></div>
+
+  <div class="toc-part">Appendices</div>
+  <div class="toc-row"><span class="n">A</span><span class="t">System design</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">B</span><span class="t">Operating procedures</span><span class="d"></span></div>
+  <div class="toc-row"><span class="n">C</span><span class="t">Glossary</span><span class="d"></span></div>
+</section>
+
+<!-- ============ EXEC SUMMARY ============ -->
+<section class="part-open">
+  <div class="part-eyebrow">Front matter</div>
+  <h1>Executive summary</h1>
+  <div class="part-rule"></div>
+
+  <p class="lede" style="margin-top:5mm">
+    We intend to publish a weekly email to our opted-in audience that combines the articles we have
+    published with the security issues that actually matter that week — assembled automatically,
+    approved by a named person, and sent through our email platform.
+  </p>
+
+  <h3>The opportunity</h3>
+  <p>
+    A weekly, genuinely useful email is one of the few marketing channels we own outright. It does not
+    depend on a social platform's ranking, it reaches people who have explicitly asked to hear from us,
+    and its value compounds: showing up every week with something worth reading is what turns a vendor
+    into a trusted advisor. We already produce the raw material. What we lack is a reliable way to
+    package and ship it every single week without it becoming somebody's manual chore.
+  </p>
+
+  <h3>The problem worth naming</h3>
+  <p>
+    Automating email to a real list is not the same as automating an internal report. The failure modes
+    are public and expensive: sending twice, sending before a human has read it, publishing a technical
+    claim that is wrong, or breaking the unsubscribe mechanics that mailbox providers now require. Any
+    of these damages the sender reputation of our domain, which is slow and costly to repair, and some
+    carry regulatory exposure.
+  </p>
+  <p>
+    The plan therefore treats safety as the primary design problem rather than an afterthought. The
+    system is built so that the dangerous outcomes are not merely unlikely but structurally prevented.
+  </p>
+
+  <h3>What we are proposing</h3>
+  <ul>
+    <li><strong>A defined content model.</strong> Each issue draws on two streams: our own published
+      articles, and public vulnerability intelligence. Both are filtered against editorial criteria and
+      capped, so an issue is consistent in size and shape.</li>
+    <li><strong>An automated assembly line with a human gate.</strong> The system gathers, selects,
+      drafts and quality-checks the issue on its own. It cannot send. A named approver must actively
+      approve each issue before anything reaches the list.</li>
+    <li><strong>Compliance built in, not bolted on.</strong> Postal address, honest sender identity,
+      one-click unsubscribe and domain authentication are treated as launch prerequisites, and the
+      system refuses to send if they are missing.</li>
+    <li><strong>A staged build with a formal go-live gate.</strong> Nothing reaches the real list until
+      a defined set of checks has been passed and a person has authorised that first send.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="t">The central design decision</span>
+    <p>
+      The system is deliberately built so that it <strong>cannot send without a human action</strong>,
+      and so that this cannot be quietly removed later. Everything else in this plan follows from that
+      choice. If we ever find ourselves wanting to automate the approval away, the correct response is to
+      question the reason, not the gate.
+    </p>
+  </div>
+
+  <h3>What we are asking for</h3>
+  <p>
+    Review and sign-off on the strategy in Parts I–III, and owners assigned to the decisions listed in
+    section 14. Those decisions — our legal sending identity, the sending domain, the audience segment,
+    the approver roster — are the genuine dependencies. They are business decisions rather than technical
+    ones, and the project cannot reach a live send without them.
+  </p>
+</section>
+
+<!-- ============ PART I ============ -->
+<section class="part-open">
+  <div class="part-eyebrow">Part I</div>
+  <h1>Why we are doing this</h1>
+  <p class="part-lede">The commercial reasoning, the failure modes that make this harder than it looks,
+    and the outcomes we intend to be judged against.</p>
+  <div class="part-rule"></div>
+</section>
+
+<h2><span class="num">1</span>The business case</h2>
+
+<p>
+  Our audience is made up of people responsible for keeping an organisation's technology working and
+  secure. They are busy, they are marketed to constantly, and they are sceptical of vendors. They do
+  not want a sales email. They will, however, reliably open something that tells them what broke this
+  week and what to do about it.
+</p>
+
+<h3>Why email, and why weekly</h3>
+<p>
+  Email is the only channel in our marketing mix that we genuinely own. A social platform can change
+  its ranking and erase our reach without warning; a search engine can reshuffle results. A list of
+  people who asked to hear from us is an asset that stays on our balance sheet. Weekly is the cadence
+  that matches how the underlying subject matter moves — vulnerability disclosure is continuous, and a
+  monthly digest is stale before it lands — and it is frequent enough to build the habit of recognising
+  our name without becoming noise.
+</p>
+
+<h3>What the newsletter is for</h3>
+<div class="grid2">
+  <div class="card">
+    <h4>Authority</h4>
+    <p>Consistently useful commentary positions us as the people who understand this material, rather
+      than the people who sell a product adjacent to it.</p>
+  </div>
+  <div class="card">
+    <h4>Distribution for our own work</h4>
+    <p>Articles we publish deserve more than one moment of attention. The newsletter gives every piece a
+      second, larger audience.</p>
+  </div>
+  <div class="card">
+    <h4>Staying present between buying moments</h4>
+    <p>Most of the list is not in market today. The point is to be the obvious call when they are.</p>
+  </div>
+  <div class="card">
+    <h4>A compounding asset</h4>
+    <p>List quality improves as disengaged addresses are retired and engaged readers stay. The channel
+      gets better with age if it is looked after.</p>
+  </div>
+</div>
+
+<h3>What it is explicitly not</h3>
+<p>
+  Being clear about this protects the channel. The newsletter is <strong>not</strong> a lead-generation
+  blast, <strong>not</strong> a product announcement vehicle, and <strong>not</strong> a destination for
+  purchased or scraped contacts. It goes only to people who have explicitly opted in. Sending to a cold
+  list from the same domain would destroy the deliverability of everything else we send, including the
+  mail our sales and support teams depend on.
+</p>
+
+<div class="callout warn">
+  <span class="t">A dependency worth stating up front</span>
+  <p>
+    The newsletter consumes articles that our content production process publishes. It does not write
+    them. If article production stops, the newsletter has only the public intelligence stream to work
+    with, and its distinctive value drops sharply. Content production is a genuine upstream dependency
+    and should be resourced accordingly.
+  </p>
+</div>
+
+<h2><span class="num">2</span>Why manual does not scale, and why naive automation is dangerous</h2>
+
+<h3>The manual version fails quietly</h3>
+<p>
+  Assembling a weekly issue by hand is perfectly possible once. It is possible for a few weeks. What
+  happens next is predictable: the person responsible has a busy week, the issue slips, then it slips
+  again, and the cadence that made the channel valuable is gone. Manual assembly also produces
+  inconsistency — different structure, different tone, different length — which readers notice even when
+  they cannot articulate it. The work is repetitive, unglamorous and easy to deprioritise, which is
+  exactly the profile of work that should be automated.
+</p>
+
+<h3>The naive automation version fails loudly</h3>
+<p>
+  The obvious shortcut is to wire a feed straight into an email platform and let it send on a schedule.
+  Most email platforms offer this. It is the wrong choice here, and it is worth being precise about why,
+  because each of these failure modes shaped a specific decision later in this plan.
+</p>
+
+<table>
+  <thead>
+    <tr><th style="width:27%">Failure mode</th><th style="width:39%">How it happens</th><th>Consequence</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Duplicate send</strong></td>
+      <td>Two scheduled jobs overlap, or a job is retried after a timeout that actually succeeded.</td>
+      <td>The same audience receives the issue twice. Complaint rate spikes; readers unsubscribe.</td>
+    </tr>
+    <tr>
+      <td><strong>Sent without a human ever reading it</strong></td>
+      <td>Approval is a link in an email. Corporate mail security scanners open every link in every
+        message automatically to check it is safe. A link that sends when opened will be triggered by a
+        machine, not a person.</td>
+      <td>An unreviewed issue goes to the entire list. This is the most damaging failure and the least
+        obvious in advance.</td>
+    </tr>
+    <tr>
+      <td><strong>Confidently wrong technical claims</strong></td>
+      <td>An automated summariser invents a vulnerability identifier, misattributes a product, or links
+        somewhere it was never given.</td>
+      <td>We publish false security information to security-literate readers. Credibility loss is
+        immediate and hard to recover.</td>
+    </tr>
+    <tr>
+      <td><strong>Broken unsubscribe mechanics</strong></td>
+      <td>The message lacks the machine-readable one-click unsubscribe headers that major mailbox
+        providers now require of bulk senders.</td>
+      <td>Filtering into spam, and regulatory exposure. Affects our domain, not just this campaign.</td>
+    </tr>
+    <tr>
+      <td><strong>Sending to the wrong audience</strong></td>
+      <td>An audience filter is misconfigured and resolves to everyone rather than the opted-in segment.</td>
+      <td>Commercial mail to people who never consented. The worst outcome on this list.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  None of these are exotic. They are the ordinary failure modes of the ordinary approach. The design in
+  Part III exists to make each one structurally impossible rather than merely unlikely.
+</p>
+
+<h2><span class="num">3</span>What success looks like</h2>
+
+<p>
+  Defining this before the mechanism keeps us honest about what we are buying. We should judge the
+  project against outcomes, not against whether the automation is clever.
+</p>
+
+<table>
+  <thead>
+    <tr><th style="width:30%">Outcome</th><th>What it means in practice</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>It ships every week</strong></td>
+      <td>The cadence holds without heroics. Preparing an issue is a review task, not a production task.</td></tr>
+    <tr><td><strong>Readers stay</strong></td>
+      <td>Unsubscribe and complaint rates stay well inside mailbox-provider thresholds, and engaged
+        readers keep engaging.</td></tr>
+    <tr><td><strong>It lands in the inbox</strong></td>
+      <td>Domain authentication is correct and sender reputation is healthy, so the mail arrives where
+        people will see it.</td></tr>
+    <tr><td><strong>Nothing embarrassing ever goes out</strong></td>
+      <td>No duplicate sends, no unreviewed issues, no fabricated technical claims. Measured by absence
+        of incidents.</td></tr>
+    <tr><td><strong>It is not one person's private knowledge</strong></td>
+      <td>The process is documented well enough that somebody else can run a week without a handover
+        conversation.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout ok">
+  <span class="t">The honest bar for the first phase</span>
+  <p>
+    Success at launch is a small, clean, reliably delivered issue reaching a genuinely opted-in
+    audience — not a large list or an impressive open rate. Reach is straightforward to grow later on a
+    healthy sending reputation. Repairing a damaged one is not.
+  </p>
+</div>
+
+<!-- ============ PART II ============ -->
+<section class="part-open">
+  <div class="part-eyebrow">Part II</div>
+  <h1>What we send</h1>
+  <p class="part-lede">The reader, the promise we make to them, where the content comes from, and how a
+    single issue is chosen and shaped.</p>
+  <div class="part-rule"></div>
+</section>
+
+<h2><span class="num">4</span>Audience and editorial promise</h2>
+
+<h3>Who is on the list</h3>
+<p>
+  The list is made up of people who have explicitly opted in and who carry responsibility for an
+  organisation's technology and security posture. In practice that is technical decision-makers and the
+  people who advise them. Our editorial subject matter — ransomware, remote access and VPN exposure,
+  identity and access, productivity-suite security, perimeter and firewall issues, and actively
+  exploited vulnerabilities — reflects what this audience is accountable for.
+</p>
+<p>
+  Everyone receiving the newsletter has consented to receive it. There is no cold segment, no purchased
+  list, and no automatic enrolment from unrelated activity. This is a hard constraint, not a preference.
+</p>
+
+<h3>The promise</h3>
+<div class="callout">
+  <span class="t">What a reader gets, every week</span>
+  <p>
+    A short, scannable briefing: what we published that is worth their time, and which security issues
+    are being actively exploited right now — written plainly, linked to the source, and never padded to
+    fill space. If a week is quiet, the issue is short. It never pretends otherwise.
+  </p>
+</div>
+
+<h3>Why they stay subscribed</h3>
+<ul>
+  <li><strong>It respects their time.</strong> Capped length, consistent structure, and a subject line
+    that says what is inside so they can decide in one second.</li>
+  <li><strong>It is genuinely useful even if they never buy.</strong> The vulnerability content has
+    standalone operational value.</li>
+  <li><strong>It does not sell at them.</strong> Our own articles are presented as reading, not as
+    pitches.</li>
+  <li><strong>Leaving is easy.</strong> A visible unsubscribe and a working one-click mechanism. Making
+    it hard to leave produces spam complaints instead of unsubscribes, which is far worse for us.</li>
+</ul>
+
+<h2><span class="num">5</span>Content strategy: two streams</h2>
+
+<p>
+  Every issue is built from two clearly separated sources. Keeping them separate matters: they have
+  different licensing constraints, different trust levels, and different editorial treatment.
+</p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>Stream one — our own published work</h4>
+    <p>Articles we have published, consumed as links only. The newsletter never reaches into drafts and
+      never publishes anything that is not already live on our own site.</p>
+    <p style="margin-top:1.6mm"><strong>Treated as:</strong> trusted in origin, still sanitised in handling.</p>
+  </div>
+  <div class="card">
+    <h4>Stream two — public vulnerability intelligence</h4>
+    <p>The authoritative public catalogue of vulnerabilities known to be actively exploited, plus a small
+      allowlist of additional feeds we choose deliberately.</p>
+    <p style="margin-top:1.6mm"><strong>Treated as:</strong> useful but untrusted content from an
+      allowlisted source.</p>
+  </div>
+</div>
+
+<h3>Editorial rules that apply to both</h3>
+<table class="tight">
+  <thead><tr><th style="width:34%">Rule</th><th>Reason</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Original summaries, never full reprints</strong></td>
+      <td>Republishing a third party's full article text is a copyright problem and adds no value. We
+        write a short original summary and link to the source.</td></tr>
+    <tr><td><strong>Public information only</strong></td>
+      <td>No customer-specific detail and no internal threat indicators ever appear in a marketing
+        email. This is a firm boundary between our marketing and our service delivery.</td></tr>
+    <tr><td><strong>Attribution without implied endorsement</strong></td>
+      <td>The public vulnerability catalogue is freely reusable, but the issuing agency's name and logo
+        are not. We cite the source; we never imply they endorse us.</td></tr>
+    <tr><td><strong>Every claim traceable to a source we ingested</strong></td>
+      <td>If a vulnerability identifier or a link did not come from a source in this issue, it does not
+        appear in the issue. This is enforced automatically, not by memory.</td></tr>
+    <tr><td><strong>No link shorteners</strong></td>
+      <td>Shortened links hide the destination, are treated as a spam signal, and break reader trust in
+        exactly the audience least willing to click something opaque.</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="num">6</span>How an issue is selected</h2>
+
+<p>
+  Selection is deliberately mechanical so that issues are consistent and the process is repeatable by
+  anyone. Three filters apply in order.
+</p>
+
+<h3>Recency</h3>
+<p>
+  Only material published inside a short rolling window is eligible. The window is slightly wider than
+  the gap between issues, so that something published just after an issue is assembled is still caught
+  by the next one rather than falling through the gap entirely.
+</p>
+
+<h3>Editorial relevance</h3>
+<p>
+  Candidates are scored against our editorial keyword set — the subject areas our audience is
+  accountable for. Items that do not touch our subject matter are not included merely because they are
+  recent. The keyword set is a configuration decision, reviewed as our positioning evolves rather than
+  fixed forever.
+</p>
+
+<h3>Caps</h3>
+<p>
+  An issue carries at most <strong>five</strong> of our own articles and at most <strong>seven</strong>
+  vulnerability items. The caps exist for three reasons: readers do not read past a certain length; a
+  consistent size sets an expectation that makes the email easy to scan; and there is a hard technical
+  ceiling to respect.
+</p>
+
+<div class="callout warn">
+  <span class="t">The clipping ceiling</span>
+  <p>
+    Major mailbox providers truncate messages beyond roughly 102 kilobytes, hiding the remainder — including
+    the footer that carries our postal address and unsubscribe link — behind a "view entire message"
+    link. Since those elements are legal requirements, an issue that exceeds the ceiling is a compliance
+    problem, not just a formatting one. The system measures each issue and refuses to proceed if it is
+    over budget, with an earlier warning threshold so the trend is visible before it becomes a failure.
+  </p>
+</div>
+
+<h3>When there is not enough material</h3>
+<p>
+  A quiet week is a normal outcome, not an error. The policy is to skip rather than to pad: an issue
+  assembled from thin material teaches readers that our email is not worth opening. Skipping is
+  recorded, so a skipped week is visibly a decision rather than a silent failure.
+</p>
+
+<h2><span class="num">7</span>Anatomy of an issue</h2>
+
+<figure>
+<svg viewBox="0 0 700 424" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Diagram of the newsletter layout showing subject line, preheader, header, editor's note, article summaries, threat board and compliance footer">
+  <defs>
+    <style>
+      .lbl{ font-family:"Liberation Sans",sans-serif; font-size:10px; fill:#3d4a58; }
+      .lblb{ font-family:"Liberation Sans",sans-serif; font-size:10px; fill:#12181f; font-weight:700; }
+      .note{ font-family:"Liberation Sans",sans-serif; font-size:9px; fill:#6b7885; }
+      .acc{ fill:#1f4e9c; }
+      .box{ fill:#ffffff; stroke:#d7dde4; stroke-width:1; }
+      .boxa{ fill:#eef3fb; stroke:#1f4e9c; stroke-width:1; }
+      .lead{ stroke:#c3ccd6; stroke-width:1; stroke-dasharray:2 2; }
+      .ph{ fill:#e8ecf0; }
+    </style>
+  </defs>
+
+  <!-- email frame -->
+  <rect x="196" y="8" width="300" height="408" rx="3" class="box"/>
+
+  <!-- subject + preheader (outside the body, in the inbox) -->
+  <rect x="204" y="16" width="284" height="17" class="boxa"/>
+  <text x="212" y="28" class="lblb">Subject line</text>
+  <rect x="204" y="35" width="284" height="14" class="ph"/>
+  <text x="212" y="45" class="lbl">Preheader — the line shown next to the subject</text>
+
+  <!-- header -->
+  <rect x="204" y="55" width="284" height="30" class="box"/>
+  <text x="212" y="68" class="lblb">Masthead</text>
+  <text x="212" y="80" class="note">Brand identity and issue reference</text>
+
+  <!-- editor note -->
+  <rect x="204" y="91" width="284" height="34" class="box"/>
+  <text x="212" y="104" class="lblb">Editor's note</text>
+  <text x="212" y="116" class="note">Two or three sentences framing the week</text>
+
+  <!-- posts -->
+  <rect x="204" y="131" width="284" height="94" class="box"/>
+  <text x="212" y="144" class="lblb">This week's articles</text>
+  <text x="212" y="156" class="note">Up to five. Title, short original summary, link.</text>
+  <rect x="212" y="163" width="268" height="17" class="ph"/>
+  <rect x="212" y="184" width="268" height="17" class="ph"/>
+  <rect x="212" y="205" width="268" height="14" class="ph"/>
+
+  <!-- threats -->
+  <rect x="204" y="231" width="284" height="94" class="box"/>
+  <text x="212" y="244" class="lblb">Actively exploited — patch board</text>
+  <text x="212" y="256" class="note">Up to seven. Identifier, what it affects, why it matters.</text>
+  <rect x="212" y="263" width="268" height="17" class="ph"/>
+  <rect x="212" y="284" width="268" height="17" class="ph"/>
+  <rect x="212" y="305" width="268" height="14" class="ph"/>
+
+  <!-- footer -->
+  <rect x="204" y="331" width="284" height="77" class="boxa"/>
+  <text x="212" y="344" class="lblb">Compliance footer</text>
+  <text x="212" y="357" class="note">Legal entity name</text>
+  <text x="212" y="369" class="note">Physical postal address</text>
+  <text x="212" y="381" class="note">Visible unsubscribe + preference link</text>
+  <text x="212" y="393" class="note">Advertisement identification, where required</text>
+  <text x="212" y="404" class="note">Link to the archived copy of this issue</text>
+
+  <!-- left annotations -->
+  <line x1="196" y1="24" x2="150" y2="24" class="lead"/>
+  <text x="8" y="21" class="lblb">Decides whether it is opened</text>
+  <text x="8" y="33" class="note">Capped at 60 characters; must honestly</text>
+  <text x="8" y="44" class="note">describe the contents.</text>
+
+  <line x1="196" y1="178" x2="150" y2="178" class="lead"/>
+  <text x="8" y="168" class="lblb">Our own work</text>
+  <text x="8" y="180" class="note">Links to published articles only.</text>
+  <text x="8" y="191" class="note">Summaries are original, never</text>
+  <text x="8" y="202" class="note">reprinted source text.</text>
+
+  <line x1="196" y1="278" x2="150" y2="278" class="lead"/>
+  <text x="8" y="268" class="lblb">Public intelligence</text>
+  <text x="8" y="280" class="note">Every identifier must trace to a</text>
+  <text x="8" y="291" class="note">source ingested for this issue.</text>
+
+  <!-- right annotations -->
+  <line x1="496" y1="369" x2="540" y2="369" class="lead"/>
+  <text x="546" y="352" class="lblb">Legally required</text>
+  <text x="546" y="364" class="note">These elements are not</text>
+  <text x="546" y="375" class="note">optional. The system</text>
+  <text x="546" y="386" class="note">refuses to send an issue</text>
+  <text x="546" y="397" class="note">missing any of them.</text>
+
+  <line x1="496" y1="120" x2="540" y2="120" class="lead"/>
+  <text x="546" y="110" class="lblb">Whole message</text>
+  <text x="546" y="122" class="note">Must stay under the</text>
+  <text x="546" y="133" class="note">clipping ceiling so the</text>
+  <text x="546" y="144" class="note">footer stays visible.</text>
+</svg>
+<figcaption><b>Figure 1 — Issue anatomy.</b> Structure is fixed so readers learn where to look. The
+  elements in the footer are legal obligations rather than design choices, which is why the assembly
+  process treats a missing one as a blocking failure.</figcaption>
+</figure>
+
+<h3>Subject and preheader discipline</h3>
+<p>
+  The subject line is capped so it is not truncated on a phone, and it must describe what is actually in
+  the issue. A subject that oversells is both a deliverability risk and a legal one: commercial email
+  must not carry a misleading subject. The preheader is treated as part of the subject rather than as
+  spare space, because together they are the entire basis on which a reader decides to open.
+</p>
+
+<!-- ============ PART III ============ -->
+<section class="part-open">
+  <div class="part-eyebrow">Part III</div>
+  <h1>How it runs</h1>
+  <p class="part-lede">The repeating process, the human gate at its centre, the controls available when
+    something goes wrong, and the compliance position the whole thing has to satisfy.</p>
+  <div class="part-rule"></div>
+</section>
+
+<h2><span class="num">8</span>The operating rhythm</h2>
+
+<p>
+  Each issue moves through the same sequence. Everything up to the approval gate is automatic;
+  everything past it is a consequence of a human decision.
+</p>
+
+<figure>
+<svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Flow diagram of the issue lifecycle from open through ingest, assemble, quality gate, human approval, send, reconcile and observe">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7885"/>
+    </marker>
+    <marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b03a3a"/>
+    </marker>
+    <style>
+      .s{ fill:#ffffff; stroke:#3d4a58; stroke-width:1.2; }
+      .sh{ fill:#eef3fb; stroke:#1f4e9c; stroke-width:1.8; }
+      .sr{ fill:#fdeeee; stroke:#b03a3a; stroke-width:1.2; }
+      .t{ font-family:"Liberation Sans",sans-serif; font-size:9.5px; fill:#12181f; font-weight:700; }
+      .u{ font-family:"Liberation Sans",sans-serif; font-size:8px; fill:#6b7885; }
+      .fl{ stroke:#6b7885; stroke-width:1.2; fill:none; }
+      .flr{ stroke:#b03a3a; stroke-width:1.2; fill:none; stroke-dasharray:3 2; }
+      .band{ font-family:"Liberation Sans",sans-serif; font-size:8px; fill:#1f4e9c; font-weight:700; letter-spacing:.08em; }
+    </style>
+  </defs>
+
+  <text x="8" y="14" class="band">AUTOMATIC</text>
+  <line x1="72" y1="10" x2="392" y2="10" stroke="#d7dde4" stroke-width="1"/>
+  <text x="400" y="14" class="band">HUMAN DECIDES</text>
+  <line x1="486" y1="10" x2="518" y2="10" stroke="#d7dde4" stroke-width="1"/>
+  <text x="526" y="14" class="band">AUTOMATIC</text>
+  <line x1="592" y1="10" x2="692" y2="10" stroke="#d7dde4" stroke-width="1"/>
+
+  <!-- row 1 -->
+  <rect x="8"   y="30" width="88" height="40" rx="3" class="s"/>
+  <text x="18" y="47" class="t">Open</text><text x="18" y="60" class="u">One issue per week</text>
+
+  <rect x="118" y="30" width="88" height="40" rx="3" class="s"/>
+  <text x="128" y="47" class="t">Gather</text><text x="128" y="60" class="u">Articles + intel</text>
+
+  <rect x="228" y="30" width="88" height="40" rx="3" class="s"/>
+  <text x="238" y="47" class="t">Assemble</text><text x="238" y="60" class="u">Select, draft, render</text>
+
+  <rect x="338" y="30" width="88" height="40" rx="3" class="s"/>
+  <text x="348" y="47" class="t">Quality gate</text><text x="348" y="60" class="u">Automated checks</text>
+
+  <line x1="96"  y1="50" x2="114" y2="50" class="fl" marker-end="url(#ar)"/>
+  <line x1="206" y1="50" x2="224" y2="50" class="fl" marker-end="url(#ar)"/>
+  <line x1="316" y1="50" x2="334" y2="50" class="fl" marker-end="url(#ar)"/>
+
+  <!-- down to approval -->
+  <path d="M382,70 L382,96" class="fl" marker-end="url(#ar)"/>
+
+  <!-- approval (emphasised) -->
+  <rect x="286" y="100" width="196" height="50" rx="3" class="sh"/>
+  <text x="298" y="119" class="t">Human approval required</text>
+  <text x="298" y="132" class="u">A named person must actively approve.</text>
+  <text x="298" y="142" class="u">Viewing the page cannot send. Works exactly once.</text>
+
+  <!-- reject path -->
+  <path d="M286,125 L214,125 L214,96" class="flr" marker-end="url(#arR)"/>
+  <rect x="170" y="100" width="88" height="0" style="opacity:0"/>
+  <text x="150" y="140" class="u" fill="#b03a3a">Reject → revise</text>
+  <text x="150" y="151" class="u" fill="#b03a3a">and reassemble</text>
+
+  <!-- quality fail path -->
+  <path d="M426,50 L470,50 L470,88 L482,88" class="flr"/>
+  <text x="486" y="52" class="u" fill="#b03a3a">Fails checks →</text>
+  <text x="486" y="63" class="u" fill="#b03a3a">held, never offered</text>
+  <text x="486" y="74" class="u" fill="#b03a3a">for approval</text>
+
+  <!-- row 2 -->
+  <path d="M482,125 L520,125 L520,178 L96,178 L96,196" class="fl" marker-end="url(#ar)"/>
+
+  <rect x="8"   y="200" width="88" height="40" rx="3" class="s"/>
+  <text x="18" y="217" class="t">Queue</text><text x="18" y="230" class="u">Exactly once</text>
+
+  <rect x="118" y="200" width="88" height="40" rx="3" class="s"/>
+  <text x="128" y="217" class="t">Send</text><text x="128" y="230" class="u">Via email platform</text>
+
+  <rect x="228" y="200" width="88" height="40" rx="3" class="s"/>
+  <text x="238" y="217" class="t">Confirm</text><text x="238" y="230" class="u">Verify it really sent</text>
+
+  <rect x="338" y="200" width="88" height="40" rx="3" class="s"/>
+  <text x="348" y="217" class="t">Measure</text><text x="348" y="230" class="u">Engagement + health</text>
+
+  <line x1="96"  y1="220" x2="114" y2="220" class="fl" marker-end="url(#ar)"/>
+  <line x1="206" y1="220" x2="224" y2="220" class="fl" marker-end="url(#ar)"/>
+  <line x1="316" y1="220" x2="334" y2="220" class="fl" marker-end="url(#ar)"/>
+
+  <rect x="452" y="196" width="240" height="48" rx="3" fill="#f7f9fb" stroke="#d7dde4"/>
+  <text x="462" y="213" class="t">Every step is recorded</text>
+  <text x="462" y="226" class="u">Who approved, what was sent, and when — kept as an</text>
+  <text x="462" y="237" class="u">unchangeable record for audit and incident review.</text>
+</svg>
+<figcaption><b>Figure 2 — The operating rhythm.</b> The approval gate is the only point where the
+  process waits for a person, and it is the only route to a send. Failures at the quality gate hold the
+  issue back rather than passing a flawed issue to the approver.</figcaption>
+</figure>
+
+<h3>What happens at each step</h3>
+<table>
+  <thead><tr><th style="width:16%">Step</th><th style="width:33%">What happens</th><th style="width:19%">Owner</th><th>If it fails</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Open</strong></td>
+      <td>The week's issue is created. Exactly one exists per week; a repeated attempt joins the
+        existing issue instead of starting a second one.</td>
+      <td>Automatic</td>
+      <td>Nothing is created twice. A duplicate attempt is a no-op.</td></tr>
+    <tr><td><strong>Gather</strong></td>
+      <td>Published articles and vulnerability intelligence are collected from approved sources only.</td>
+      <td>Automatic</td>
+      <td>Unreachable source is logged; the issue proceeds with what is available.</td></tr>
+    <tr><td><strong>Assemble</strong></td>
+      <td>Items are selected and capped, summaries drafted, and the issue rendered into its final form.</td>
+      <td>Automatic</td>
+      <td>Nothing to include → the week is skipped and recorded as skipped.</td></tr>
+    <tr><td><strong>Quality gate</strong></td>
+      <td>Automated checks on links, technical identifiers, size, required footer elements and sender
+        configuration.</td>
+      <td>Automatic</td>
+      <td>The issue is held and never offered for approval. The team is notified.</td></tr>
+    <tr><td><strong>Approval</strong></td>
+      <td>A named approver reviews the finished issue exactly as it will be received, and decides.</td>
+      <td><strong>Named approver</strong></td>
+      <td>Not approved within the agreed window → escalated. Never auto-approved.</td></tr>
+    <tr><td><strong>Queue &amp; send</strong></td>
+      <td>The approved issue is queued once and handed to the email platform.</td>
+      <td>Automatic</td>
+      <td>Transient error → retried with a widening gap. A configuration error stops immediately and
+        escalates rather than retrying pointlessly.</td></tr>
+    <tr><td><strong>Confirm</strong></td>
+      <td>The platform is asked what actually happened, and our record is updated to match reality.</td>
+      <td>Automatic</td>
+      <td>Mismatch is recorded for review rather than assumed away.</td></tr>
+    <tr><td><strong>Measure</strong></td>
+      <td>Delivery and engagement figures are collected against the health thresholds in section 11.</td>
+      <td>Automatic</td>
+      <td>Threshold breach triggers the response in section 10.</td></tr>
+  </tbody>
+</table>
+
+<h3>Skipping a week</h3>
+<p>
+  Skipping is a supported, deliberate outcome — for a quiet week, a holiday period, or any week where
+  we would rather send nothing than send something unreviewed. The standing rule is that skipping is
+  always preferable to rushing an unreviewed issue out. The cost of a missed week is one missed week.
+  The cost of a bad send is measured in list damage and sender reputation.
+</p>
+
+<h2><span class="num">9</span>The approval gate</h2>
+
+<p class="lede">
+  This section describes the single most important design decision in the project.
+</p>
+
+<p>
+  When an issue is ready, the approver receives a message containing a link. Opening that link shows the
+  finished issue exactly as a subscriber would receive it, along with a button to approve. The critical
+  property is that <strong>opening the link does nothing at all</strong>. Only pressing the button does
+  anything.
+</p>
+
+<div class="callout stop">
+  <span class="t">Why merely opening a link must never send</span>
+  <p>
+    Corporate mail security systems automatically open every link in every inbound message to check it
+    is not malicious. They do this before a human sees the message. If our approval link performed the
+    send when opened, the newsletter would go to the entire list the moment the approval message arrived
+    in the approver's inbox — triggered by a scanner, with no human involvement whatsoever.
+  </p>
+  <p>
+    This is not a theoretical risk. It is the default behaviour of ordinary corporate email security,
+    and it is the most common way that approval-by-link workflows fail in practice.
+  </p>
+</div>
+
+<h3>The properties the gate guarantees</h3>
+<table class="tight">
+  <thead><tr><th style="width:36%">Property</th><th>Why it matters</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Viewing changes nothing</strong></td>
+      <td>Scanners, previews, forwarded copies and repeat visits are all harmless. The approver can open
+        it as many times as they like.</td></tr>
+    <tr><td><strong>Approval works exactly once</strong></td>
+      <td>A second press — a double-click, a re-forwarded message, a stale browser tab — cannot produce
+        a second send.</td></tr>
+    <tr><td><strong>The link expires</strong></td>
+      <td>An approval message that surfaces much later cannot be acted on. Stale approvals are not
+        approvals.</td></tr>
+    <tr><td><strong>What is approved is what is sent</strong></td>
+      <td>The issue is frozen at approval. What the approver saw is byte-for-byte what goes out; it
+        cannot be edited in between.</td></tr>
+    <tr><td><strong>Approval is attributable</strong></td>
+      <td>The record shows who approved, and when. Not "the system sent it".</td></tr>
+    <tr><td><strong>The first live issues need two people</strong></td>
+      <td>Two different named approvers must agree on the earliest production issues, when the risk of a
+        configuration mistake is highest.</td></tr>
+  </tbody>
+</table>
+
+<h3>Reviewing, not rubber-stamping</h3>
+<p>
+  The gate is only worth having if the review is real. The approver is asked to confirm that the subject
+  honestly describes the contents, that the summaries are accurate and read as ours, that the technical
+  claims are right, and that the footer is complete. Automated checks catch fabricated links and
+  identifiers, but they cannot catch a summary that is plausible and wrong. That specific judgement is
+  why a person is in the loop, and it is the part that must never be automated away.
+</p>
+
+<h2><span class="num">10</span>Controls and stop switches</h2>
+
+<p>
+  Three levels of stop, each blunter than the last. They exist so that the response to a problem is
+  never "wait and hope".
+</p>
+
+<table>
+  <thead><tr><th style="width:12%">Level</th><th style="width:30%">Stops</th><th>Use when</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Level 1</strong></td>
+      <td>No new issues are started at all.</td>
+      <td>Something is wrong upstream — a bad content source, or a problem we have not diagnosed yet.
+        Work in progress is untouched.</td></tr>
+    <tr><td><strong>Level 2</strong></td>
+      <td>Issues may still be prepared and approved, but nothing is handed to the email platform.</td>
+      <td>We are unsure about sending specifically. Preparation continues; delivery is held.</td></tr>
+    <tr><td><strong>Level 3</strong></td>
+      <td>Stops a campaign already handed to the email platform, from the platform's own controls.</td>
+      <td>Something is already in flight and must not go out.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout stop">
+  <span class="t">Standing rule — cancel, never resume</span>
+  <p>
+    If a campaign is paused at the platform and its scheduled moment passes, resuming it does not
+    reschedule it — it sends immediately, to everyone. Anyone touching a paused campaign must know this
+    in advance. The rule is therefore absolute: <strong>a paused campaign is cancelled and rebuilt, never
+    resumed.</strong> This is written into the operating procedures and rehearsed rather than left to be
+    discovered during an incident.
+  </p>
+</div>
+
+<h3>Dry-run as the default posture</h3>
+<p>
+  The system's default state is one where it performs every step of its work but does not actually send.
+  Live sending is something that has to be deliberately switched on, with the audience, the environment
+  and the stop switches all explicitly aligned. The consequence is that a mistake in configuration, a
+  misfired scheduled job, or an accidental deployment produces a rehearsal rather than a send.
+</p>
+
+<h2><span class="num">11</span>Compliance and deliverability</h2>
+
+<p class="lede">
+  Commercial email is regulated, and the major mailbox providers now enforce their own requirements on
+  top of the law. We follow the stricter of the two wherever they overlap.
+</p>
+
+<h3>Legal obligations</h3>
+<table class="tight">
+  <thead><tr><th style="width:32%">Obligation</th><th>How we meet it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Honest sender identity</strong></td>
+      <td>The from-name, from-address and reply-to identify our real business. No disguised or
+        misleading routing.</td></tr>
+    <tr><td><strong>Subject matches the message</strong></td>
+      <td>Editorial discipline plus an automated length cap. A subject that oversells is a legal
+        problem, not just a marketing one.</td></tr>
+    <tr><td><strong>Valid physical postal address</strong></td>
+      <td>Present in the footer of every issue. This is a launch prerequisite: the system refuses to
+        send while the address is unset.</td></tr>
+    <tr><td><strong>Clear opt-out, promptly honoured</strong></td>
+      <td>A visible unsubscribe in every issue, honoured within 48 hours — deliberately stricter than
+        the legal minimum, because that is what mailbox providers expect of bulk senders.</td></tr>
+    <tr><td><strong>Advertisement identification</strong></td>
+      <td>Included where the primary purpose of the message is commercial.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <span class="t">Responsibility cannot be outsourced</span>
+  <p>
+    Using a third-party email platform does not transfer legal responsibility for what we send. The
+    obligations remain ours, which is why they are enforced in our own process rather than assumed to be
+    handled downstream.
+  </p>
+</div>
+
+<h3>Mailbox provider requirements</h3>
+<p>
+  Major providers apply requirements to bulk senders that determine whether mail reaches the inbox at
+  all. We intend to meet these from the first issue, regardless of our volume, because building the
+  practice at low volume is far easier than retrofitting it later.
+</p>
+<ul>
+  <li><strong>Domain authentication.</strong> The sending domain must be properly authenticated so
+    receiving systems can verify the mail genuinely came from us and was not altered in transit.</li>
+  <li><strong>A published policy for unauthenticated mail</strong>, with the visible sender aligned to
+    the authenticated domain.</li>
+  <li><strong>One-click unsubscribe.</strong> Beyond the visible link, the message must carry the
+    machine-readable headers that let a mailbox provider offer its own unsubscribe control. This is a
+    requirement, not an enhancement.</li>
+  <li><strong>Complaint rate below the enforced ceiling.</strong> Providers publish a hard threshold; we
+    set our internal warning level well below it so we can act on a trend rather than react to a
+    breach.</li>
+</ul>
+
+<h4>Complaint thresholds and the response</h4>
+<table class="tight">
+  <thead><tr><th style="width:20%">Level</th><th style="width:16%">Threshold</th><th>Response</th></tr></thead>
+  <tbody>
+    <tr><td><span class="sev md">Warning</span></td><td class="nowrap">0.1% complaints</td>
+      <td>Investigate. Review recent acquisition sources and content. Do not treat as noise.</td></tr>
+    <tr><td><span class="sev hi">Hard stop</span></td><td class="nowrap">0.3% complaints</td>
+      <td>Stop sending. No further issues until the cause is found and sender reputation recovers.</td></tr>
+  </tbody>
+</table>
+
+<h3>List hygiene</h3>
+<ul>
+  <li><strong>Opt-in only.</strong> The audience is an explicit opt-in segment. There is no path by
+    which a contact acquired for another purpose joins the newsletter automatically.</li>
+  <li><strong>Suppression respected.</strong> Unsubscribed, complained and hard-bounced addresses are
+    suppressed at the platform and never re-added.</li>
+  <li><strong>Sunset policy.</strong> Subscribers with no engagement over an extended period — our
+    working figure is 90 days — are re-permissioned or retired. Continuing to mail people who never open
+    is what drags a sender reputation down, and a smaller engaged list outperforms a larger stale one.</li>
+</ul>
+
+<h3>Subscriber data</h3>
+<div class="callout">
+  <span class="t">The list stays where it lives</span>
+  <p>
+    Subscriber records remain in the email platform. Our own systems store only what they need to
+    operate: which issue was sent, which campaign it became, and aggregate counts. We deliberately avoid
+    copying personal data into additional systems, because every copy is another thing to secure, to
+    keep in sync, and to account for.
+  </p>
+</div>
+
+<h3>Content licensing</h3>
+<p>
+  The public vulnerability catalogue we rely on is released for free reuse, which is why we can build on
+  it. The issuing agency's name and insignia are a separate matter: we cite the source as a factual
+  reference and never use official logos or any wording that could imply endorsement of our business. We
+  also do not reproduce third-party article text in full — we summarise in our own words and link.
+</p>
+
+<h2><span class="num">12</span>Use of AI and editorial integrity</h2>
+
+<p>
+  Language models draft the summary copy. Being precise about what that does and does not mean matters,
+  both for the quality of the product and because our readers are exactly the audience most likely to
+  notice — and least likely to forgive — a confidently wrong technical claim.
+</p>
+
+<div class="grid2">
+  <div class="card">
+    <h4>What the model does</h4>
+    <p>Writes short summaries of items already selected, drafts a subject line and preheader, and writes
+      a brief framing note for the issue.</p>
+  </div>
+  <div class="card">
+    <h4>What the model never does</h4>
+    <p>Choose the audience. Decide whether to send. Fetch anything from the internet. Introduce a link
+      or a vulnerability identifier that was not in the source material it was given.</p>
+  </div>
+</div>
+
+<h3>Three defences against fabrication</h3>
+<ol>
+  <li><strong>A closed set of source material.</strong> The model is given the specific items selected
+    for this issue and nothing else. It has no browsing ability and no wider corpus to draw a
+    plausible-sounding detail from.</li>
+  <li><strong>Automated verification of every reference.</strong> Every link and every vulnerability
+    identifier in the finished issue is checked against the source material actually ingested. Anything
+    that does not trace back is rejected and the issue is held. A fabricated reference cannot reach the
+    approver, let alone a reader.</li>
+  <li><strong>Human review.</strong> The approver reads the finished issue before anyone else does.</li>
+</ol>
+
+<h3>Treating source text as content, never as instructions</h3>
+<div class="callout">
+  <span class="t">Why this deserves its own paragraph</span>
+  <p>
+    We ingest text from public feeds. Anyone who can publish to a feed can write whatever they like in
+    it — including text crafted to read as an instruction to an automated system. Our design treats
+    everything arriving from a feed strictly as material to summarise, never as direction to follow.
+    Instructions to the model come only from a reviewed internal prompt that feed content cannot alter.
+  </p>
+</div>
+
+<h3>The residual risk we accept, stated plainly</h3>
+<p>
+  Automated checks catch invented links and invented identifiers. They cannot catch a summary that is
+  fluent, correctly cited, and subtly wrong about what a vulnerability actually does. No amount of
+  additional automation resolves this, because the error is one of meaning rather than of form.
+</p>
+<p>
+  This is precisely why a knowledgeable human approves each issue, and it is the strongest argument
+  against ever removing that step for convenience. We should be honest that this risk is managed rather
+  than eliminated.
+</p>
+
+<h3>Model policy</h3>
+<p>
+  The model is a configuration choice rather than an architectural one, so it can be changed if quality
+  or cost warrants it without redesigning anything. If the model is unavailable or returns something
+  that fails validation, the issue is held for attention rather than sent with degraded copy.
+</p>
+
+<!-- ============ PART IV ============ -->
+<section class="part-open">
+  <div class="part-eyebrow">Part IV</div>
+  <h1>How we build it</h1>
+  <p class="part-lede">The order of work, the decisions that have to be made by people rather than by
+    engineering, what must be proven before the first live send, and how we will know it is working.</p>
+  <div class="part-rule"></div>
+</section>
+
+<h2><span class="num">13</span>Build sequence</h2>
+
+<p>
+  The work is organised into stages ordered by dependency. Each stage produces something demonstrable,
+  and each has a clear definition of done so that progress is visible rather than asserted. Stages are
+  sequenced by what they depend on, not allocated to a calendar.
+</p>
+
+<figure>
+<svg viewBox="0 0 700 132" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Diagram of build stages from foundations through ingestion, assembly, approval, delivery, operations, to the go-live gate">
+  <defs>
+    <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7885"/>
+    </marker>
+    <style>
+      .st{ fill:#ffffff; stroke:#3d4a58; stroke-width:1.2; }
+      .stg{ fill:#eef3fb; stroke:#1f4e9c; stroke-width:1.8; }
+      .n{ font-family:"Liberation Sans",sans-serif; font-size:8px; fill:#1f4e9c; font-weight:700; }
+      .l{ font-family:"Liberation Sans",sans-serif; font-size:8.6px; fill:#12181f; font-weight:700; }
+      .c{ stroke:#6b7885; stroke-width:1.2; fill:none; }
+    </style>
+  </defs>
+  <g>
+    <rect x="4"   y="30" width="86" height="44" rx="3" class="st"/>
+    <text x="12" y="46" class="n">STAGE 0</text><text x="12" y="60" class="l">Foundations</text>
+    <rect x="102" y="30" width="86" height="44" rx="3" class="st"/>
+    <text x="110" y="46" class="n">STAGE 1</text><text x="110" y="60" class="l">Ingestion</text>
+    <rect x="200" y="30" width="86" height="44" rx="3" class="st"/>
+    <text x="208" y="46" class="n">STAGE 2</text><text x="208" y="60" class="l">Assembly</text>
+    <rect x="298" y="30" width="86" height="44" rx="3" class="st"/>
+    <text x="306" y="46" class="n">STAGE 3</text><text x="306" y="60" class="l">Approval</text>
+    <rect x="396" y="30" width="86" height="44" rx="3" class="st"/>
+    <text x="404" y="46" class="n">STAGE 4</text><text x="404" y="60" class="l">Delivery</text>
+    <rect x="494" y="30" width="86" height="44" rx="3" class="st"/>
+    <text x="502" y="46" class="n">STAGE 5</text><text x="502" y="60" class="l">Operations</text>
+    <rect x="592" y="30" width="104" height="44" rx="3" class="stg"/>
+    <text x="600" y="46" class="n">STAGE 6</text><text x="600" y="60" class="l">Go-live gate</text>
+  </g>
+  <line x1="90"  y1="52" x2="98"  y2="52" class="c" marker-end="url(#a2)"/>
+  <line x1="188" y1="52" x2="196" y2="52" class="c" marker-end="url(#a2)"/>
+  <line x1="286" y1="52" x2="294" y2="52" class="c" marker-end="url(#a2)"/>
+  <line x1="384" y1="52" x2="392" y2="52" class="c" marker-end="url(#a2)"/>
+  <line x1="482" y1="52" x2="490" y2="52" class="c" marker-end="url(#a2)"/>
+  <line x1="580" y1="52" x2="588" y2="52" class="c" marker-end="url(#a2)"/>
+  <text x="4" y="98" style="font-family:'Liberation Sans',sans-serif;font-size:8.6px;fill:#6b7885;">
+    Stages 1 and 2 can proceed while the decisions in Stage 0 are still being settled; Stage 4 cannot begin</text>
+  <text x="4" y="111" style="font-family:'Liberation Sans',sans-serif;font-size:8.6px;fill:#6b7885;">
+    until the sending platform decisions are made. Stage 6 depends on every preceding stage being complete.</text>
+</svg>
+<figcaption><b>Figure 3 — Build stages, ordered by dependency.</b> The go-live gate is a distinct stage
+  rather than a formality at the end of delivery work.</figcaption>
+</figure>
+
+<h3>Stage 0 — Foundations</h3>
+<p><strong>Objective:</strong> settle the decisions everything else depends on, and stand up the
+  environment the system runs in.</p>
+<p><strong>Produces:</strong> a confirmed brand and sending identity, an authenticated sending domain, a
+  named audience segment, a named approver roster, and a running environment with its data store.</p>
+<p><strong>Done when:</strong> the decisions in section 14 have named owners and confirmed values, and
+  domain authentication is verified as correct.</p>
+
+<h3>Stage 1 — Content ingestion</h3>
+<p><strong>Objective:</strong> reliably collect our published articles and public vulnerability
+  intelligence from approved sources.</p>
+<p><strong>Produces:</strong> a normalised store of candidate items, with source restrictions in place so
+  the system can only fetch from sources we have approved.</p>
+<p><strong>Done when:</strong> both streams ingest correctly, hostile or malformed input is handled
+  safely rather than propagated, and the same item ingested twice does not appear twice.</p>
+<p><strong>Depends on:</strong> confirmed content sources from Stage 0.</p>
+
+<h3>Stage 2 — Assembly, rendering and quality gates</h3>
+<p><strong>Objective:</strong> turn a set of candidate items into a finished, checked issue.</p>
+<p><strong>Produces:</strong> selection and capping, drafted summaries, the rendered email in both rich
+  and plain-text form, and the automated quality checks.</p>
+<p><strong>Done when:</strong> a complete issue can be produced from sample material and the quality
+  gates demonstrably reject a bad issue — a fabricated link, an oversized message, a missing footer
+  element — rather than merely passing a good one.</p>
+<p><strong>Depends on:</strong> Stage 1.</p>
+
+<h3>Stage 3 — Approval and control</h3>
+<p><strong>Objective:</strong> put the human gate in place, along with the stop switches.</p>
+<p><strong>Produces:</strong> the approval notification and review page, single-use approval, the record
+  of who approved what, and the stop switches from section 10.</p>
+<p><strong>Done when:</strong> viewing the approval page provably changes nothing, approving works
+  exactly once, and each stop switch has been exercised.</p>
+<p><strong>Depends on:</strong> Stage 2.</p>
+
+<h3>Stage 4 — Delivery integration and sandbox verification</h3>
+<p><strong>Objective:</strong> connect to the email platform and establish, by observation rather than
+  assumption, exactly how it behaves.</p>
+<p><strong>Produces:</strong> the integration, and a recorded body of evidence covering how the platform
+  accepts an issue, how an audience is addressed, what it reports back, and what the message actually
+  looks like when received.</p>
+<p><strong>Done when:</strong> a test issue has been sent to a small set of seed recipients we control,
+  and each open question about platform behaviour has been answered from a real request and response
+  rather than from documentation.</p>
+<p><strong>Depends on:</strong> Stage 3, and on sending-platform access from Stage 0.</p>
+
+<div class="callout warn">
+  <span class="t">Why this stage is a genuine unknown</span>
+  <p>
+    Published documentation for the sending platform does not fully specify some of the details we
+    depend on, and available sources disagree in places. These questions can only be settled by
+    observing the platform's actual behaviour in a controlled test account. Until that is done, the
+    correct engineering posture is to treat them as unresolved and refuse to send to the real audience —
+    which is exactly what the system does.
+  </p>
+</div>
+
+<h3>Stage 5 — Operations</h3>
+<p><strong>Objective:</strong> make the system supportable by someone other than the person who built it.</p>
+<p><strong>Produces:</strong> monitoring and alerting, escalation for anything stuck, backups with a
+  tested restore, and written operating procedures.</p>
+<p><strong>Done when:</strong> a restore has actually been performed from a backup, and the incident
+  procedures have been walked through as a rehearsal rather than only written down.</p>
+<p><strong>Depends on:</strong> Stage 3.</p>
+
+<h3>Stage 6 — Go-live gate</h3>
+<p><strong>Objective:</strong> a deliberate, evidenced decision to send to the real audience for the
+  first time.</p>
+<p><strong>Produces:</strong> a completed verification checklist (section 15) and a recorded
+  authorisation naming the person who approved the first live send.</p>
+<p><strong>Done when:</strong> every check is passed and the authorisation is recorded. This gate is a
+  human decision by design and is not automated.</p>
+<p><strong>Depends on:</strong> all preceding stages.</p>
+
+<h2><span class="num">14</span>Decisions to lock</h2>
+
+<p class="lede">
+  These are the genuine dependencies. They are business decisions rather than engineering tasks, and the
+  project cannot reach a live send without them. Each needs a named owner.
+</p>
+
+<table>
+  <thead><tr><th style="width:23%">Decision</th><th style="width:44%">What is needed</th><th style="width:15%">Owner</th><th>Blocks</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Legal sending entity</strong></td>
+      <td>The registered legal or trading name that appears in the footer of every issue.</td>
+      <td>Leadership</td><td class="nowrap">Any send</td></tr>
+    <tr><td><strong>Physical postal address</strong></td>
+      <td>A valid physical address for the footer. A legal requirement for commercial email.</td>
+      <td>Leadership</td><td class="nowrap">Any send</td></tr>
+    <tr><td><strong>Sending identity</strong></td>
+      <td>From-name, from-address and reply-to. Decide whether replies reach a monitored mailbox — if we
+        invite replies, someone must read them.</td>
+      <td>Growth Ops</td><td class="nowrap">Any send</td></tr>
+    <tr><td><strong>Sending domain</strong></td>
+      <td>Which domain or subdomain sends the newsletter, and confirmation that it is properly
+        authenticated. Consider separating marketing mail from business-critical mail so a reputation
+        problem in one does not affect the other.</td>
+      <td>Growth Ops + IT</td><td class="nowrap">Any send</td></tr>
+    <tr><td><strong>Audience segment</strong></td>
+      <td>Precisely which opt-in segment receives the newsletter, and how someone joins it. Must be
+        demonstrably opt-in.</td>
+      <td>Growth Ops</td><td class="nowrap">Any send</td></tr>
+    <tr><td><strong>Approver roster</strong></td>
+      <td>Who may approve an issue, and who covers when they are unavailable. At least two named people,
+        since the first live issues require two approvals.</td>
+      <td>Leadership</td><td class="nowrap">Stage 3</td></tr>
+    <tr><td><strong>Schedule</strong></td>
+      <td>Which day and hour issues arrive, in which timezone, and how far ahead of that an issue is
+        prepared so there is a real review window.</td>
+      <td>Growth Ops</td><td class="nowrap">Stage 0</td></tr>
+    <tr><td><strong>Content sources</strong></td>
+      <td>The feed for our published articles, and confirmation of which additional intelligence feeds
+        we want beyond the primary catalogue.</td>
+      <td>Growth Ops</td><td class="nowrap">Stage 1</td></tr>
+    <tr><td><strong>Editorial keywords</strong></td>
+      <td>The subject areas that make an item relevant to this audience. Sets what an issue contains.</td>
+      <td>Growth Ops</td><td class="nowrap">Stage 2</td></tr>
+    <tr><td><strong>Brand assets</strong></td>
+      <td>Logo, colours and where assets are hosted, so the issue looks like us.</td>
+      <td>Marketing</td><td class="nowrap">Stage 2</td></tr>
+    <tr><td><strong>Platform accounts</strong></td>
+      <td>A test account for verification with seed recipients we control, and the live account. These
+        must be separate.</td>
+      <td>Growth Ops</td><td class="nowrap">Stage 4</td></tr>
+    <tr><td><strong>Escalation contact</strong></td>
+      <td>Who is contacted when something is stuck or has failed, and by what route.</td>
+      <td>Leadership</td><td class="nowrap">Stage 5</td></tr>
+    <tr><td><strong>Preference handling</strong></td>
+      <td>Whether subscribers can choose which of our emails they receive, or only unsubscribe from
+        everything.</td>
+      <td>Growth Ops</td><td class="nowrap">Stage 4</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <span class="t">The shape of this list is deliberate</span>
+  <p>
+    Almost every blocking item is a business decision, not an engineering one. The system is built to
+    refuse to operate on placeholder values rather than to quietly substitute something plausible — so
+    an unmade decision surfaces as a clear blocked state rather than as an incorrect email arriving in
+    somebody's inbox.
+  </p>
+</div>
+
+<h2><span class="num">15</span>Verification before the first live send</h2>
+
+<p>
+  Each item below must be <em>demonstrated</em>, not assumed. Several cannot be proven from documentation
+  and require observing real behaviour.
+</p>
+
+<table>
+  <thead><tr><th style="width:28%">Check</th><th style="width:44%">How it is proven</th><th>Why it cannot be assumed</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Platform behaviour</strong></td>
+      <td>A test issue created and sent in a separate test account, with the actual requests and
+        responses recorded.</td>
+      <td>Published documentation is incomplete and sources disagree.</td></tr>
+    <tr><td><strong>Audience resolves narrowly</strong></td>
+      <td>Confirm the audience selection resolves to exactly the seed recipients — before it is ever
+        pointed at the real list.</td>
+      <td>An audience filter that silently resolves wider than intended is the worst failure available
+        to us.</td></tr>
+    <tr><td><strong>One-click unsubscribe present</strong></td>
+      <td>Inspect the raw source of an actually received test message and confirm the required headers
+        are there.</td>
+      <td>No documentation can prove what the platform put on a specific message. Only the received
+        message can.</td></tr>
+    <tr><td><strong>Domain authentication</strong></td>
+      <td>Verify against a received message that authentication passes and the visible sender aligns.</td>
+      <td>A configuration that looks right can still fail in transit.</td></tr>
+    <tr><td><strong>Inbox placement</strong></td>
+      <td>Score the issue with a deliverability testing service and address anything flagged.</td>
+      <td>Catches problems before real subscribers experience them.</td></tr>
+    <tr><td><strong>Rendering</strong></td>
+      <td>View the issue in the major mail clients our audience actually uses, and confirm it is not
+        truncated.</td>
+      <td>Email clients render inconsistently; a layout that works in one can break in another.</td></tr>
+    <tr><td><strong>Approval gate</strong></td>
+      <td>Open a real approval link from a real mailbox — including one behind corporate mail security —
+        and confirm the issue's state is unchanged afterwards.</td>
+      <td>This is the property most worth proving under realistic conditions rather than in a test.</td></tr>
+    <tr><td><strong>Full rehearsal</strong></td>
+      <td>Run a complete issue end to end with sending disabled.</td>
+      <td>Exercises the real process, including the people, with no possibility of a send.</td></tr>
+    <tr><td><strong>Restore from backup</strong></td>
+      <td>Actually restore a backup and confirm the result is complete.</td>
+      <td>An untested backup is not a backup.</td></tr>
+    <tr><td><strong>Stop switches</strong></td>
+      <td>Exercise each level and confirm it stops what it claims to.</td>
+      <td>An untested control is not a control.</td></tr>
+    <tr><td><strong>Compliance footer</strong></td>
+      <td>Confirm real legal name, real postal address and working unsubscribe in a received message.</td>
+      <td>These are legal requirements and the most consequential thing to get wrong.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout ok">
+  <span class="t">The first live send</span>
+  <p>
+    Once every check above is passed, the first live send is a deliberate act by a named person, with a
+    second approver agreeing. It is recorded. The system will not perform it on its own, and this is by
+    design rather than by omission.
+  </p>
+</div>
+
+<h2><span class="num">16</span>Risk register</h2>
+
+<table>
+  <thead><tr><th style="width:20%">Risk</th><th style="width:9%">Impact</th><th style="width:40%">Mitigation</th><th>Owner</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Send to the wrong or wider audience</strong></td>
+      <td><span class="sev hi">Severe</span></td>
+      <td>Audience proven to resolve to seed recipients before any live use; live sending requires
+        environment, audience and stop switches all deliberately aligned; system refuses an empty or
+        unverified audience definition.</td>
+      <td>Growth Ops</td></tr>
+    <tr><td><strong>Issue sent without human review</strong></td>
+      <td><span class="sev hi">Severe</span></td>
+      <td>Viewing the approval link cannot send; only an explicit action can. Proven under real
+        corporate mail security before launch.</td>
+      <td>Growth Ops</td></tr>
+    <tr><td><strong>Duplicate send</strong></td>
+      <td><span class="sev hi">Severe</span></td>
+      <td>One issue per week enforced at the data layer; approval works exactly once; delivery is queued
+        with a guard against repeat submission.</td>
+      <td>AI Eng</td></tr>
+    <tr><td><strong>Factually wrong technical claim</strong></td>
+      <td><span class="sev hi">Severe</span></td>
+      <td>Closed source material; automated verification of every link and identifier; knowledgeable
+        human review. Meaning-level error remains a managed residual risk.</td>
+      <td>Approver</td></tr>
+    <tr><td><strong>Sender reputation damage</strong></td>
+      <td><span class="sev hi">Severe</span></td>
+      <td>Opt-in only; authentication before launch; complaint monitoring with a warning level below the
+        enforced ceiling; sunset policy; consider separating marketing from business-critical mail.</td>
+      <td>Growth Ops + IT</td></tr>
+    <tr><td><strong>Missing legal footer elements</strong></td>
+      <td><span class="sev hi">Severe</span></td>
+      <td>Treated as launch prerequisites; the system refuses to send while any required brand or legal
+        value is unset, checked again immediately before delivery.</td>
+      <td>Leadership</td></tr>
+    <tr><td><strong>Platform behaves differently than expected</strong></td>
+      <td><span class="sev md">Moderate</span></td>
+      <td>Resolved by observation in a test account before launch; unresolved questions block the live
+        audience rather than being assumed away.</td>
+      <td>AI Eng</td></tr>
+    <tr><td><strong>Article production stalls</strong></td>
+      <td><span class="sev md">Moderate</span></td>
+      <td>Issues can run on the intelligence stream alone, but distinctiveness drops. Escalate rather
+        than quietly degrade; skip rather than pad.</td>
+      <td>Marketing</td></tr>
+    <tr><td><strong>Cadence slips</strong></td>
+      <td><span class="sev md">Moderate</span></td>
+      <td>Preparation is automatic, so the only manual step is review; escalation when an issue sits
+        unapproved past the agreed window.</td>
+      <td>Growth Ops</td></tr>
+    <tr><td><strong>Hostile content in a public feed</strong></td>
+      <td><span class="sev md">Moderate</span></td>
+      <td>Sources restricted to an approved list; incoming text sanitised; feed text never treated as
+        instructions to the system.</td>
+      <td>AI Eng</td></tr>
+    <tr><td><strong>Key-person dependency</strong></td>
+      <td><span class="sev md">Moderate</span></td>
+      <td>Written operating procedures; more than one named approver; rehearsed incident handling.
+        Worth addressing early rather than after it becomes a problem.</td>
+      <td>Leadership</td></tr>
+    <tr><td><strong>Data loss</strong></td>
+      <td><span class="sev lo">Contained</span></td>
+      <td>Regular backups with a tested restore. Sent issues are immutable, so a restored copy is
+        identical to what recipients received.</td>
+      <td>AI Eng</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="num">17</span>Success metrics</h2>
+
+<p>
+  Measured from the first live issue. The distinction between what we <em>watch</em> and what we
+  <em>act on</em> matters: acting on noise is its own failure mode.
+</p>
+
+<table>
+  <thead><tr><th style="width:20%">Area</th><th style="width:30%">Measure</th><th>What we do about it</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3"><strong>Delivery health</strong><br><span class="sev hi">Act on</span></td>
+      <td>Complaint rate</td>
+      <td>Investigate at the warning level; stop sending at the enforced ceiling.</td></tr>
+    <tr><td>Hard bounce rate</td>
+      <td>A rising trend indicates a list acquisition problem. Investigate the source.</td></tr>
+    <tr><td>Delivery rate</td>
+      <td>A sudden drop suggests a reputation or authentication problem. Treat as urgent.</td></tr>
+    <tr><td rowspan="2"><strong>Engagement</strong><br><span class="sev md">Watch</span></td>
+      <td>Click rate, and clicks as a share of opens</td>
+      <td>The most honest available signal of whether content is landing. Guides editorial direction.</td></tr>
+    <tr><td>Open rate</td>
+      <td>Directional only — see the caveat below. Never used alone to judge an issue.</td></tr>
+    <tr><td rowspan="2"><strong>List health</strong><br><span class="sev md">Watch</span></td>
+      <td>Net growth, unsubscribe rate</td>
+      <td>A spike after a specific issue is editorial feedback worth taking seriously.</td></tr>
+    <tr><td>Share of list engaged</td>
+      <td>Drives the sunset policy. A smaller engaged list beats a larger stale one.</td></tr>
+    <tr><td rowspan="2"><strong>Operational</strong><br><span class="sev hi">Act on</span></td>
+      <td>Issues shipped as planned</td>
+      <td>The core reliability measure. A miss should have a recorded reason.</td></tr>
+    <tr><td>Incidents</td>
+      <td>Target is zero. Any duplicate send, unreviewed send or factual correction is reviewed.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <span class="t">A caveat about open rates</span>
+  <p>
+    Open tracking has become substantially unreliable. Privacy features in major mail clients pre-fetch
+    tracking pixels automatically, registering opens that never happened. Reported open rates are
+    therefore inflated by an unknown amount and are not comparable across audiences or over time.
+    We track the figure for direction only, and judge content on clicks, replies and unsubscribes.
+    Anyone reporting on this channel should understand that before quoting an open rate.
+  </p>
+</div>
+
+<h2><span class="num">18</span>Roles and responsibilities</h2>
+
+<table>
+  <thead><tr><th style="width:20%">Role</th><th style="width:42%">Responsible for</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Leadership</strong></td>
+      <td>Approving this plan. Confirming the legal entity, postal address and approver roster.
+        Authorising the first live send.</td>
+      <td>The blocking decisions in section 14 sit here.</td></tr>
+    <tr><td><strong>Growth Operations</strong></td>
+      <td>Editorial direction and keyword set. Audience definition and list hygiene. Approving issues.
+        Monitoring the health metrics.</td>
+      <td>Day-to-day owner of the channel.</td></tr>
+    <tr><td><strong>Named approver(s)</strong></td>
+      <td>Reviewing each issue before it sends. Judging accuracy and tone, not just presence.</td>
+      <td>At least two named people. Review must be genuine, not a rubber stamp.</td></tr>
+    <tr><td><strong>AI Engineering</strong></td>
+      <td>Building and maintaining the system. Content sources, quality gates, platform integration,
+        backups, monitoring.</td>
+      <td>Does not decide what is sent or to whom.</td></tr>
+    <tr><td><strong>IT</strong></td>
+      <td>Domain authentication and DNS for the sending domain.</td>
+      <td>Needed at Stage 0 and again at verification.</td></tr>
+    <tr><td><strong>Marketing</strong></td>
+      <td>Brand assets. Article production, which the newsletter depends on.</td>
+      <td>Upstream dependency, not part of this project.</td></tr>
+    <tr><td><strong>Escalation contact</strong></td>
+      <td>Responding when an issue is stuck, has failed, or a health threshold is breached.</td>
+      <td>Must be a named person, not a shared inbox nobody watches.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <span class="t">One separation worth preserving</span>
+  <p>
+    The people who build the system do not decide what goes out or who receives it, and the people who
+    approve content do not need to understand the system to do their job well. Keeping those
+    responsibilities apart is what makes the approval gate meaningful rather than ceremonial.
+  </p>
+</div>
+
+<!-- ============ APPENDICES ============ -->
+<section class="part-open">
+  <div class="part-eyebrow">Appendices</div>
+  <h1>Reference material</h1>
+  <p class="part-lede">Supporting detail for the project team. Not required reading for the strategic
+    decision in Parts I–III.</p>
+  <div class="part-rule"></div>
+</section>
+
+<h2><span class="num">A</span>System design</h2>
+
+<p>
+  The system is organised into three separated concerns. The separation is the point: it is what lets us
+  make the safety guarantees in Part III, and it is the main thing distinguishing this from wiring a feed
+  directly into an email platform.
+</p>
+
+<figure>
+<svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Architecture diagram showing the work plane, control plane and delivery plane, with the control plane as system of record">
+  <defs>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7885"/>
+    </marker>
+    <style>
+      .pl{ fill:#fbfcfd; stroke:#c3ccd6; stroke-width:1.2; }
+      .plc{ fill:#eef3fb; stroke:#1f4e9c; stroke-width:1.8; }
+      .bx{ fill:#ffffff; stroke:#3d4a58; stroke-width:1; }
+      .ttl{ font-family:"Liberation Sans",sans-serif; font-size:9.5px; fill:#12181f; font-weight:700; }
+      .eyebrow{ font-family:"Liberation Sans",sans-serif; font-size:7.6px; fill:#1f4e9c; font-weight:700; letter-spacing:.1em; }
+      .sm{ font-family:"Liberation Sans",sans-serif; font-size:8px; fill:#3d4a58; }
+      .xs{ font-family:"Liberation Sans",sans-serif; font-size:7.6px; fill:#6b7885; }
+      .ln{ stroke:#6b7885; stroke-width:1.2; fill:none; }
+    </style>
+  </defs>
+
+  <!-- work plane -->
+  <rect x="4" y="26" width="176" height="150" rx="3" class="pl"/>
+  <text x="14" y="42" class="eyebrow">WORK PLANE</text>
+  <text x="14" y="56" class="ttl">Scheduled workers</text>
+  <rect x="14" y="64" width="156" height="24" rx="2" class="bx"/><text x="22" y="79" class="sm">Start the week's issue</text>
+  <rect x="14" y="92" width="156" height="24" rx="2" class="bx"/><text x="22" y="107" class="sm">Gather content</text>
+  <rect x="14" y="120" width="156" height="24" rx="2" class="bx"/><text x="22" y="135" class="sm">Trigger assembly</text>
+  <rect x="14" y="148" width="156" height="20" rx="2" class="bx"/><text x="22" y="162" class="sm">Confirm what was sent</text>
+
+  <!-- control plane -->
+  <rect x="200" y="26" width="286" height="248" rx="3" class="plc"/>
+  <text x="212" y="42" class="eyebrow">CONTROL PLANE — SYSTEM OF RECORD</text>
+  <text x="212" y="56" class="ttl">Owns every decision that matters</text>
+  <rect x="212" y="64" width="128" height="30" rx="2" class="bx"/>
+  <text x="220" y="77" class="sm">One issue per week</text><text x="220" y="88" class="xs">Locking prevents duplicates</text>
+  <rect x="348" y="64" width="126" height="30" rx="2" class="bx"/>
+  <text x="356" y="77" class="sm">Selection &amp; drafting</text><text x="356" y="88" class="xs">Caps and editorial rules</text>
+  <rect x="212" y="98" width="128" height="30" rx="2" class="bx"/>
+  <text x="220" y="111" class="sm">Quality gates</text><text x="220" y="122" class="xs">Links, identifiers, size, footer</text>
+  <rect x="348" y="98" width="126" height="30" rx="2" class="bx"/>
+  <text x="356" y="111" class="sm">Frozen issue</text><text x="356" y="122" class="xs">Immutable once approved</text>
+  <rect x="212" y="132" width="262" height="32" rx="2" style="fill:#ffffff;stroke:#1f4e9c;stroke-width:1.6"/>
+  <text x="220" y="146" class="sm" style="font-weight:700">Approval gate — the only route to a send</text>
+  <text x="220" y="158" class="xs">Viewing is inert. A person must act. Works exactly once.</text>
+  <rect x="212" y="168" width="128" height="30" rx="2" class="bx"/>
+  <text x="220" y="181" class="sm">Send queue</text><text x="220" y="192" class="xs">Guarded against repeats</text>
+  <rect x="348" y="168" width="126" height="30" rx="2" class="bx"/>
+  <text x="356" y="181" class="sm">Stop switches</text><text x="356" y="192" class="xs">Levels 1 and 2</text>
+  <rect x="212" y="202" width="262" height="30" rx="2" class="bx"/>
+  <text x="220" y="215" class="sm">Unchangeable record of every step</text>
+  <text x="220" y="226" class="xs">Who approved, what was sent, when. Cannot be edited or deleted.</text>
+  <rect x="212" y="236" width="262" height="28" rx="2" class="bx"/>
+  <text x="220" y="249" class="sm">Archived copies of every issue sent</text>
+  <text x="220" y="260" class="xs">Byte-identical to what recipients received.</text>
+
+  <!-- delivery plane -->
+  <rect x="506" y="26" width="190" height="150" rx="3" class="pl"/>
+  <text x="516" y="42" class="eyebrow">DELIVERY PLANE</text>
+  <text x="516" y="56" class="ttl">Email platform</text>
+  <rect x="516" y="64" width="170" height="30" rx="2" class="bx"/>
+  <text x="524" y="77" class="sm">Owns the subscriber list</text><text x="524" y="88" class="xs">Consent, suppression, preferences</text>
+  <rect x="516" y="98" width="170" height="30" rx="2" class="bx"/>
+  <text x="524" y="111" class="sm">Sends the mail</text><text x="524" y="122" class="xs">Authentication, unsubscribe headers</text>
+  <rect x="516" y="132" width="170" height="30" rx="2" class="bx"/>
+  <text x="524" y="145" class="sm">Reports what happened</text><text x="524" y="156" class="xs">Delivery and engagement</text>
+
+  <!-- arrows -->
+  <line x1="180" y1="100" x2="196" y2="100" class="ln" marker-end="url(#a3)"/>
+  <line x1="486" y1="120" x2="502" y2="120" class="ln" marker-end="url(#a3)"/>
+  <line x1="502" y1="150" x2="486" y2="150" class="ln" marker-end="url(#a3)"/>
+
+  <!-- footnote -->
+  <rect x="4" y="188" width="176" height="86" rx="3" style="fill:#fdf6e8;stroke:#c8912a;stroke-width:1"/>
+  <text x="14" y="204" class="sm" style="font-weight:700;fill:#8a6318">Why not just workers?</text>
+  <text x="14" y="219" class="xs">Scheduled workers can run twice,</text>
+  <text x="14" y="231" class="xs">retry after a timeout, or overlap.</text>
+  <text x="14" y="243" class="xs">They are good at triggering work</text>
+  <text x="14" y="255" class="xs">and bad at being the source of</text>
+  <text x="14" y="267" class="xs">truth. So they ask; they never decide.</text>
+</svg>
+<figcaption><b>Figure 4 — Three planes.</b> The control plane is the system of record: it owns the
+  lifecycle, the approval gate and the audit trail. Workers only ask it to do things, and the email
+  platform only receives an already-approved issue.</figcaption>
+</figure>
+
+<h3>Why the separation matters</h3>
+<table class="tight">
+  <thead><tr><th style="width:24%">Plane</th><th style="width:36%">Responsible for</th><th>Explicitly not responsible for</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Work plane</strong></td>
+      <td>Triggering activity on a schedule.</td>
+      <td>Deciding anything. It holds no state and is not trusted to be correct about what has already
+        happened.</td></tr>
+    <tr><td><strong>Control plane</strong></td>
+      <td>The issue lifecycle, one-issue-per-week enforcement, quality gates, the approval gate, the
+        audit trail, and the archive.</td>
+      <td>Holding subscriber personal data.</td></tr>
+    <tr><td><strong>Delivery plane</strong></td>
+      <td>The subscriber list, consent and suppression, and actually transmitting the mail.</td>
+      <td>Deciding what gets sent or when. It receives an already-approved issue.</td></tr>
+  </tbody>
+</table>
+
+<h3>Technology choices</h3>
+<p>
+  The body of this document deliberately avoids naming products, because the strategy holds regardless
+  of which vendor fills each role. For the project team, this is what fills them and why.
+</p>
+<table class="tight">
+  <thead><tr><th style="width:20%">Role</th><th style="width:26%">Choice</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td><strong>System of record</strong></td><td>A relational database (PostgreSQL)</td>
+      <td>We need guaranteed uniqueness, locking that prevents two jobs acting on the same issue, and an
+        append-only history. A workflow tool cannot provide these.</td></tr>
+    <tr><td><strong>Control plane</strong></td><td>A small service we own</td>
+      <td>Holds the lifecycle, the approval gate and the audit trail. Deliberately ours rather than a
+        vendor's, because these are the guarantees the whole design rests on.</td></tr>
+    <tr><td><strong>Scheduled workers</strong></td><td>A workflow automation tool (n8n)</td>
+      <td>Good at running things on a schedule and easy to change without a deploy. Trusted only to
+        trigger work, never to decide anything or hold state.</td></tr>
+    <tr><td><strong>Email platform</strong></td><td>HighLevel LC Email</td>
+      <td>Already holds our contacts and consent records, and provides the one-click unsubscribe headers
+        bulk senders are required to include. Keeping the list in one place avoids a second copy of
+        subscriber data.</td></tr>
+    <tr><td><strong>Summarisation</strong></td><td>A hosted language model</td>
+      <td>Drafts summary copy. A configuration choice, changeable without redesign if quality or cost
+        warrants.</td></tr>
+    <tr><td><strong>CRM view</strong></td><td>Twenty</td>
+      <td>Receives a read-only projection of what was sent. It is not the source of truth and has no
+        ability to send.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <span class="t">One constraint the email platform imposes</span>
+  <p>
+    Sending must go through the platform's own email service rather than a custom mail server, because
+    that is what supplies the required unsubscribe headers and the domain authentication that goes with
+    them. The trade-off is that some details of the platform's behaviour are not fully documented, which
+    is why Stage 4 verifies them by observation rather than trusting documentation.
+  </p>
+</div>
+
+<h3>Two properties worth understanding</h3>
+<p>
+  <strong>Issues are frozen.</strong> At approval, the issue is fixed and identified by a fingerprint of
+  its exact contents. What the approver saw is what is sent, and the archived copy is provably the same
+  as what recipients received. There is no window in which an approved issue can be edited.
+</p>
+<p>
+  <strong>The record cannot be rewritten.</strong> The history of what happened to each issue is
+  append-only: entries can be added but not altered or deleted, including by the system itself. If we
+  ever need to answer "who approved this and what exactly went out", the answer is reliable.
+</p>
+
+<h2><span class="num">B</span>Operating procedures</h2>
+
+<h3>A normal week</h3>
+<ol>
+  <li>The issue is prepared automatically, ahead of the send, allowing a real review window.</li>
+  <li>The approver receives a notification with a link to the finished issue.</li>
+  <li>The approver reviews and either approves or rejects with a comment.</li>
+  <li>On approval, the issue is queued and handed to the email platform.</li>
+  <li>Delivery is confirmed against the platform, and health figures are collected afterwards.</li>
+</ol>
+
+<h3>When something goes wrong</h3>
+<table class="tight">
+  <thead><tr><th style="width:26%">Situation</th><th>Response</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Issue fails its quality checks</strong></td>
+      <td>It is held and never offered for approval. Fix the cause and reassemble. Do not bypass the gate.</td></tr>
+    <tr><td><strong>Nobody approved in time</strong></td>
+      <td>Escalated to the named contact. Never auto-approved. Skipping the week is an acceptable
+        outcome.</td></tr>
+    <tr><td><strong>Delivery failed repeatedly</strong></td>
+      <td>Stops and escalates rather than retrying indefinitely. Configuration errors escalate at once,
+        since retrying cannot fix them.</td></tr>
+    <tr><td><strong>Wrong content went out</strong></td>
+      <td>Stop switches on. Cancel at the platform if still in flight — cancel, never resume. Then
+        decide whether a correction is warranted.</td></tr>
+    <tr><td><strong>Approval link opened by a scanner</strong></td>
+      <td>Nothing happens; this is the designed behaviour. Confirm the issue's state is unchanged and
+        continue.</td></tr>
+    <tr><td><strong>Complaint threshold breached</strong></td>
+      <td>Warning level: investigate acquisition and content. Enforced ceiling: stop sending until
+        reputation recovers.</td></tr>
+  </tbody>
+</table>
+
+<h3>Backup and recovery</h3>
+<p>
+  The operational record and the archived issues are backed up on a schedule, held somewhere other than
+  the machine that produced them, and — critically — restored periodically as a rehearsal. A backup that
+  has never been restored should not be counted as a backup. Sent issues are immutable, so a restored
+  archive is identical to what recipients received.
+</p>
+
+<h2><span class="num">C</span>Glossary</h2>
+
+<table class="tight">
+  <thead><tr><th style="width:26%">Term</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Opt-in</strong></td><td>The subscriber explicitly asked to receive this email. The only basis on which we send.</td></tr>
+    <tr><td><strong>Email platform</strong></td><td>The service that holds the list and physically sends the mail.</td></tr>
+    <tr><td><strong>Sender reputation</strong></td><td>Mailbox providers' running judgement of whether our mail is wanted. Determines inbox versus spam. Slow to build, quick to lose.</td></tr>
+    <tr><td><strong>Domain authentication</strong></td><td>DNS records letting a receiving system verify mail genuinely came from our domain and was not altered.</td></tr>
+    <tr><td><strong>One-click unsubscribe</strong></td><td>Machine-readable headers letting a mailbox provider offer its own unsubscribe control. Required of bulk senders.</td></tr>
+    <tr><td><strong>Complaint rate</strong></td><td>Share of recipients marking the message as spam. The single most important deliverability signal.</td></tr>
+    <tr><td><strong>Suppression</strong></td><td>Addresses permanently excluded — unsubscribed, complained, or repeatedly undeliverable.</td></tr>
+    <tr><td><strong>Sunset policy</strong></td><td>Retiring subscribers who have not engaged for an extended period, to protect sender reputation.</td></tr>
+    <tr><td><strong>Actively exploited vulnerability</strong></td><td>A security flaw confirmed to be under real-world attack, not merely theoretical. The basis of our patch board.</td></tr>
+    <tr><td><strong>Vulnerability identifier</strong></td><td>The standard public reference for a specific security flaw, letting readers look it up independently.</td></tr>
+    <tr><td><strong>Dry run</strong></td><td>The system performing every step except actually sending. Our default state.</td></tr>
+    <tr><td><strong>Seed recipients</strong></td><td>A small set of addresses we control, used to inspect a real received message before any live send.</td></tr>
+    <tr><td><strong>System of record</strong></td><td>The one place holding the authoritative answer to what happened. Here, the control plane.</td></tr>
+    <tr><td><strong>Frozen issue</strong></td><td>An issue fixed at approval so that what was approved is exactly what is sent and archived.</td></tr>
+    <tr><td><strong>Clipping</strong></td><td>Mailbox providers truncating an over-long message, hiding the footer — including the legally required parts — behind a link.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout" style="margin-top:8mm">
+  <span class="t">Document status</span>
+  <p>
+    This is a draft for review. The strategy in Parts I–III is presented for approval; the decisions in
+    section 14 need named owners before build work can reach a live send. Both should be settled before
+    this plan is treated as agreed.
+  </p>
+</div>
+
+</body>
+</html>
