@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Fixture industry feed</title>
+    <item>
+      <title>Why prompt injection is now a board-level risk</title>
+      <link>https://industry.example.com/prompt-injection-board-risk</link>
+      <description>A survey of enterprise AI incidents traces most of them back to untrusted text being treated as instructions, not to model quality.</description>
+      <pubDate>Wed, 19 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Agentic AI tooling is outpacing its own guardrails</title>
+      <link>https://industry.example.com/agentic-ai-guardrails</link>
+      <description>Researchers document a widening gap between how much autonomy agent frameworks grant and how much of that surface is actually reviewed.</description>
+      <pubDate>Tue, 18 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

@@ -466,6 +466,7 @@ describe("invariant 6: feed text is data, never instruction", () => {
               editorBlurb: "One post this week, no threat items worth a callout.",
               posts: [{ id: hostilePost.id, summary: "A neutral summary.", ctaLabel: "Read the post" }],
               threats: [],
+              briefs: [],
             },
           };
         },

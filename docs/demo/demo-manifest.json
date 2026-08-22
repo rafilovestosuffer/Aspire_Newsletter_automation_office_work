@@ -1,0 +1,88 @@
+[
+  {
+    "theme": "light",
+    "htmlPath": "/home/user/Aspire_Newsletter_automation_office_work/docs/demo/aspire-weekly-demo-light.html",
+    "qa": {
+      "ok": true,
+      "failures": [],
+      "warnings": [
+        "brand.legalName is still a placeholder: TODO: confirm sending entity — aspiretss.com footer lists \"Aspire Tech Services & Solutions Limited\"",
+        "brand.postalAddress is still a placeholder: TODO: valid physical postal address (CAN-SPAM) — not yet confirmed"
+      ]
+    },
+    "htmlBytes": 61743,
+    "issue": {
+      "schemaVersion": "1.0.0",
+      "issueKey": "aspire-America/New_York-2026-W34",
+      "brandSlug": "aspire",
+      "audienceTz": "America/New_York",
+      "isoWeek": "2026-W34",
+      "revision": 1,
+      "status": "assembled",
+      "subject": "HIPAA and a hybrid workforce: securing PHI when nobody's ...",
+      "preheader": "Selected posts and public KEV items from this week's window.",
+      "htmlSha256": "0a8824fef2d9f3001a032412cc9c1e0a505636dbe22024d6132a9441f768259a",
+      "textSha256": "d330cb177ace646a6cfc130f7188ed3c3eb5d33af61887221400cb80d88c5a46",
+      "postIds": [
+        "post:99828a46d55a16f7",
+        "post:d4f7d004112eb91f",
+        "post:0ec80444bc0e327a",
+        "post:f2c8098604361cdc",
+        "post:61b43552df8310a1"
+      ],
+      "threatIds": [
+        "threat:CVE-2026-45659",
+        "threat:CVE-2026-72529",
+        "threat:CVE-2026-73570",
+        "threat:CVE-2026-72530"
+      ],
+      "briefIds": [
+        "brief:397bcb9bbec86908",
+        "brief:98a2b173dcb4a6e5"
+      ]
+    }
+  },
+  {
+    "theme": "dark",
+    "htmlPath": "/home/user/Aspire_Newsletter_automation_office_work/docs/demo/aspire-weekly-demo-dark.html",
+    "qa": {
+      "ok": true,
+      "failures": [],
+      "warnings": [
+        "brand.legalName is still a placeholder: TODO: confirm sending entity — aspiretss.com footer lists \"Aspire Tech Services & Solutions Limited\"",
+        "brand.postalAddress is still a placeholder: TODO: valid physical postal address (CAN-SPAM) — not yet confirmed"
+      ]
+    },
+    "htmlBytes": 61743,
+    "issue": {
+      "schemaVersion": "1.0.0",
+      "issueKey": "aspire-America/New_York-2026-W34",
+      "brandSlug": "aspire",
+      "audienceTz": "America/New_York",
+      "isoWeek": "2026-W34",
+      "revision": 1,
+      "status": "assembled",
+      "subject": "HIPAA and a hybrid workforce: securing PHI when nobody's ...",
+      "preheader": "Selected posts and public KEV items from this week's window.",
+      "htmlSha256": "5f8efe423d08a759de9624af79335d1ec07427057d21414c1948bc4fe378b989",
+      "textSha256": "d330cb177ace646a6cfc130f7188ed3c3eb5d33af61887221400cb80d88c5a46",
+      "postIds": [
+        "post:99828a46d55a16f7",
+        "post:d4f7d004112eb91f",
+        "post:0ec80444bc0e327a",
+        "post:f2c8098604361cdc",
+        "post:61b43552df8310a1"
+      ],
+      "threatIds": [
+        "threat:CVE-2026-45659",
+        "threat:CVE-2026-72529",
+        "threat:CVE-2026-73570",
+        "threat:CVE-2026-72530"
+      ],
+      "briefIds": [
+        "brief:397bcb9bbec86908",
+        "brief:98a2b173dcb4a6e5"
+      ]
+    }
+  }
+]

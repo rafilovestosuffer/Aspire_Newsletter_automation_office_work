@@ -26,7 +26,16 @@ function asArray<T>(v: T | T[] | undefined): T[] {
   return Array.isArray(v) ? v : [v];
 }
 
-export function parseRssPosts(xml: string, sourceId: string): ContentItem[] {
+/**
+ * `kind` defaults to "post" (Aspire's own articles). Pass "brief" for a
+ * third-party industry/AI feed — callers must never let a third-party item
+ * default to "post", which would present someone else's writing as ours.
+ */
+export function parseRssPosts(
+  xml: string,
+  sourceId: string,
+  kind: "post" | "brief" = "post",
+): ContentItem[] {
   const doc = parser.parse(xml) as { rss?: { channel?: { item?: unknown } } };
   const items = asArray(doc.rss?.channel?.item as Record<string, unknown> | Record<string, unknown>[] | undefined);
   const out: ContentItem[] = [];
@@ -41,8 +50,8 @@ export function parseRssPosts(xml: string, sourceId: string): ContentItem[] {
     const rawHash = sha256Hex(`${link}\n${title}\n${excerpt}`);
     out.push({
       schemaVersion: CONTENT_SCHEMA_VERSION,
-      id: `post:${sha256Hex(link).slice(0, 16)}`,
-      kind: "post",
+      id: `${kind}:${sha256Hex(link).slice(0, 16)}`,
+      kind,
       sourceId,
       canonicalUrl: link,
       title,

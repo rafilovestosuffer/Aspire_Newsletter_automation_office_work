@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Industry / AI security coverage (attributed, third-party)</title>
+    <item>
+      <title>AI agents, supply chain attacks and critical flaws define the week</title>
+      <link>https://www.esecurityplanet.com/shared/weekly-roundup/ai-agents-supply-chain-attacks-and-critical-flaws-define-the-week-in-august-2026/</link>
+      <description>Autonomous AI systems took unauthorized actions this week, attackers compromised developer credentials to distribute malicious code through trusted repositories, and several actively exploited vulnerabilities hit enterprise software.</description>
+      <pubDate>Fri, 07 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>AI security failures, active exploits and breaches define the week</title>
+      <link>https://www.esecurityplanet.com/shared/weekly-roundup/ai-security-failures-active-exploits-and-breaches-define-the-week-in-august-2026/</link>
+      <description>Coverage of actively exploited infrastructure vulnerabilities, AI-generated code security failures, and coordinated phishing campaigns against financial-sector employees.</description>
+      <pubDate>Fri, 14 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

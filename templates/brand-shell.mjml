@@ -4,47 +4,67 @@
     <mj-preview>{{preheader}}</mj-preview>
     <mj-attributes>
       <mj-all font-family="Arial, Helvetica, sans-serif" />
-      <mj-text color="{{textColor}}" font-size="16px" line-height="1.5" />
-      <mj-button background-color="{{primaryColor}}" color="#0B1220" font-weight="bold" border-radius="4px" />
+      <mj-text color="{{textColor}}" font-size="16px" line-height="1.6" />
+      <mj-button background-color="{{primaryColor}}" color="#FFFFFF" font-weight="bold" border-radius="4px" />
     </mj-attributes>
+    <mj-raw>
+      <meta name="color-scheme" content="light dark" />
+      <meta name="supported-color-schemes" content="light dark" />
+    </mj-raw>
     <mj-style>
       a { color: {{primaryColor}}; }
+      /* Dark-mode support for clients that honour prefers-color-scheme
+         (Apple Mail, many webmail/Android clients). Classic Outlook on
+         Windows applies no dark transform at all and simply renders the
+         light palette below as-is, which is the correct, safe fallback —
+         see docs/plan for the research behind this choice. */
+      @media (prefers-color-scheme: dark) {
+        .dm-bg { background-color: #14181f !important; }
+        .dm-card { background-color: #1c212b !important; }
+        .dm-text { color: #eef1f5 !important; }
+        .dm-muted { color: #9aa5b1 !important; }
+      }
     </mj-style>
   </mj-head>
-  <mj-body background-color="{{backgroundColor}}" width="600px">
-    <mj-section padding="24px 16px 8px">
+  <mj-body background-color="{{backgroundColor}}" width="600px" css-class="dm-bg">
+    <mj-section padding="24px 16px 8px" css-class="dm-bg">
       <mj-column>
-        <mj-text font-size="12px" color="#9AA8BC">{{displayName}} · {{issueLabel}}</mj-text>
-        <mj-text font-size="22px" font-weight="bold" padding-top="0">{{displayName}} Weekly</mj-text>
+        <mj-text font-size="12px" color="#6b7885" css-class="dm-muted">{{displayName}} · {{issueLabel}}</mj-text>
+        <mj-text font-size="22px" font-weight="bold" padding-top="0" css-class="dm-text">{{displayName}} Weekly</mj-text>
         <mj-text font-size="14px"><a href="{{archiveUrl}}">View in browser</a></mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="8px 16px">
+    <mj-section padding="8px 16px" css-class="dm-bg">
       <mj-column>
-        <mj-text>{{editorBlurb}}</mj-text>
+        <mj-text font-size="17px" font-weight="bold" css-class="dm-text">The 30-second read</mj-text>
+        <mj-text css-class="dm-text">{{editorBlurb}}</mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="8px 16px 0">
+    <mj-section padding="16px 16px 0" css-class="dm-bg">
       <mj-column>
-        <mj-text font-size="18px" font-weight="bold">From the blog</mj-text>
-      </mj-column>
-    </mj-section>
-    {{postBlocks}}
-
-    <mj-section padding="16px 16px 0">
-      <mj-column>
-        <mj-text font-size="18px" font-weight="bold">This week in threats</mj-text>
-        <mj-text font-size="12px" color="#9AA8BC">Public vulnerability intelligence. CISA KEV catalog data is CC0. This newsletter is not a CISA or DHS product and does not use agency marks.</mj-text>
+        <mj-text font-size="18px" font-weight="bold" css-class="dm-text">Patch board — this week's KEV items</mj-text>
+        <mj-text font-size="12px" color="#6b7885" css-class="dm-muted">Sorted ransomware-linked first, then nearest CISA remediation deadline. Public CISA KEV data is CC0 — this newsletter is not a CISA or DHS product and does not use agency marks.</mj-text>
       </mj-column>
     </mj-section>
     {{threatBlocks}}
 
-    <mj-section padding="24px 16px 32px">
+    {{promoBlock}}
+
+    {{briefsSection}}
+
+    <mj-section padding="16px 16px 0" css-class="dm-bg">
       <mj-column>
-        <mj-divider border-color="#243044" />
-        <mj-text font-size="12px" color="#9AA8BC">
+        <mj-text font-size="18px" font-weight="bold" css-class="dm-text">From the {{displayName}} blog</mj-text>
+      </mj-column>
+    </mj-section>
+    {{postBlocks}}
+
+    <mj-section padding="24px 16px 32px" css-class="dm-bg">
+      <mj-column>
+        <mj-divider border-color="#e2e6ea" />
+        <mj-text font-size="12px" color="#6b7885" css-class="dm-muted">
           {{legalName}}<br/>
           {{postalAddress}}<br/>
           {{advertisementNotice}}<br/><br/>

@@ -48,6 +48,7 @@ function goodOutput(overrides: Record<string, unknown> = {}) {
     editorBlurb: "Identity reviews lead this week. One KEV entry is on the patch board.",
     posts: [{ id: post.id, summary: "An original note about identity reviews.", ctaLabel: "Read the post" }],
     threats: [{ id: threat.id, whyItMatters: "Exploited in the wild.", severity: "high" }],
+    briefs: [],
     ...overrides,
   };
 }

@@ -63,6 +63,9 @@ describe("ingest scope keeps posts and threats workers distinct", () => {
     expect(threats.length).toBeGreaterThan(0);
     expect(posts.every((i) => i.kind === "post")).toBe(true);
     expect(threats.every((i) => i.kind === "threat")).toBe(true);
-    expect(all.length).toBe(posts.length + threats.length);
+    // "all" now also covers the third slice (industry briefs); the fixture
+    // registers two of them.
+    expect(all.length).toBe(posts.length + threats.length + 2);
+    expect(all.filter((i) => i.kind === "brief")).toHaveLength(2);
   });
 });

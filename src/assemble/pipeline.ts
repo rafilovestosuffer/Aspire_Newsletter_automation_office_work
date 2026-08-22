@@ -73,10 +73,10 @@ export async function assembleFromItems(opts: {
   const selected = selectContent(opts.items, opts.now, opts.config.relevance);
   const archiveUrl = `${opts.publicBaseUrl.replace(/\/$/, "")}/archive/${issueKeyToPath(opts.issue.issueKey)}/r/${opts.issue.revision}`;
 
-  if (!selected.posts.length && !selected.threats.length) {
+  if (!selected.posts.length && !selected.threats.length && !selected.briefs.length) {
     const empty: AssembleResult = {
-      issue: { ...opts.issue, status: "skipped", postIds: [], threatIds: [] },
-      llm: fixtureSummarize([], []),
+      issue: { ...opts.issue, status: "skipped", postIds: [], threatIds: [], briefIds: [] },
+      llm: fixtureSummarize([], [], []),
       html: "",
       text: "",
       qa: { ok: false, failures: ["empty issue"], warnings: [] },
@@ -89,11 +89,12 @@ export async function assembleFromItems(opts: {
   const llm = await summarizeSelected({
     posts: selected.posts,
     threats: selected.threats,
+    briefs: selected.briefs,
     provider: opts.llmProvider,
     apiKey: opts.llmApiKey,
     model: opts.llmModel,
   });
-  const untrustedPrompt = untrustedDataRegion(selected.posts, selected.threats);
+  const untrustedPrompt = untrustedDataRegion(selected.posts, selected.threats, selected.briefs);
   const issueLabel = `${opts.issue.isoWeek} · r${opts.issue.revision}`;
   const { html, errors } = compileMjml({
     brand: opts.config.brand,
@@ -102,6 +103,7 @@ export async function assembleFromItems(opts: {
     llm,
     posts: selected.posts,
     threats: selected.threats,
+    briefs: selected.briefs,
   });
   const text = compilePlaintext({
     brand: opts.config.brand,
@@ -110,6 +112,7 @@ export async function assembleFromItems(opts: {
     llm,
     posts: selected.posts,
     threats: selected.threats,
+    briefs: selected.briefs,
   });
   const qa = runQa({
     llm,
@@ -117,6 +120,7 @@ export async function assembleFromItems(opts: {
     text,
     posts: selected.posts,
     threats: selected.threats,
+    briefs: selected.briefs,
     brand: opts.config.brand,
     relevance: opts.config.relevance,
     archiveUrl,
@@ -136,6 +140,7 @@ export async function assembleFromItems(opts: {
     textSha256,
     postIds: selected.posts.map((p) => p.id),
     threatIds: selected.threats.map((t) => t.id),
+    briefIds: selected.briefs.map((b) => b.id),
   };
 
   const dir = artifactDirFor(opts.artifactsRoot, issue.issueKey, issue.revision);

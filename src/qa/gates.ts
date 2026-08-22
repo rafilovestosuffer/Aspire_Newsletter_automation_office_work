@@ -29,6 +29,7 @@ export function hrefAllowList(opts: {
     opts.brand.preferenceUrl,
     opts.brand.archiveBaseUrl,
     opts.archiveUrl,
+    opts.brand.promo?.ctaUrl,
   ]) {
     if (u) set.add(u);
   }
@@ -108,6 +109,7 @@ export function runQa(opts: {
   text: string;
   posts: ContentItem[];
   threats: ContentItem[];
+  briefs?: ContentItem[];
   brand: BrandConfig;
   relevance: RelevanceConfig;
   archiveUrl: string;
@@ -121,7 +123,8 @@ export function runQa(opts: {
 }): QaReport {
   const failures: string[] = [];
   const warnings: string[] = [];
-  const items = [...opts.posts, ...opts.threats];
+  const briefs = opts.briefs ?? [];
+  const items = [...opts.posts, ...opts.threats, ...briefs];
   const ids = new Set(items.map((i) => i.id));
   const sourceCves = new Set(items.flatMap((i) => i.cveIds.map((c) => c.toUpperCase())));
 
@@ -131,7 +134,7 @@ export function runQa(opts: {
   if (!opts.threats.length && !opts.relevance.allowPostsOnly) {
     failures.push("threats required unless allowPostsOnly");
   }
-  if (!opts.posts.length && !opts.threats.length) {
+  if (!opts.posts.length && !opts.threats.length && !briefs.length) {
     failures.push("empty issue");
   }
 
@@ -162,6 +165,23 @@ export function runQa(opts: {
   }
   for (const t of opts.llm.threats) {
     if (!ids.has(t.id)) failures.push(`threat id not in allow-list: ${t.id}`);
+  }
+  for (const b of opts.llm.briefs) {
+    if (!ids.has(b.id)) failures.push(`brief id not in allow-list: ${b.id}`);
+  }
+  // A brief must never be presented as one of Aspire's own posts — that is
+  // the exact mislabelling that motivated a distinct content kind.
+  for (const b of opts.llm.briefs) {
+    const item = items.find((i) => i.id === b.id);
+    if (item && item.kind !== "brief") {
+      failures.push(`brief id refers to a non-brief item: ${b.id}`);
+    }
+  }
+  for (const p of opts.llm.posts) {
+    const item = items.find((i) => i.id === p.id);
+    if (item && item.kind === "brief") {
+      failures.push(`post id refers to a third-party brief, not an Aspire article: ${p.id}`);
+    }
   }
 
   const allow = hrefAllowList({ items, brand: opts.brand, archiveUrl: opts.archiveUrl });

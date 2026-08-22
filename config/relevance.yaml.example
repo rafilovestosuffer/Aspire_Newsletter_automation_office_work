@@ -3,6 +3,7 @@ schemaVersion: "1.0.0"
 postLookbackDays: 8
 postCap: 5
 threatCap: 7
+briefCap: 3
 allowThreatOnly: false
 allowPostsOnly: false
 keywords:

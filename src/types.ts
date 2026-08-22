@@ -26,10 +26,10 @@ export const TERMINAL_NOOP_STATUSES: ReadonlySet<IssueStatus> = new Set([
   "sent",
 ]);
 
-export type ContentKind = "post" | "threat";
+export type ContentKind = "post" | "threat" | "brief";
 
-/** Which half of the feed registry an ingest run covers. */
-export type IngestScope = "posts" | "threats" | "all";
+/** Which slice of the feed registry an ingest run covers. */
+export type IngestScope = "posts" | "threats" | "briefs" | "all";
 
 export type Severity = "critical" | "high" | "medium" | "low" | "unknown";
 
@@ -48,6 +48,10 @@ export interface ContentItem {
   severity?: Severity;
   vendorProduct?: string;
   knownRansomware?: boolean;
+  /** CISA KEV remediation deadline (ISO date). The reader's actual SLA. */
+  dueDate?: string;
+  /** CISA KEV required action, verbatim from the catalogue. */
+  requiredAction?: string;
 }
 
 export interface NewsletterIssue {
@@ -64,6 +68,7 @@ export interface NewsletterIssue {
   textSha256?: string;
   postIds?: string[];
   threatIds?: string[];
+  briefIds?: string[];
   ghlCampaignId?: string | null;
   ghlSourceId?: string | null;
   ghlTraceId?: string | null;
@@ -87,6 +92,12 @@ export interface LlmPostOut {
   ctaLabel: string;
 }
 
+/** A third-party industry/AI item — never one of Aspire's own articles. */
+export interface LlmBriefOut {
+  id: string;
+  summary: string;
+}
+
 export interface LlmThreatOut {
   id: string;
   whyItMatters: string;
@@ -99,6 +110,7 @@ export interface LlmOutput {
   editorBlurb: string;
   posts: LlmPostOut[];
   threats: LlmThreatOut[];
+  briefs: LlmBriefOut[];
 }
 
 export interface QaReport {
@@ -127,6 +139,8 @@ export interface BrandConfig {
   ghlUnsubscribeMergeTag: string;
   advertisementNotice: string;
   cdnHost: string;
+  /** Optional native promo block. Absent or blank heading means no block renders. */
+  promo?: { heading: string; body: string; ctaLabel: string; ctaUrl: string };
 }
 
 export interface FeedConfig {
@@ -138,6 +152,13 @@ export interface FeedConfig {
     url: string;
     allowHost: string;
   }>;
+  /** Third-party industry/AI news. Rendered as attributed, never as Aspire's own writing. */
+  industryFeeds?: Array<{
+    id: string;
+    url: string;
+    allowHost: string;
+    sourceName: string;
+  }>;
 }
 
 export interface RelevanceConfig {
@@ -145,6 +166,7 @@ export interface RelevanceConfig {
   postLookbackDays: number;
   postCap: number;
   threatCap: number;
+  briefCap: number;
   allowThreatOnly: boolean;
   allowPostsOnly: boolean;
   keywords: string[];

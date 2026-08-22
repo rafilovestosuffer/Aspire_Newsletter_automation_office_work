@@ -10,7 +10,9 @@ interface KevDoc {
     product?: string;
     vulnerabilityName?: string;
     dateAdded?: string;
+    dueDate?: string;
     shortDescription?: string;
+    requiredAction?: string;
     knownRansomwareCampaignUse?: string;
   }>;
 }
@@ -28,6 +30,10 @@ export function parseKevJson(raw: string, sourceId: string): ContentItem[] {
     const canonicalUrl = `https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=${encodeURIComponent(cve)}`;
     const vendorProduct = toSafeText(`${v.vendorProject ?? ""} ${v.product ?? ""}`.trim());
     const ransomware = (v.knownRansomwareCampaignUse ?? "").toLowerCase() === "known";
+    // dueDate is the reader's actual remediation SLA — the single most
+    // actionable field in the catalogue, and previously dropped on the floor.
+    const dueDate = v.dueDate?.trim() || undefined;
+    const requiredAction = v.requiredAction ? toSafeText(v.requiredAction) : undefined;
     out.push({
       schemaVersion: CONTENT_SCHEMA_VERSION,
       id: `threat:${cve}`,
@@ -41,6 +47,8 @@ export function parseKevJson(raw: string, sourceId: string): ContentItem[] {
       rawHash: sha256Hex(JSON.stringify(v)),
       knownRansomware: ransomware,
       vendorProduct,
+      dueDate,
+      requiredAction,
       severity: ransomware ? "critical" : ("high" as Severity),
     });
   }

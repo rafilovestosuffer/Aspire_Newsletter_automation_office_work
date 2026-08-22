@@ -43,6 +43,7 @@ export function allowHostsFromConfig(feeds: FeedConfig, brand: BrandConfig): Set
   const hosts = new Set<string>();
   hosts.add(feeds.cms.originHost.toLowerCase());
   for (const f of feeds.threatFeeds) hosts.add(f.allowHost.toLowerCase());
+  for (const f of feeds.industryFeeds ?? []) hosts.add(f.allowHost.toLowerCase());
   for (const url of [brand.siteUrl, brand.logoUrl, brand.archiveBaseUrl, brand.unsubscribeUrl, brand.preferenceUrl]) {
     try {
       hosts.add(new URL(url).hostname.toLowerCase());

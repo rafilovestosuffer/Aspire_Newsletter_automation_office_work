@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Aspire Tech blog (sample titles for this demo issue)</title>
+    <item>
+      <title>What CMMC 2.0 actually requires of a 40-person defense subcontractor</title>
+      <link>https://aspiretss.com/blog/cmmc-2-requirements-small-defense-contractor</link>
+      <description>A walkthrough of which CMMC Level 2 practices apply below the primes, and where a managed SOC covers the control without a new hire.</description>
+      <pubDate>Mon, 17 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Why we run 24/7 SOC coverage in-house instead of reselling a SIEM license</title>
+      <link>https://aspiretss.com/blog/why-24-7-soc-coverage-in-house</link>
+      <description>The difference between owning detection and just owning the dashboard, and what that means during an actual incident at 2am.</description>
+      <pubDate>Thu, 13 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>A vCISO's checklist for a SOC 2 Type II renewal that doesn't derail Q4</title>
+      <link>https://aspiretss.com/blog/vciso-soc-2-type-2-renewal-checklist</link>
+      <description>Evidence collection, control testing, and the three findings we see repeat every renewal cycle for NYC mid-market clients.</description>
+      <pubDate>Tue, 11 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>HIPAA and a hybrid workforce: securing PHI when nobody's on the same VPN</title>
+      <link>https://aspiretss.com/blog/hipaa-hybrid-workforce-phi-vpn</link>
+      <description>Practical identity and endpoint controls for healthcare-adjacent clients that stopped trunking everything through one gateway years ago.</description>
+      <pubDate>Fri, 07 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Digital forensics after a business email compromise: the first 24 hours</title>
+      <link>https://aspiretss.com/blog/digital-forensics-bec-first-24-hours</link>
+      <description>What we actually do in the first day of a BEC engagement, before anyone asks about root cause.</description>
+      <pubDate>Mon, 03 Aug 2026 00:00:00 GMT</pubDate>
+    </item>
+  </channel>
+</rss>

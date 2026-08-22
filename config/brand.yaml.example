@@ -21,3 +21,12 @@ preferenceUrl: "https://TODO.example.invalid/preferences"
 ghlUnsubscribeMergeTag: "{{unsubscribe_link}}"
 advertisementNotice: "TODO: advertisement identification if primary purpose is commercial"
 cdnHost: "cdn.TODO.example.invalid"
+
+# Optional native promo block, rendered mid-issue (research: in-voice native
+# ads outperform banner-style placements). Leave heading blank to render
+# nothing.
+promo:
+  heading: "" # TODO: e.g. "Need this patched, not just flagged?"
+  body: "" # TODO: 1-3 sentences in Aspire's own voice
+  ctaLabel: "" # TODO: e.g. "Talk to the SOC"
+  ctaUrl: "" # TODO

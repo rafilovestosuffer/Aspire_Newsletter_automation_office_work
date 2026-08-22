@@ -28,6 +28,16 @@ export const llmOutputSchema = z
           .strict(),
       )
       .max(7),
+    briefs: z
+      .array(
+        z
+          .object({
+            id: z.string().min(1),
+            summary: z.string().min(1),
+          })
+          .strict(),
+      )
+      .max(5),
   })
   .strict();
 
@@ -63,6 +73,7 @@ export function assertIdsAllowed(out: LlmOutput, allowedIds: ReadonlySet<string>
   const unknown = [
     ...out.posts.map((p) => p.id),
     ...out.threats.map((t) => t.id),
+    ...out.briefs.map((b) => b.id),
   ].filter((id) => !allowedIds.has(id));
   if (unknown.length) {
     throw new LlmContractError(`model cited ids not in the source allow-list: ${unknown.join(", ")}`);

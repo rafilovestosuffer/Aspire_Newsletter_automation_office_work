@@ -1,0 +1,71 @@
+Aspire Weekly — 2026-W34 · r1
+HIPAA and a hybrid workforce: securing PHI when nobody's ...
+Selected posts and public KEV items from this week's window.
+
+This issue opens with HIPAA and a hybrid workforce: securing PHI when nobody's on the same VPN. On the threat desk, CVE-2026-45659 is in the selected set.
+
+PATCH BOARD — This week in threats
+Public KEV data is CC0. This is not a CISA or DHS product.
+CVE-2026-45659 Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability (critical)
+Microsoft SharePoint Server · due 2026-07-04 · RANSOMWARE
+Microsoft SharePoint Server contains a deserialization of untrusted data vulnerability which allows an authorized attacker to execute code over a network. The federal remediation date has already passed.
+https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-45659
+CVE-2026-72529 TrueConf Server Missing Authentication for Critical Function Vulnerability (high)
+TrueConf Server · due 2026-08-23
+TrueConf Server contains a missing authentication for critical function vulnerability which could allow a remote unauthorized attacker with network access via port 4307/TCP to execute an arbitrary script. Federal agencies must remediate within 1 day.
+https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72529
+CVE-2026-73570 Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability (high)
+Synacor Zimbra Collaboration Suite (ZCS) · due 2026-08-24
+Zimbra Collaboration Suite (ZCS) contains an OS command injection vulnerability which could allow an unauthenticated attacker to send specially crafted SMTP requests that may result in execution of arbitrary operating system commands as the Zimbra user. Federal agencies must remediate within 2 days.
+https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-73570
+CVE-2026-72530 TrueConf Server Code Injection Vulnerability (high)
+TrueConf Server · due 2026-09-03
+TrueConf Server contains a code injection vulnerability that could allow an unauthorized remote attacker with network access via port 4307/TCP to use a specially crafted script to break out of the isolated environment and execute arbitrary code on the host system. Federal deadline: 2026-09-03.
+https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72530
+
+SPONSORED BY ASPIRE
+Need this patched, not just flagged?
+Aspire's 24/7 SOC is already watching for exactly this kind of exploited vulnerability across client networks. If your team is stretched thin this week, our vCISO and managed security services can take the patch board above off your plate.
+https://aspiretss.com/managed-service/socaas-services
+
+AI & SECURITY THIS WEEK
+Third-party coverage, summarised and attributed — not written by Aspire.
+
+AI security failures, active exploits and breaches define the week
+via eSecurity Planet
+Coverage of actively exploited infrastructure vulnerabilities, AI-generated code security failures, and coordinated phishing campaigns against financial-sector employees. Full detail is on the blog.
+https://www.esecurityplanet.com/shared/weekly-roundup/ai-security-failures-active-exploits-and-breaches-define-the-week-in-august-2026/
+
+AI agents, supply chain attacks and critical flaws define the week
+via eSecurity Planet
+Autonomous AI systems took unauthorized actions this week, attackers compromised developer credentials to distribute malicious code through trusted repositories, and several actively exploited vulnerabilities hit enterprise software.
+https://www.esecurityplanet.com/shared/weekly-roundup/ai-agents-supply-chain-attacks-and-critical-flaws-define-the-week-in-august-2026/
+
+FROM THE BLOG
+
+HIPAA and a hybrid workforce: securing PHI when nobody's on the same VPN
+Practical identity and endpoint controls for healthcare-adjacent clients that stopped trunking everything through one gateway years ago. The published write-up has the walkthrough.
+https://aspiretss.com/blog/hipaa-hybrid-workforce-phi-vpn
+
+What CMMC 2.0 actually requires of a 40-person defense subcontractor
+A walkthrough of which CMMC Level 2 practices apply below the primes, and where a managed SOC covers the control without a new hire. The link goes to the published post, not a syndicated copy.
+https://aspiretss.com/blog/cmmc-2-requirements-small-defense-contractor
+
+Why we run 24/7 SOC coverage in-house instead of reselling a SIEM license
+The difference between owning detection and just owning the dashboard, and what that means during an actual incident at 2am. The published write-up has the walkthrough.
+https://aspiretss.com/blog/why-24-7-soc-coverage-in-house
+
+A vCISO's checklist for a SOC 2 Type II renewal that doesn't derail Q4
+Evidence collection, control testing, and the three findings we see repeat every renewal cycle for NYC mid-market clients. The link goes to the published post, not a syndicated copy.
+https://aspiretss.com/blog/vciso-soc-2-type-2-renewal-checklist
+
+Digital forensics after a business email compromise: the first 24 hours
+What we actually do in the first day of a BEC engagement, before anyone asks about root cause. Full detail is on the blog.
+https://aspiretss.com/blog/digital-forensics-bec-first-24-hours
+
+TODO: confirm sending entity — aspiretss.com footer lists "Aspire Tech Services & Solutions Limited"
+TODO: valid physical postal address (CAN-SPAM) — not yet confirmed
+
+Unsubscribe: https://aspiretss.com/newsletter/unsubscribe
+Preferences: https://aspiretss.com/newsletter/preferences
+Archive: https://aspiretss.com/archive/aspire-America~New_York-2026-W34/r/1

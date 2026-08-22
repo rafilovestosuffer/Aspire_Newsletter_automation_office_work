@@ -62,6 +62,16 @@ export async function registerInternal(
     }),
   );
 
+  app.post<{ Body: { fixture?: boolean } }>("/internal/issues/:issueKeyPath/ingest-briefs", async (req) =>
+    ingestContent({
+      store: ctx.store,
+      env: ctx.env,
+      config: ctx.config,
+      scope: "briefs",
+      forceFixture: req.body?.fixture,
+    }),
+  );
+
   app.post<{ Params: { issueKeyPath: string }; Body: { now?: string } }>(
     "/internal/issues/:issueKeyPath/assemble",
     async (req) => {

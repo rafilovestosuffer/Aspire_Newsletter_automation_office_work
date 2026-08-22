@@ -43,7 +43,7 @@ export async function ingestLive(
   const errors: string[] = [];
   let upserted = 0;
 
-  async function ingestUrl(id: string, url: string, kind: "rss" | "kev-json"): Promise<void> {
+  async function ingestUrl(id: string, url: string, kind: "rss" | "kev-json" | "brief"): Promise<void> {
     const host = hostOf(url);
     if (!host || isPlaceholderHost(host)) {
       skipped.push(id);
@@ -52,7 +52,8 @@ export async function ingestLive(
     try {
       const res = await safeFetch(url, { allowHosts: allow, fetchImpl: opts?.fetchImpl });
       const text = res.body.toString("utf8");
-      const items = kind === "kev-json" ? parseKevJson(text, id) : parseRssPosts(text, id);
+      const items =
+        kind === "kev-json" ? parseKevJson(text, id) : parseRssPosts(text, id, kind === "brief" ? "brief" : "post");
       for (const item of items) await store.upsertContent(item);
       upserted += items.length;
     } catch (err) {
@@ -66,6 +67,11 @@ export async function ingestLive(
   if (scope === "threats" || scope === "all") {
     for (const feed of config.feeds.threatFeeds) {
       await ingestUrl(feed.id, feed.url, feed.kind === "kev-json" ? "kev-json" : "rss");
+    }
+  }
+  if (scope === "briefs" || scope === "all") {
+    for (const feed of config.feeds.industryFeeds ?? []) {
+      await ingestUrl(feed.id, feed.url, "brief");
     }
   }
   return { upserted, skipped, errors, scope };

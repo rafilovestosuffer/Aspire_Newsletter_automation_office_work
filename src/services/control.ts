@@ -134,6 +134,11 @@ export function loadFixtureItems(_config: AppConfig, scope: IngestScope = "all")
   if (scope === "threats" || scope === "all") {
     items.push(...parseKevJson(readFileSync(join(root, "fixtures/kev.json"), "utf8"), "cisa-kev"));
   }
+  if (scope === "briefs" || scope === "all") {
+    items.push(
+      ...parseRssPosts(readFileSync(join(root, "fixtures/briefs.rss"), "utf8"), "fixture-industry", "brief"),
+    );
+  }
   return items;
 }
 

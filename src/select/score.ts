@@ -3,6 +3,7 @@ import type { ContentItem, RelevanceConfig } from "../types";
 export interface Selection {
   posts: ContentItem[];
   threats: ContentItem[];
+  briefs: ContentItem[];
 }
 
 function recencyWeight(publishedAt: string, now: Date, lookbackDays: number): number {
@@ -24,6 +25,22 @@ export function scoreItem(item: ContentItem, now: Date, cfg: RelevanceConfig): n
   return score;
 }
 
+/**
+ * Ransomware-linked first, then nearest CISA remediation deadline, then score.
+ * This is how the audience actually triages a patch board — the practitioner
+ * framing is "when a CVE appears in KEV, its due date becomes your SLA" — so
+ * selection order should match that rather than pure recency/keyword score.
+ */
+function threatUrgency(a: ContentItem, b: ContentItem): number {
+  const ra = a.knownRansomware ? 1 : 0;
+  const rb = b.knownRansomware ? 1 : 0;
+  if (ra !== rb) return rb - ra;
+  const da = a.dueDate ? Date.parse(a.dueDate) : Infinity;
+  const db = b.dueDate ? Date.parse(b.dueDate) : Infinity;
+  if (da !== db) return da - db;
+  return 0;
+}
+
 export function selectContent(items: ContentItem[], now: Date, cfg: RelevanceConfig): Selection {
   const horizon = now.getTime() - cfg.postLookbackDays * 86_400_000;
   const posts = items
@@ -36,7 +53,14 @@ export function selectContent(items: ContentItem[], now: Date, cfg: RelevanceCon
     .filter((i) => i.kind === "threat" && Date.parse(i.publishedAt) >= horizon)
     .map((i) => ({ ...i, score: scoreItem(i, now, cfg) }))
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || b.publishedAt.localeCompare(a.publishedAt))
-    .slice(0, cfg.threatCap);
+    .slice(0, cfg.threatCap)
+    .sort(threatUrgency);
 
-  return { posts, threats };
+  const briefs = items
+    .filter((i) => i.kind === "brief" && Date.parse(i.publishedAt) >= horizon)
+    .map((i) => ({ ...i, score: scoreItem(i, now, cfg) }))
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || b.publishedAt.localeCompare(a.publishedAt))
+    .slice(0, cfg.briefCap);
+
+  return { posts, threats, briefs };
 }

@@ -3,7 +3,7 @@
   "title": "NewsletterLlmOutput",
   "type": "object",
   "additionalProperties": false,
-  "required": ["subject", "preheader", "editorBlurb", "posts", "threats"],
+  "required": ["subject", "preheader", "editorBlurb", "posts", "threats", "briefs"],
   "properties": {
     "subject": { "type": "string", "maxLength": 60 },
     "preheader": { "type": "string", "minLength": 1, "maxLength": 140 },
@@ -36,6 +36,19 @@
             "type": "string",
             "enum": ["critical", "high", "medium", "low"]
           }
+        }
+      }
+    },
+    "briefs": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summary"],
+        "properties": {
+          "id": { "type": "string" },
+          "summary": { "type": "string" }
         }
       }
     }

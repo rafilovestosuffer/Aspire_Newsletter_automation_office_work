@@ -14,3 +14,11 @@ threatFeeds:
     kind: rss
     url: "https://TODO-threat-feed.example.invalid/rss" # TODO: extra allowlisted RSS or delete this row
     allowHost: "TODO-threat-feed.example.invalid"
+
+# Third-party industry/AI news. Rendered as attributed briefs, clearly
+# separate from Aspire's own articles above — never labelled as our writing.
+industryFeeds:
+  - id: industry-ai-security
+    url: "https://TODO-industry-feed.example.invalid/rss" # TODO: allowlisted AI/security news RSS, or delete this row
+    allowHost: "TODO-industry-feed.example.invalid"
+    sourceName: "TODO: source publication name"
