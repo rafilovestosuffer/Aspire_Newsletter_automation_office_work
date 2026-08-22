@@ -47,6 +47,26 @@ Two invariants need a live database and self-gate on `DATABASE_URL`: tokens
 being hashed at rest, and the `issue_events` append-only trigger. CI runs them
 with a Postgres service container.
 
+## Known dependency advisories
+
+`npm audit --omit=dev` reports 32 high-severity advisories. All 32 are the same
+root cause: mjml depends on `html-minifier <=4.0.0`, which carries a ReDoS
+(GHSA-pfq8-rq6v-vf5m). There is no patched release — 4.0.0 is the latest, and
+the fix only exists in mjml 5, which migrates to `html-minifier-terser`.
+
+**Not currently reachable.** `mjml-core` calls the minifier only when the
+`minify` option is true (`mjml-core/lib/index.js`: `if (minify)`), and
+`src/render/compile.ts` passes `minify: false`. `tests/qa.test.ts` pins that
+flag, so the mitigation cannot be undone by a tidy-up.
+
+This matters because feed-derived text reaches the rendered HTML: with
+minification on, an attacker-influenced excerpt would be the minifier's input.
+
+**Upgrading is deliberate work, not a quick `npm audit fix`.** mjml 5 is a
+semver-major and will change rendered bytes, which changes every frozen
+artifact hash. Doing it means re-verifying the fixture hash, re-rendering in
+Gmail / Outlook / Apple Mail, and re-checking the 102 KB clip budget.
+
 ## Residual
 
 - Human approves a meaning-drift summary that still cites the right URL

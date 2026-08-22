@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { loadConfig } from "../src/config";
 import { fixtureSummarize } from "../src/llm/summarize";
@@ -97,5 +100,19 @@ describe("QA gates", () => {
     });
     expect(qa.ok).toBe(false);
     expect(qa.failures.some((f) => f.includes("CVE-2099-99999"))).toBe(true);
+  });
+});
+
+describe("mjml minification stays off", () => {
+  // Not a style preference: mjml depends on html-minifier <=4.0.0, which has a
+  // high-severity ReDoS (GHSA-pfq8-rq6v-vf5m) and no patched release. mjml-core
+  // only reaches that code when `minify` is true, and feed-derived text ends up
+  // in this HTML, so flipping the flag would hand an attacker-influenced string
+  // to a vulnerable regex engine. Pinned here so the mitigation cannot be
+  // undone by a passing tidy-up.
+  it("never enables the vulnerable minifier", () => {
+    const src = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../src/render/compile.ts"), "utf8");
+    expect(src).toMatch(/minify:\s*false/);
+    expect(src).not.toMatch(/minify:\s*true/);
   });
 });

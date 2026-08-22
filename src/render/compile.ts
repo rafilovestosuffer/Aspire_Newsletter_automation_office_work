@@ -77,6 +77,17 @@ export function compileMjml(opts: {
     ghlUnsubscribeMergeTag: escapeHtml(opts.brand.ghlUnsubscribeMergeTag),
   });
 
+  // `minify: false` is a security control, not a style choice.
+  //
+  // mjml pulls in html-minifier <=4.0.0, which carries a high-severity ReDoS
+  // (GHSA-pfq8-rq6v-vf5m) and has no patched release — the fix only exists in
+  // mjml 5, a semver-major that would change rendered bytes and therefore every
+  // frozen artifact hash. mjml-core only calls the minifier when this flag is
+  // true (mjml-core/lib/index.js: `if (minify)`), so the vulnerable path is
+  // unreachable while it stays false. Feed excerpts reach this HTML, so an
+  // attacker-influenced string would otherwise be the minifier's input.
+  //
+  // tests/qa.test.ts pins this. Do not flip it on without upgrading mjml first.
   const rendered = mjml2html(mjml, { validationLevel: "soft", minify: false }) as unknown as {
     html: string;
     errors: Array<{ formattedMessage?: string }>;
