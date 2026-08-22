@@ -122,8 +122,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: env.GHL_BASE_URL,
       version: env.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
     });
     await queueIssue({ env, config, store });
     const result = await drainOutbox({ store, env, config, limit: 10, ghl });
@@ -143,8 +143,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: env.GHL_BASE_URL,
       version: env.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
     });
     const queued = await queueIssue({ env, config, store });
     const result = await drainOutbox({ store, env, config, limit: 10, ghl });
@@ -168,8 +168,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: env.GHL_BASE_URL,
       version: env.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
     });
     const queued = await queueIssue({ env, config, store });
     const file = join(
@@ -212,8 +212,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: drainEnv.GHL_BASE_URL,
       version: drainEnv.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
       // This test isolates audience resolution, so open the binding-log gate
       // the same way it already opens APP_ENV and DRY_RUN. The gate itself is
       // asserted separately below.
@@ -224,6 +224,47 @@ describe("drainOutbox audience + frozen HTML", () => {
     expect(result.processed).toBe(1);
     expect(ghl.lastRecipients).toEqual({ filter: { TODO_unverified: "do-not-invent-ghl-keys" } });
     expect(ghl.lastRecipients).not.toHaveProperty("contactIds");
+  });
+
+  // These used to fall back to the literal strings "TODO-userId" and
+  // "TODO subject". The first merely fails at GHL; the second would put
+  // "TODO subject" in front of the whole list, which is also a CAN-SPAM
+  // problem because the subject has to match the body.
+  it.each([
+    ["no GHL userId for the slot", { userId: "" }, /no GHL userId/],
+    ["no subject on the issue", { subject: "" }, /no subject/],
+  ])("refuses to send scaffolding: %s", async (_label, patch, expected) => {
+    const env = testEnv();
+    const config = withAudience(withCompleteBrand(), {
+      contactIds: ["seed-fixture"],
+      filter: {},
+    });
+    const store = new MemoryStore();
+    const ghl = new RecordingGhl({
+      appEnv: "development",
+      dryRun: true,
+      kill: { l1: false, l2: false },
+      baseUrl: env.GHL_BASE_URL,
+      version: env.GHL_API_VERSION,
+      sandbox: { locationId: "loc", userId: (patch as { userId?: string }).userId ?? "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
+    });
+
+    await queueIssue({ env, config, store });
+    const key = [...store.issues.keys()][0]!;
+    if ((patch as { subject?: string }).subject === "") {
+      await store.updateIssue(key, { subject: "" });
+    }
+
+    const result = await drainOutbox({ store, env, config, limit: 10, ghl });
+
+    expect(result.processed).toBe(0);
+    // A misconfiguration only a human can fix: dead-letter now, do not retry.
+    expect(result.failed).toBe(1);
+    expect(ghl.lastRecipients).toBeUndefined();
+    const outbox = [...store.outbox.values()][0]!;
+    expect(outbox.status).toBe("failed");
+    expect(outbox.lastError).toMatch(expected);
   });
 
   // Gate B says no production send until every binding-log row is backed by a
@@ -247,8 +288,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: drainEnv.GHL_BASE_URL,
       version: drainEnv.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
       bindingLogGreen: false,
     });
 
@@ -285,8 +326,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: drainEnv.GHL_BASE_URL,
       version: drainEnv.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
     });
     await queueIssue({ env: queueEnv, config, store });
 
@@ -310,8 +351,8 @@ describe("drainOutbox audience + frozen HTML", () => {
       kill: { l1: false, l2: false },
       baseUrl: env.GHL_BASE_URL,
       version: env.GHL_API_VERSION,
-      sandbox: { locationId: "", userId: "", pit: "" },
-      production: { locationId: "", userId: "", pit: "" },
+      sandbox: { locationId: "loc-sb", userId: "user-sb", pit: "" },
+      production: { locationId: "loc-pr", userId: "user-pr", pit: "" },
     });
     await queueIssue({ env, config, store });
     const result = await drainOutbox({ store, env, config, limit: 10, ghl });

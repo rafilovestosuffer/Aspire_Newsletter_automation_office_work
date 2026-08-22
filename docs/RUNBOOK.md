@@ -152,11 +152,28 @@ collecting → assembled → pending_approval →(human POST)→ queued_outbox
 | --- | --- | --- |
 | drain | `POST /internal/outbox/drain` | Creates + schedules the GHL campaign. Retries transient errors with backoff; refusals dead-letter at once. |
 | reconcile | `POST /internal/reconcile` | Reads campaign status from GHL and writes the terminal state. The only path to `sent`. |
-| watchdog | `POST /internal/watchdog` | Escalates overdue approvals and dead-lettered outbox rows. **Never sends.** |
+| watchdog | `POST /internal/watchdog` | Escalates overdue approvals and dead-lettered outbox rows. **Never sends.** Escalations are urgent and also fan out to `ONCALL_WEBHOOK_URL`. |
 | observe | `POST /internal/observe` | Declared no-op. GHL statistics field names are UNVERIFIED until the sandbox spike; a guessed payload is worse than none. |
 | prune | `POST /internal/retention/prune` | Drops content outside the retention window that no issue cites. |
 
 All take `Authorization: Bearer $WORKER_TOKEN`.
+
+### Notification sinks
+
+| Sink | Env | Gets |
+| --- | --- | --- |
+| Staff webhook | `STAFF_NOTIFY_WEBHOOK` | everything |
+| Staff email | `STAFF_NOTIFY_SMTP_URL` + `_FROM` + `_TO` | everything, incl. approval links |
+| On-call | `ONCALL_WEBHOOK_URL` | urgent only — overdue approval, dead-lettered outbox |
+
+All optional and best-effort; a failing sink never breaks approval. Every
+attempt writes `notify_sent` or `notify_failed` to `issue_events`, so silence
+means nothing was attempted. Email is deliberately **not** LC Email — that is
+the subscriber channel.
+
+Setting two of the three email settings is treated as a misconfiguration, not
+as opting out: on a host that plainly meant to send mail, silently skipping it
+is the wrong reading.
 
 ### Outbox retry and dead letters
 
@@ -164,8 +181,8 @@ Transient failures retry up to 4 attempts with exponential backoff (60s doubling
 to a 1h cap); the row stays `pending` and the issue stays `queued_outbox`.
 
 Failures that will recur identically — empty recipients, placeholder brand
-config, a missing frozen artifact, any `GhlBanError` — **dead-letter on the
-first attempt**. Retrying them only delays the escalation that gets a human
+config, a missing frozen artifact, no GHL `userId` for the slot, an issue with
+no subject, any `GhlBanError` — **dead-letter on the first attempt**. Retrying them only delays the escalation that gets a human
 looking.
 
 A dead letter sets the outbox row to `failed`, the issue to `failed`, and emits

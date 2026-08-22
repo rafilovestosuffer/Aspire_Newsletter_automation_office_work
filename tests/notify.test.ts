@@ -108,6 +108,44 @@ describe("staff notification sinks", () => {
   });
 });
 
+describe("on-call escalation", () => {
+  // A separate sink so the watchdog can page someone for a stuck approval
+  // without every routine "approval requested" doing the same.
+  it("does not page on-call for a routine notification", async () => {
+    const { deps, hooks } = spyDeps();
+    const env = configuredEnv({ ONCALL_WEBHOOK_URL: "https://pager.aspire.test/hook" });
+
+    const res = await notifyStaff(env, note, undefined, deps);
+
+    expect(res.oncall).toBe("not_urgent");
+    expect(hooks).toHaveLength(0);
+  });
+
+  it("pages on-call for an urgent one, tagged so the pager can route it", async () => {
+    const { deps, hooks } = spyDeps();
+    const env = configuredEnv({ ONCALL_WEBHOOK_URL: "https://pager.aspire.test/hook" });
+
+    const res = await notifyStaff(env, { ...note, event: "approval_overdue", urgent: true }, undefined, deps);
+
+    expect(res.oncall).toBe("sent");
+    expect(hooks[0]!.url).toBe("https://pager.aspire.test/hook");
+    expect(hooks[0]!.body).toMatchObject({ severity: "urgent", event: "approval_overdue" });
+  });
+
+  it("reports a failed page rather than throwing", async () => {
+    const deps: NotifyDeps = {
+      sendMail: async () => {},
+      postWebhook: async () => {
+        throw new Error("pager 503");
+      },
+    };
+    const env = configuredEnv({ ONCALL_WEBHOOK_URL: "https://pager.aspire.test/hook" });
+    const res = await notifyStaff(env, { ...note, urgent: true }, undefined, deps);
+    expect(res.oncall).toBe("failed");
+    expect(res.errors.join(" ")).toMatch(/pager 503/);
+  });
+});
+
 describe("staff notification failures", () => {
   // The approval token is already minted and valid by the time we notify.
   // Throwing here would strand it and fail the whole request for a reason the

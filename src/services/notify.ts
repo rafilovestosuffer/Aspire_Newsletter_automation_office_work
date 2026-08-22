@@ -25,11 +25,18 @@ export interface StaffNotification {
   subject?: string;
   note?: string;
   urls?: Array<{ approverId: string; url: string }>;
+  /**
+   * Something is stuck and a person needs to look now, as opposed to a routine
+   * "approval requested". Also fans out to ONCALL_WEBHOOK_URL, so a pager
+   * target can be configured without every routine notice waking someone.
+   */
+  urgent?: boolean;
 }
 
 export interface NotifyResult {
   webhook: "sent" | "failed" | "not_configured";
   email: "sent" | "failed" | "not_configured";
+  oncall: "sent" | "failed" | "not_configured" | "not_urgent";
   errors: string[];
 }
 
@@ -150,7 +157,12 @@ export async function notifyStaff(
   store?: IssueStore,
   deps: NotifyDeps = {},
 ): Promise<NotifyResult> {
-  const result: NotifyResult = { webhook: "not_configured", email: "not_configured", errors: [] };
+  const result: NotifyResult = {
+    webhook: "not_configured",
+    email: "not_configured",
+    oncall: "not_configured",
+    errors: [],
+  };
   const postWebhook = deps.postWebhook ?? defaultPostWebhook;
   const sendMail = deps.sendMail ?? defaultSendMail;
 
@@ -162,6 +174,22 @@ export async function notifyStaff(
     } catch (err) {
       result.webhook = "failed";
       result.errors.push(`webhook: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  // On-call is a separate sink on purpose: the watchdog escalating a stuck
+  // approval should be able to page someone without every routine notification
+  // doing the same.
+  const oncallUrl = env.ONCALL_WEBHOOK_URL.trim();
+  if (!payload.urgent) {
+    result.oncall = "not_urgent";
+  } else if (oncallUrl) {
+    try {
+      await postWebhook(oncallUrl, { source: "e02-control-plane", severity: "urgent", ...payload });
+      result.oncall = "sent";
+    } catch (err) {
+      result.oncall = "failed";
+      result.errors.push(`oncall: ${err instanceof Error ? err.message : String(err)}`);
     }
   }
 
@@ -198,7 +226,13 @@ export async function notifyStaff(
       issueKey: payload.issueKey,
       revision: payload.revision,
       eventType: result.errors.length ? "notify_failed" : "notify_sent",
-      payload: { event: payload.event, webhook: result.webhook, email: result.email, errors: result.errors },
+      payload: {
+        event: payload.event,
+        webhook: result.webhook,
+        email: result.email,
+        oncall: result.oncall,
+        errors: result.errors,
+      },
     });
   }
 

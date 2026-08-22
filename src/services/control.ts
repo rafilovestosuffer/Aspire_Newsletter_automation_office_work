@@ -513,20 +513,36 @@ export async function drainOutbox(opts: {
         throw new PermanentSendError(err instanceof Error ? err.message : String(err));
       }
       ghl.assertAudienceSlot(slot);
+
+      // Refuse rather than send scaffolding. These used to fall back to the
+      // literal strings "TODO-userId" and "TODO subject": the first just fails
+      // at GHL, but the second would put "TODO subject" in front of the whole
+      // list, which is also a CAN-SPAM problem — the subject has to match the
+      // body. Both are misconfigurations only a human can fix, so they
+      // dead-letter immediately and the watchdog escalates.
+      const senderUserId = ghl.locationFor(slot).userId.trim();
+      if (!senderUserId) {
+        throw new PermanentSendError(`no GHL userId configured for the ${slot} slot`);
+      }
+      const subject = (issue.subject ?? "").trim();
+      if (!subject) {
+        throw new PermanentSendError("issue has no subject; re-assemble before sending");
+      }
+
       const created = await ghl.createCampaign(slot, {
         name: `${issue.issueKey} r${issue.revision}`,
         editorType: "html",
         timeZone: issue.audienceTz,
-        userId: ghl.locationFor(slot).userId || "TODO-userId",
+        userId: senderUserId,
         editorContent: html,
       });
       const payload = job.payload as { scheduleType?: "scheduled" | "immediate" };
       const scheduled = await ghl.scheduleCampaign(slot, created.id, {
         scheduleType: payload.scheduleType === "immediate" ? "immediate" : "scheduled",
         timeZone: issue.audienceTz,
-        userId: ghl.locationFor(slot).userId || "TODO-userId",
+        userId: senderUserId,
         emailMeta: {
-          subject: issue.subject ?? "TODO subject",
+          subject,
           fromName: opts.config.brand.fromName,
           fromEmail: opts.config.brand.fromEmail,
           previewText: issue.preheader,
@@ -776,6 +792,7 @@ export async function runWatchdog(opts: {
       revision: issue.revision,
       subject: issue.subject ?? "",
       note: "Past approval SLA. Watchdog never sends; a human must still POST.",
+      urgent: true,
     }, opts.store);
   }
 
@@ -795,6 +812,7 @@ export async function runWatchdog(opts: {
       revision: job.revision,
       subject: "",
       note: `Outbox gave up after ${job.attempts} attempts: ${job.lastError ?? "unknown"}`,
+      urgent: true,
     }, opts.store);
   }
 

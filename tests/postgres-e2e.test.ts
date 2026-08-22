@@ -45,6 +45,10 @@ describe.skipIf(!databaseUrl)("Postgres E2E (set DATABASE_URL)", () => {
       APP_SECRET: "test-secret-at-least-32-bytes-long",
       WORKER_TOKEN: "test-worker",
       PUBLIC_BASE_URL: "http://localhost:8787",
+      // A real deployment always has a sender for its slot; drain refuses to
+      // send without one rather than falling back to scaffolding.
+      GHL_SANDBOX_LOCATION_ID: "loc-sb",
+      GHL_SANDBOX_USER_ID: "user-sb",
     });
     const config = uniqueConfig(["seed-fixture"]);
     const now = new Date("2026-08-20T19:00:00.000Z");
