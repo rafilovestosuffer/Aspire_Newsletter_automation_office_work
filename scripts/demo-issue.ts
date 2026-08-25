@@ -46,6 +46,9 @@ const promo = {
   ctaUrl: "https://aspiretss.com/managed-service/socaas-services",
 };
 
+/** Where the brand PNGs are served from in a real send. */
+const ASSET_BASE = "https://aspiretss.com/newsletter/assets";
+
 function brandVariant(theme: "light" | "dark"): BrandConfig {
   const base: BrandConfig = {
     schemaVersion: "1.0.0",
@@ -72,7 +75,18 @@ function brandVariant(theme: "light" | "dark"): BrandConfig {
     cardBackgroundColor: theme === "light" ? "#f7f9fb" : "#1c212b",
     severityColors: { critical: "#b03a3a", high: "#c8912a", medium: "#3d4a58", low: "#6b7885" },
     urgencyColors: { overdue: "#b03a3a", soon: "#c8912a", ok: "#6b7885" },
-    logoUrl: "https://aspiretss.com/logo.png",
+    // Brand-hosted asset URLs. The files themselves live in assets/brand/dist;
+    // the review renderer maps this prefix onto that directory so the offline
+    // PDF shows the real artwork without any of them being fetched.
+    // Empty on purpose: the demo uses the live-text wordmark, which needs no
+    // asset and stays legible in dark mode.
+    logoUrl: "",
+    heroImageUrl: `${ASSET_BASE}/header-band.png`,
+    sectionIcons: {
+      threats: `${ASSET_BASE}/icon-threats.png`,
+      briefs: `${ASSET_BASE}/icon-briefs.png`,
+      posts: `${ASSET_BASE}/icon-posts.png`,
+    },
     siteUrl: "https://aspiretss.com",
     archiveBaseUrl: "https://aspiretss.com/newsletter/archive",
     unsubscribeUrl: "https://aspiretss.com/newsletter/unsubscribe",

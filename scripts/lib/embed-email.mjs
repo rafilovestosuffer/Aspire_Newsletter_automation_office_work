@@ -63,7 +63,9 @@ export function scopeCss(css, scope) {
         .map((sel) => scopeSelector(sel, scope))
         .filter(Boolean)
         .join(",");
-      if (scoped) out += `${scoped}{${body}}\n`;
+      // Declarations collapse to one line: a rule that wrapped in the source
+      // otherwise emits a continuation line that reads like an unscoped rule.
+      if (scoped) out += `${scoped}{${body.trim().replace(/\s*\n\s*/g, " ")}}\n`;
     }
     i = j;
   }

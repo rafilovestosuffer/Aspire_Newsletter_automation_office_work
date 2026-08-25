@@ -16,11 +16,12 @@
 // Usage: node scripts/render-issue-pdf.mjs <artifact-dir> <out.pdf>
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, writeFileSync, mkdtempSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 import { embedEmail } from "./lib/embed-email.mjs";
+import { findChrome } from "./lib/chrome.mjs";
 
 const [artifactDirArg, outPathArg] = process.argv.slice(2);
 if (!artifactDirArg || !outPathArg) {
@@ -29,42 +30,9 @@ if (!artifactDirArg || !outPathArg) {
 }
 const artifactDir = resolve(artifactDirArg);
 const outPath = resolve(outPathArg);
+const assetsArgIndex = process.argv.indexOf("--assets");
+const assetsDir = resolve(assetsArgIndex === -1 ? "assets/brand/dist" : process.argv[assetsArgIndex + 1]);
 const PORT = Number(process.env.CHROME_DEBUG_PORT ?? 9224);
-
-// --- locate Chromium -------------------------------------------------------
-// The plan-doc renderer hardcoded one path, which breaks the moment the
-// browser is updated or the script runs anywhere else.
-function findChrome() {
-  const candidates = [
-    process.env.CHROME_PATH,
-    process.env.PLAYWRIGHT_BROWSERS_PATH
-      ? join(process.env.PLAYWRIGHT_BROWSERS_PATH, "chromium", "chrome-linux", "chrome")
-      : undefined,
-    "/opt/pw-browsers/chromium/chrome-linux/chrome",
-    "/usr/bin/chromium",
-    "/usr/bin/chromium-browser",
-    "/usr/bin/google-chrome",
-  ].filter(Boolean);
-  for (const c of candidates) if (existsSync(c)) return c;
-  // Fall back to a glob over versioned Playwright installs.
-  const base = process.env.PLAYWRIGHT_BROWSERS_PATH ?? "/opt/pw-browsers";
-  if (existsSync(base)) {
-    for (const d of readdirSafe(base)) {
-      const p = join(base, d, "chrome-linux", "chrome");
-      if (existsSync(p)) return p;
-    }
-  }
-  throw new Error(
-    `no Chromium found. Set CHROME_PATH to a Chromium/Chrome binary. Looked in: ${candidates.join(", ")}`,
-  );
-}
-function readdirSafe(d) {
-  try {
-    return readdirSync(d);
-  } catch {
-    return [];
-  }
-}
 
 // --- load the frozen artifact ---------------------------------------------
 function readJson(name) {
@@ -108,9 +76,31 @@ function annotateMergeTokens(html) {
   });
 }
 
+/**
+ * Point brand image sources at the local files they are built from.
+ *
+ * The email references brand-hosted URLs, which is what a real send needs and
+ * what the QA gate allows. This renderer is offline and deliberately fetches
+ * nothing, so without this the artwork would print as a "not fetched"
+ * annotation. Rewriting to a data: URI shows the real asset while still making
+ * no network request. Applied to the display copy only — the frozen bytes are
+ * never touched, exactly as with the merge-token annotation above.
+ */
+const MIME = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", svg: "image/svg+xml" };
+let assetsResolved = 0;
+function resolveLocalAssets(html) {
+  return html.replace(/src="https?:\/\/[^"]*\/([A-Za-z0-9._-]+\.(?:png|jpe?g|gif|svg))"/gi, (whole, file) => {
+    const path = join(assetsDir, file);
+    if (!existsSync(path)) return whole;
+    const ext = file.split(".").pop().toLowerCase();
+    assetsResolved++;
+    return `src="data:${MIME[ext] ?? "application/octet-stream"};base64,${readFileSync(path).toString("base64")}"`;
+  });
+}
+
 // The email is a complete HTML document. Embedding it raw would merge its
 // <body> attributes onto this page's body and hoist its stylesheet page-wide.
-const embedded = embedEmail(annotateMergeTokens(emailHtml), ".frame");
+const embedded = embedEmail(resolveLocalAssets(annotateMergeTokens(emailHtml)), ".frame");
 
 const byteLen = Buffer.byteLength(emailHtml, "utf8");
 const WARN_BYTES = 81_920;
@@ -339,6 +329,8 @@ const { data } = await send("Page.printToPDF", {
 });
 
 writeFileSync(outPath, Buffer.from(data, "base64"));
-console.log(`wrote ${outPath} (${verdict[1]}, ${byteLen} html bytes, sha ${actualSha.slice(0, 12)})`);
+console.log(
+  `wrote ${outPath} (${verdict[1]}, ${byteLen} html bytes, ${assetsResolved} brand asset(s) resolved from ${assetsDir}, sha ${actualSha.slice(0, 12)})`,
+);
 ws.close();
 chrome.kill();

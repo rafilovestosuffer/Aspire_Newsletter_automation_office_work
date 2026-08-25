@@ -5,7 +5,7 @@ import { parseRssPosts } from "../src/ingest/rss";
 import { selectContent } from "../src/select/score";
 import { fixtureSummarize } from "../src/llm/summarize";
 import { extractImageSrcs, runQa } from "../src/qa/gates";
-import { compileMjml } from "../src/render/compile";
+import { compileMjml, compilePlaintext } from "../src/render/compile";
 import { resolveTheme, severityColor, urgencyBucket } from "../src/render/theme";
 import { embedEmail, scopeCss } from "../scripts/lib/embed-email.mjs";
 import { loadConfig } from "../src/config";
@@ -324,8 +324,9 @@ describe("rendered HTML carries the visual signal, not an emoji", () => {
     });
     const { html } = render([overdue]);
     const theme = resolveTheme(config.brand);
-    // fixtureSummarize marks a ransomware item "critical".
-    expect(html).toContain(`border-left:4px solid ${theme.severity.critical}`);
+    // fixtureSummarize marks a ransomware item "critical". The stripe is now a
+    // rule beside the numeral rather than a border around a card.
+    expect(html).toContain(`border-left:3px solid ${theme.severity.critical}`);
     expect(html).toContain(theme.urgency.overdue);
     expect(html).toContain("Due date passed");
   });
@@ -336,11 +337,19 @@ describe("rendered HTML carries the visual signal, not an emoji", () => {
     expect(html).not.toContain("Due date passed");
   });
 
-  it("renders the brand logo, which the previous template validated but never used", () => {
+  it("renders a brand's raster logo when it supplies one", () => {
     const { html, errors } = render([threatItem({ id: "l" })]);
     expect(errors).toEqual([]);
     expect(html).toContain(config.brand.logoUrl);
     expect(html).toContain("<img");
+  });
+
+  it("falls back to a live-text wordmark when the brand has no logo", () => {
+    // Text beats an image here: many corporate clients block images by
+    // default, and an image would need a second asset for dark mode.
+    const { html } = render([threatItem({ id: "w" })], { ...config.brand, logoUrl: "" });
+    expect(html).toContain("WEEKLY");
+    expect(html).not.toContain("<img");
   });
 
   it("renders a hero image only when the brand supplies one", () => {
@@ -594,5 +603,167 @@ describe("an email document is isolated before being embedded in a page", () => 
       if (line.startsWith("@") || line === "}" || line === "{") continue;
       expect(line.startsWith(".frame")).toBe(true);
     }
+  });
+});
+
+
+// ---------------------------------------------------------------------------
+// The editorial redesign. Each of these pins one of three complaints about the
+// previous draft: left-aligned buttons, no contents block, and every story
+// rendered through one identical box.
+// ---------------------------------------------------------------------------
+describe("editorial layout", () => {
+  const config = withCompleteBrand();
+
+  function issue(counts: { threats: number; briefs: number; posts: number }) {
+    const threats = Array.from({ length: counts.threats }, (_, i) =>
+      threatItem({
+        id: `t${i}`,
+        title: `Threat ${i}`,
+        cveIds: [`CVE-2026-1000${i}`],
+        knownRansomware: i === 0,
+        dueDate: i === 1 ? "2026-08-01" : "2026-09-30",
+      }),
+    );
+    const mk = (kind: "post" | "brief", i: number): ContentItem => ({
+      schemaVersion: CONTENT_SCHEMA_VERSION,
+      id: `${kind}:${i}`,
+      kind,
+      sourceId: kind === "post" ? "cms" : "industry-feed",
+      canonicalUrl: `https://${kind === "post" ? "aspire.test/blog" : "industry.example.com"}/${i}`,
+      title: `${kind === "post" ? "Post" : "Brief"} ${i}`,
+      excerpt: "An excerpt long enough to read as a real one for these purposes.",
+      publishedAt: "2026-08-19T00:00:00.000Z",
+      cveIds: [],
+      rawHash: `${kind[0]}`.repeat(64).slice(0, 64),
+    });
+    const posts = Array.from({ length: counts.posts }, (_, i) => mk("post", i));
+    const briefs = Array.from({ length: counts.briefs }, (_, i) => mk("brief", i));
+    const llm = fixtureSummarize(posts, threats, briefs, NOW);
+    const { html, errors } = compileMjml({
+      brand: config.brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x",
+      llm,
+      posts,
+      threats,
+      briefs,
+      now: NOW,
+    });
+    const text = compilePlaintext({
+      brand: config.brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x",
+      llm,
+      posts,
+      threats,
+      briefs,
+      now: NOW,
+    });
+    return { html, text, errors, threats, posts, briefs };
+  }
+
+  it("renders cleanly", () => {
+    expect(issue({ threats: 4, briefs: 2, posts: 5 }).errors).toEqual([]);
+  });
+
+  it("centres the primary CTA", () => {
+    const { html } = issue({ threats: 2, briefs: 0, posts: 1 });
+    // Centre is the default for a primary action; left is for a secondary
+    // in-line one. Every CTA in the previous draft was left-aligned.
+    expect(html).toMatch(/<table[^>]*align="center"[^>]*>[\s\S]{0,400}?Read the advisory/);
+    expect(html).not.toMatch(/align="left"[^>]{0,200}Read the advisory/);
+  });
+
+  it("gives the CTA a tap target at least 44px tall", () => {
+    const { html } = issue({ threats: 1, briefs: 0, posts: 0 });
+    // 14px padding top and bottom around a 14px/normal line ≈ 46px.
+    expect(html).toContain("padding:14px 30px");
+  });
+
+  describe("in this issue", () => {
+    it("counts what is actually in the issue", () => {
+      const { html } = issue({ threats: 4, briefs: 2, posts: 5 });
+      expect(html).toContain("In this issue");
+      expect(html).toContain("4 KEV items");
+      expect(html).toContain("1 ransomware-linked");
+      expect(html).toContain("1 past its federal deadline");
+      expect(html).toContain("2 attributed briefs");
+    });
+
+    it("moves with the content rather than being written by hand", () => {
+      const { html } = issue({ threats: 1, briefs: 1, posts: 1 });
+      // Scoped to the contents block: the section heading below it says
+      // "This week's KEV items" regardless of how many there are.
+      const start = html.indexOf("In this issue");
+      const contents = html.slice(start, html.indexOf("</table>", start));
+      expect(contents).toContain("1 KEV item");
+      expect(contents).not.toContain("KEV items");
+      expect(contents).toContain("1 attributed brief");
+      expect(contents).not.toContain("attributed briefs");
+    });
+
+    it("links each line to a real destination, never an in-email anchor", () => {
+      // Anchor links do nothing in the Gmail mobile apps or Outlook for Mac,
+      // which is most opens — so contents entries link to the source instead.
+      const { html, threats } = issue({ threats: 2, briefs: 1, posts: 1 });
+      const start = html.indexOf("In this issue");
+      const contents = html.slice(start, html.indexOf("</table>", start));
+      expect(contents).toContain(threats[0]!.canonicalUrl);
+      expect(html).not.toMatch(/href="#/);
+    });
+
+    it("names the lead blog post so the reader knows what is inside", () => {
+      const { html } = issue({ threats: 1, briefs: 0, posts: 3 });
+      expect(html).toContain("Post 0");
+    });
+
+    it("disappears entirely for an empty issue", () => {
+      const { html } = issue({ threats: 0, briefs: 0, posts: 0 });
+      expect(html).not.toContain("In this issue");
+    });
+
+    it("is mirrored into the plaintext part", () => {
+      const { text } = issue({ threats: 4, briefs: 2, posts: 5 });
+      expect(text).toContain("IN THIS ISSUE");
+      expect(text).toContain("4 KEV items");
+      expect(text).toContain("2 attributed briefs");
+    });
+  });
+
+  describe("rank", () => {
+    it("sets the lead threat larger than the ones below it", () => {
+      // The previous draft had one gear: nine identically sized boxes. The
+      // lead has to look like the lead.
+      const { html } = issue({ threats: 3, briefs: 0, posts: 0 });
+      expect(html).toContain("font-size:23px");
+      expect(html).toContain("font-size:18px");
+      expect(html.match(/font-size:23px/g) ?? []).toHaveLength(1);
+    });
+
+    it("gives only the lead threat a button", () => {
+      const { html } = issue({ threats: 3, briefs: 0, posts: 0 });
+      expect(html.match(/Read the advisory/g) ?? []).toHaveLength(3);
+      expect(html.match(/padding:14px 30px/g) ?? []).toHaveLength(1);
+    });
+
+    it("numbers the stories", () => {
+      const { html } = issue({ threats: 3, briefs: 0, posts: 2 });
+      for (const n of ["01", "02", "03"]) expect(html).toContain(n);
+    });
+  });
+
+  it("separates stories with a rule instead of boxing each one", () => {
+    const { html } = issue({ threats: 3, briefs: 0, posts: 0 });
+    const theme = resolveTheme(config.brand);
+    // A rule between stories, and none above the first.
+    expect(html.match(new RegExp(`border-top:1px solid ${theme.border}`, "g")) ?? []).toHaveLength(2);
+  });
+
+  it("keeps the issue inside the Gmail byte budget", () => {
+    // The card layout hit 97KB against a 102KB clip once mj-group markup was
+    // counted. Editorial rows are a table, and cheaper.
+    const { html } = issue({ threats: 7, briefs: 3, posts: 5 });
+    expect(Buffer.byteLength(html, "utf8")).toBeLessThan(config.relevance.gmailWarnBytes);
   });
 });

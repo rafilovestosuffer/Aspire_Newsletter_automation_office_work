@@ -10,6 +10,11 @@ import type { BrandConfig } from "../types";
  */
 export interface Theme {
   primary: string;
+  /** Serif, for headlines, numerals and the opening blurb. */
+  displayFont: string;
+  /** Sans, for kickers, pills, meta and anything UI-shaped. */
+  bodyFont: string;
+  ornament: string;
   background: string;
   text: string;
   muted: string;
@@ -21,6 +26,13 @@ export interface Theme {
 }
 
 const DEFAULTS = {
+  // Web-safe both. A newsletter cannot depend on a webfont: Outlook on Windows
+  // will not load one, and the fallback is what most of the list would see.
+  // Georgia against Arial gives the editorial contrast without that risk.
+  // Single-quoted inside: these land in MJML attributes, which are themselves
+  // double-quoted, and a double quote here terminates the attribute early.
+  displayFont: "Georgia, 'Liberation Serif', 'Times New Roman', serif",
+  bodyFont: "Arial, 'Liberation Sans', Helvetica, sans-serif",
   muted: "#6B7885",
   border: "#D7DDE4",
   card: "#F7F9FB",
@@ -36,6 +48,9 @@ export function resolveTheme(brand: BrandConfig): Theme {
   const urg = brand.urgencyColors ?? {};
   return {
     primary: brand.primaryColor,
+    displayFont: brand.displayFont ?? DEFAULTS.displayFont,
+    bodyFont: brand.bodyFont ?? DEFAULTS.bodyFont,
+    ornament: brand.ornamentColor ?? brand.primaryColor,
     background: brand.backgroundColor,
     text: brand.textColor,
     muted: brand.mutedColor ?? DEFAULTS.muted,

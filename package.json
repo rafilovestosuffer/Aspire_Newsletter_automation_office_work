@@ -17,6 +17,7 @@
     "lint": "tsc --noEmit",
     "migrate": "tsx src/db/migrate.ts",
     "assemble:fixture": "tsx src/cli/assemble-fixture.ts",
+    "build:assets": "node scripts/build-assets.mjs",
     "demo:issue": "tsx scripts/demo-issue.ts",
     "render:pdf": "node scripts/render-issue-pdf.mjs",
     "approve:dummy": "tsx src/cli/dummy-approve.ts",

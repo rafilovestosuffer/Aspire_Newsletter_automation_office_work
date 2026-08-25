@@ -4,7 +4,13 @@ Selected posts and public KEV items from this week's window.
 
 This issue opens with HIPAA and a hybrid workforce: securing PHI when nobody's on the same VPN. On the threat desk, CVE-2026-45659 is in the selected set.
 
-PATCH BOARD — This week in threats
+IN THIS ISSUE
+01  Patch board — 4 KEV items · 1 ransomware-linked · 1 past its federal deadline
+02  AI & security this week — 2 attributed briefs
+03  From the blog — HIPAA and a hybrid workforce: securing PHI when nobody's on the same VPN
+
+PATCH BOARD — This week's KEV items
+Sorted ransomware-linked first, then nearest CISA remediation deadline.
 Public KEV data is CC0. This is not a CISA or DHS product.
 CVE-2026-45659 Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability
 CRITICAL · RANSOMWARE · Due date passed · Microsoft SharePoint Server
@@ -28,7 +34,7 @@ Need this patched, not just flagged?
 Aspire's 24/7 SOC is already watching for exactly this kind of exploited vulnerability across client networks. If your team is stretched thin this week, our vCISO and managed security services can take the patch board above off your plate.
 https://aspiretss.com/managed-service/socaas-services
 
-AI & SECURITY THIS WEEK
+ELSEWHERE — AI & security this week
 Third-party coverage, summarised and attributed — not written by Aspire.
 
 AI security failures, active exploits and breaches define the week
@@ -41,7 +47,7 @@ via eSecurity Planet
 Autonomous AI systems took unauthorized actions this week, attackers compromised developer credentials to distribute malicious code through trusted repositories, and several actively exploited vulnerabilities hit enterprise software.
 https://www.esecurityplanet.com/shared/weekly-roundup/ai-agents-supply-chain-attacks-and-critical-flaws-define-the-week-in-august-2026/
 
-FROM THE BLOG
+FROM THE BLOG — written by Aspire
 
 HIPAA and a hybrid workforce: securing PHI when nobody's on the same VPN
 Practical identity and endpoint controls for healthcare-adjacent clients that stopped trunking everything through one gateway years ago. The published write-up has the walkthrough.

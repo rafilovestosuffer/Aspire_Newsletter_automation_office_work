@@ -303,3 +303,65 @@ issues get the new design. Card markup grew the demo issue from 61,743 to
 74,477 bytes against an 81,920-byte warn threshold and a 102KB Gmail clip —
 a test now pins the fixture under the warn threshold, but the margin is
 narrower and worth watching as item caps rise.
+
+---
+
+## Block 11 — Editorial redesign
+
+**Goal:** Make the issue look designed rather than generated.
+
+**Why:** Three complaints about the previous draft, all fair. Buttons were
+left-aligned (`align="left"` on every CTA) when centre is the default for a
+primary action. There was no "In this issue" contents block — every brief worth
+studying opens with one. And `card()` rendered threats, briefs *and* posts
+through one identical shape, so nine identical grey rectangles ran down the
+page with no lead, no rank and no rhythm.
+
+**Research** (Morning Brew, Axios, Sahan Journal, The 19th News, Madison
+Minutes, Dense Discovery, Litmus, caniemail): coloured all-caps kickers open
+each entry; a coloured ornament marks section transitions; links read better as
+dark text with a coloured underline than as coloured text; whitespace does the
+structural work a border does badly. Two constraints settled by the research:
+in-email **anchor links do not work** in the Gmail mobile apps or Outlook for
+Mac, so the contents block links to sources rather than jumping; and **linked
+SVG fails** in Gmail's mobile apps for Google accounts and in Yahoo entirely,
+so SVG is the in-repo source and PNG is what ships.
+
+**Files:** `assets/brand/*.svg`, `scripts/build-assets.mjs` (new),
+`scripts/lib/chrome.mjs` (new), `src/render/compile.ts`, `src/render/theme.ts`,
+`templates/brand-shell.mjml`, `scripts/render-issue-pdf.mjs`,
+`scripts/demo-issue.ts`, `tests/newsletter-redesign.test.ts`.
+
+* [x] `card()` deleted; `storyRow()` renders an editorial row — numeral, kicker,
+      serif headline, body — separated by a hairline rule instead of boxed
+* [x] Lead treatment: the first KEV item is set larger and is the only one
+      carrying a button; the rest are compact
+* [x] "In this issue" contents block, counts derived from the selected content
+      so it cannot drift, each line linking to a real source
+* [x] CTAs centred, ~46px tap target, built as a table so they can sit inside a
+      story row
+* [x] Georgia/Arial pairing for editorial contrast, both web-safe — no webfont
+      Outlook would refuse
+* [x] Brand assets authored as SVG and rasterized to PNG at 2x
+      (`npm run build:assets`); wordmark is live text so it survives image
+      blocking and needs no second dark-mode asset
+* [x] `--assets` on the PDF renderer resolves brand images to data: URIs in the
+      display copy only, so the offline review render shows the real artwork
+* [x] Plaintext mirrors the contents block and the new section labels
+
+**Test:** `npm test` (276), `npm run typecheck`, `npm run assemble:fixture`,
+`npm run demo:issue -- --pdf`. Both themes rendered at 600px and 375px.
+
+**Byte budget:** the first cut of this used `mj-group` for the numeral column
+and hit **97,007 bytes** — past the 81,920 warn threshold and within sight of
+the 102,400 Gmail clip. MJML emits a block of Outlook conditional markup per
+group and per column. Rebuilt as a single `mj-text` wrapping a two-cell table:
+**73,611 bytes**, below the previous card design, with a contents block, a
+header band and three section icons added. A test pins the fixture under the
+warn threshold. The threshold was not raised.
+
+**Risk:** the layout now depends on a table cell rather than an MJML column for
+the numeral. That is what keeps it from stacking on mobile, and it is checked
+at 375px — but it is hand-built markup inside `mj-text`, so MJML will not
+validate it. The render test catches a structural break; a subtle one would
+need an eye.

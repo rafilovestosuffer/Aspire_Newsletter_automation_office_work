@@ -3,9 +3,11 @@
     <mj-title>{{subject}}</mj-title>
     <mj-preview>{{preheader}}</mj-preview>
     <mj-attributes>
-      <mj-all font-family="Arial, Helvetica, sans-serif" />
+      <!-- Two web-safe faces, no webfont. Outlook on Windows will not load one,
+           and the fallback is what most of a real list would see. -->
+      <mj-all font-family="{{bodyFont}}" />
       <mj-text color="{{textColor}}" font-size="16px" line-height="1.6" />
-      <mj-button background-color="{{primaryColor}}" color="#FFFFFF" font-weight="bold" border-radius="4px" />
+      <mj-button background-color="{{primaryColor}}" color="#FFFFFF" font-weight="bold" border-radius="3px" />
       <mj-section background-color="{{backgroundColor}}" />
     </mj-attributes>
     <mj-raw>
@@ -13,10 +15,15 @@
       <meta name="supported-color-schemes" content="light dark" />
     </mj-raw>
     <mj-style>
-      a { color: {{primaryColor}}; }
+      /* Links as dark text with a coloured underline rather than coloured
+         text: markedly better contrast against a light background, and it
+         keeps the accent colour meaning "this is a link" instead of competing
+         with the severity pills for attention. */
+      a { color: inherit; text-decoration: underline; text-decoration-color: {{primaryColor}};
+          text-underline-offset: 2px; text-decoration-thickness: 2px; }
       /* Severity and deadline pills are the one place colour carries meaning
          rather than decoration, so they keep their own fill in dark mode and
-         only the surrounding card flips. */
+         only the surrounding surface flips. */
       .pill { border-radius: 3px; padding: 2px 7px; color: #ffffff; font-weight: bold; }
       /* Dark-mode support for clients that honour prefers-color-scheme
          (Apple Mail, many webmail/Android clients). Classic Outlook on
@@ -33,59 +40,47 @@
     </mj-style>
   </mj-head>
   <mj-body background-color="{{backgroundColor}}" width="600px" css-class="dm-bg">
-    <mj-section padding="24px 16px 4px" css-class="dm-bg">
+    <mj-section padding="28px 16px 0" css-class="dm-bg">
       <mj-column>
         {{logoBlock}}
         <!-- The masthead carries identity, not the headline. The subject is
              capped at 60 characters for the inbox envelope, so setting it as
              an H1 printed a headline truncated mid-phrase — and the reader
              has already seen the subject in their inbox. The lead story is
-             stated in full, once, in the 30-second read below. -->
-        <mj-text font-size="11px" color="{{mutedColor}}" letter-spacing="1px" text-transform="uppercase" css-class="dm-muted">{{issueLabel}}</mj-text>
-        <mj-text font-size="26px" font-weight="bold" line-height="1.25" padding-top="2px" css-class="dm-text">{{displayName}} Weekly</mj-text>
-        <mj-text font-size="13px" padding-top="4px"><a href="{{archiveUrl}}">View in browser</a></mj-text>
+             stated in full, once, in the opening below. -->
+        <mj-text font-size="11px" color="{{mutedColor}}" letter-spacing="1.5px" text-transform="uppercase" padding="4px 0 0" css-class="dm-muted">{{issueLabel}} &nbsp;·&nbsp; <a href="{{archiveUrl}}">View in browser</a></mj-text>
       </mj-column>
     </mj-section>
 
     {{heroBlock}}
 
-    <mj-section padding="4px 16px 8px" css-class="dm-bg">
-      <mj-column border-left="3px solid {{primaryColor}}" padding-left="14px">
-        <mj-text font-size="11px" color="{{mutedColor}}" letter-spacing="1px" text-transform="uppercase" css-class="dm-muted">The 30-second read</mj-text>
-        <mj-text font-size="17px" line-height="1.55" padding-top="2px" css-class="dm-text">{{editorBlurb}}</mj-text>
+    <mj-section padding="20px 16px 4px" css-class="dm-bg">
+      <mj-column>
+        <mj-text font-family="{{displayFont}}" font-size="20px" line-height="1.5" padding="0" css-class="dm-text">{{editorBlurb}}</mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="20px 16px 0" css-class="dm-bg">
-      <mj-column>
-        <mj-divider border-color="{{borderColor}}" border-width="1px" padding-bottom="14px" css-class="dm-rule" />
-        <mj-text font-size="20px" font-weight="bold" padding-bottom="2px" css-class="dm-text">Patch board — this week's KEV items</mj-text>
-        <mj-text font-size="12px" line-height="1.5" color="{{mutedColor}}" css-class="dm-muted">Sorted ransomware-linked first, then nearest CISA remediation deadline. Public CISA KEV data is CC0 — this newsletter is not a CISA or DHS product and does not use agency marks.</mj-text>
-      </mj-column>
-    </mj-section>
+    {{contentsBlock}}
+
+    {{threatsSection}}
     {{threatBlocks}}
 
     {{promoBlock}}
 
     {{briefsSection}}
 
-    <mj-section padding="20px 16px 0" css-class="dm-bg">
-      <mj-column>
-        <mj-divider border-color="{{borderColor}}" border-width="1px" padding-bottom="14px" css-class="dm-rule" />
-        <mj-text font-size="20px" font-weight="bold" css-class="dm-text">From the {{displayName}} blog</mj-text>
-      </mj-column>
-    </mj-section>
+    {{postsSection}}
     {{postBlocks}}
 
-    <mj-section padding="24px 16px 32px" css-class="dm-bg">
+    <mj-section padding="32px 16px 32px" css-class="dm-bg">
       <mj-column>
-        <mj-divider border-color="{{borderColor}}" border-width="1px" css-class="dm-rule" />
-        <mj-text font-size="12px" line-height="1.55" color="{{mutedColor}}" css-class="dm-muted">
+        <mj-divider border-color="{{borderColor}}" border-width="1px" padding="0 0 16px" css-class="dm-rule" />
+        <mj-text font-size="12px" line-height="1.6" color="{{mutedColor}}" padding="0" css-class="dm-muted">
           {{legalName}}<br/>
           {{postalAddress}}<br/>
           {{advertisementNotice}}<br/><br/>
           You received this because you opted in to the Weekly Newsletter category.<br/>
-          <a href="{{unsubscribeUrl}}">Unsubscribe</a> · <a href="{{preferenceUrl}}">Preferences</a> · <a href="{{archiveUrl}}">Archive</a><br/>
+          <a href="{{unsubscribeUrl}}">Unsubscribe</a> &nbsp;·&nbsp; <a href="{{preferenceUrl}}">Preferences</a> &nbsp;·&nbsp; <a href="{{archiveUrl}}">Archive</a><br/>
           {{ghlUnsubscribeMergeTag}}
         </mj-text>
       </mj-column>

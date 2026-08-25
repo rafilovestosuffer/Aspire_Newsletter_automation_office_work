@@ -11,7 +11,7 @@
         "brand.postalAddress is still a placeholder: TODO: valid physical postal address (CAN-SPAM) — not yet confirmed"
       ]
     },
-    "htmlBytes": 74477,
+    "htmlBytes": 73611,
     "issue": {
       "schemaVersion": "1.0.0",
       "issueKey": "aspire-America/New_York-2026-W34",
@@ -22,8 +22,8 @@
       "status": "assembled",
       "subject": "HIPAA and a hybrid workforce: securing PHI when nobody's ...",
       "preheader": "Selected posts and public KEV items from this week's window.",
-      "htmlSha256": "2820a92dcbfe2d4676c53bd4224262e061fa60ed62f7d92608866d95e34531d7",
-      "textSha256": "7284c1af1efc25db2cf3358ef51b96ab99a6f5cc884b16962833f0e8b83fb743",
+      "htmlSha256": "5cd752e89a6e7dfed20cbfb54140e4cbb63c156ed8e50367781bfc129f124992",
+      "textSha256": "2c14bea7947b7da3520d471d255cc71b1ef7ac2c933b2cd244aad377b08c5336",
       "postIds": [
         "post:99828a46d55a16f7",
         "post:d4f7d004112eb91f",
@@ -55,7 +55,7 @@
         "brand.postalAddress is still a placeholder: TODO: valid physical postal address (CAN-SPAM) — not yet confirmed"
       ]
     },
-    "htmlBytes": 74477,
+    "htmlBytes": 73611,
     "issue": {
       "schemaVersion": "1.0.0",
       "issueKey": "aspire-America/New_York-2026-W34",
@@ -66,8 +66,8 @@
       "status": "assembled",
       "subject": "HIPAA and a hybrid workforce: securing PHI when nobody's ...",
       "preheader": "Selected posts and public KEV items from this week's window.",
-      "htmlSha256": "a5659c5fcd2c4338a9879d7c689a125de9effd16def67401c92efb1ba4fbbed9",
-      "textSha256": "7284c1af1efc25db2cf3358ef51b96ab99a6f5cc884b16962833f0e8b83fb743",
+      "htmlSha256": "26b6f742260272806aeadd7295a74cc2aa6cde291651afe9132f246abd7dd294",
+      "textSha256": "2c14bea7947b7da3520d471d255cc71b1ef7ac2c933b2cd244aad377b08c5336",
       "postIds": [
         "post:99828a46d55a16f7",
         "post:d4f7d004112eb91f",

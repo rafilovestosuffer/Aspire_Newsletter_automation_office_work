@@ -146,6 +146,11 @@ export interface BrandConfig {
    * defaults in `src/render/theme.ts`, so a brand.yaml written before these
    * existed keeps rendering exactly as it did.
    */
+  /** Serif display face. Must be web-safe: Outlook will not load a webfont. */
+  displayFont?: string;
+  bodyFont?: string;
+  /** Colour of the em-dash mark that opens each section. Defaults to primary. */
+  ornamentColor?: string;
   mutedColor?: string;
   borderColor?: string;
   cardBackgroundColor?: string;
