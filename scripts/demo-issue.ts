@@ -115,7 +115,11 @@ async function buildVariant(theme: "light" | "dark") {
       relevance: { ...config.relevance, postLookbackDays: 60 },
     },
     now,
-    artifactsRoot: artifactsRoot(env.ARTIFACT_DIR),
+    // Each theme gets its own artifact root. Both variants share one issue
+    // key and revision, so a single root means the two runs freeze over each
+    // other's email.html — and whichever finished last is what a reader of
+    // that directory gets, regardless of which theme they asked for.
+    artifactsRoot: join(artifactsRoot(env.ARTIFACT_DIR), "demo", theme),
     publicBaseUrl: "https://aspiretss.com",
     llmProvider: "fixture",
     llmApiKey: "",

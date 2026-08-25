@@ -20,6 +20,7 @@ import { existsSync, readdirSync, readFileSync, writeFileSync, mkdtempSync } fro
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
+import { embedEmail } from "./lib/embed-email.mjs";
 
 const [artifactDirArg, outPathArg] = process.argv.slice(2);
 if (!artifactDirArg || !outPathArg) {
@@ -107,6 +108,10 @@ function annotateMergeTokens(html) {
   });
 }
 
+// The email is a complete HTML document. Embedding it raw would merge its
+// <body> attributes onto this page's body and hoist its stylesheet page-wide.
+const embedded = embedEmail(annotateMergeTokens(emailHtml), ".frame");
+
 const byteLen = Buffer.byteLength(emailHtml, "utf8");
 const WARN_BYTES = 81_920;
 const CLIP_BYTES = 104_448;
@@ -136,8 +141,10 @@ const wrapper = `<!doctype html>
   @page { size: Letter; margin: 20mm 18mm 18mm 18mm; }
   /* Noto Color Emoji is last but present: the previous demo omitted it, which
      is why an emoji in the source rendered as a missing-glyph box. */
+  /* Explicit white: this is a print document, and the embedded email's own
+     background must never be what decides the colour of the paper. */
   body { font-family:"Bitstream Charter","Liberation Serif",Georgia,serif; color:var(--ink);
-         font-size:10.5pt; line-height:1.5; margin:0; }
+         font-size:10.5pt; line-height:1.5; margin:0; background:#ffffff; }
   .doc h1, .doc h2, .doc h3, .sans { font-family:"Liberation Sans","DejaVu Sans",Arial,"Noto Color Emoji",sans-serif; }
   .doc h1 { font-size:24pt; line-height:1.2; margin:0 0 6pt; }
   .doc h2 { font-size:13pt; margin:18pt 0 6pt; padding-bottom:3pt; border-bottom:1px solid var(--rule); }
@@ -170,6 +177,11 @@ const wrapper = `<!doctype html>
   pre.plaintext { font-family:"Liberation Mono",monospace; font-size:8pt; line-height:1.45;
                   white-space:pre-wrap; word-break:break-word; background:#f7f9fb;
                   border:1px solid var(--rule); padding:8pt; }
+</style>
+<style>
+/* The email's own stylesheet, every rule scoped to .frame so it cannot
+   restyle the review chrome around it. */
+${embedded.css}
 </style></head><body>
 <script>
   // The review render is offline by design — it never fetches remote brand
@@ -237,7 +249,7 @@ ${list(warnings, "None.")}
 <div class="page-break"></div>
 <h2>The email, as the reader sees it</h2>
 </div>
-<div class="frame">${annotateMergeTokens(emailHtml)}</div>
+<div class="frame" style="${esc(embedded.bodyStyle)}">${embedded.content}</div>
 <p class="frame-note">Frozen email.html &middot; 600px &middot; light palette</p>
 
 <div class="doc">

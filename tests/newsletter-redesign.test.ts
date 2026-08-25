@@ -7,6 +7,7 @@ import { fixtureSummarize } from "../src/llm/summarize";
 import { extractImageSrcs, runQa } from "../src/qa/gates";
 import { compileMjml } from "../src/render/compile";
 import { resolveTheme, severityColor, urgencyBucket } from "../src/render/theme";
+import { embedEmail, scopeCss } from "../scripts/lib/embed-email.mjs";
 import { loadConfig } from "../src/config";
 import { withCompleteBrand } from "./support/config";
 
@@ -507,5 +508,91 @@ describe("QA gates image sources as strictly as hrefs", () => {
     expect(report.failures).toEqual([]);
     // The redesign added card markup; the Gmail clip budget still has to hold.
     expect(Buffer.byteLength(html, "utf8")).toBeLessThan(config.relevance.gmailWarnBytes);
+  });
+});
+
+
+// ---------------------------------------------------------------------------
+// Embedding the email in the review PDF.
+//
+// Both of these were found by rendering the document and looking at it, not by
+// reading the code: the page came out with the email's dark background and the
+// appendix heading was nearly invisible on it.
+// ---------------------------------------------------------------------------
+describe("an email document is isolated before being embedded in a page", () => {
+  const emailDoc = [
+    "<!doctype html><html><head>",
+    "<style>body{margin:0}table,td{border-collapse:collapse}",
+    "@media (prefers-color-scheme: dark){.dm-bg{background-color:#14181f !important}}</style>",
+    '</head><body style="background-color:#0f1420;word-spacing:normal">',
+    '<table><tr><td class="dm-bg">hello</td></tr></table>',
+    "</body></html>",
+  ].join("");
+
+  it("takes the body background off the body tag so it cannot repaint the host page", () => {
+    // The HTML parser merges a second <body> tag's attributes onto the real
+    // one, so leaving it inline turned the whole review document dark.
+    const { bodyStyle, content } = embedEmail(emailDoc);
+    expect(bodyStyle).toContain("#0f1420");
+    expect(content).not.toMatch(/<body/i);
+    expect(content).not.toMatch(/<\/?html/i);
+    expect(content).not.toMatch(/<!doctype/i);
+    expect(content).toContain("hello");
+  });
+
+  it("scopes every rule of the email's stylesheet, including inside @media", () => {
+    const { css } = embedEmail(emailDoc, ".frame");
+    // `body` becomes the frame itself — inside the frame, the frame is the body.
+    expect(css).toContain(".frame{margin:0}");
+    expect(css).toContain(".frame table,.frame td{");
+    expect(css).toContain("@media (prefers-color-scheme: dark){.frame .dm-bg{");
+    // Nothing may be left that can match outside the frame.
+    expect(css).not.toMatch(/(^|\n|\{)\s*(body|table|td|\.dm-bg)\s*[,{]/);
+  });
+
+  it("does not read a comma inside a comment as a selector separator", () => {
+    // A comment swallowing the prelude boundary left the rule after it
+    // unscoped, so .dm-bg and .pill escaped the frame entirely.
+    const css = scopeCss("/* colour carries meaning, not decoration */\n.pill{color:#fff}", ".frame");
+    expect(css).toContain(".frame .pill{");
+    expect(css).not.toContain("decoration");
+    expect(css).not.toMatch(/(^|\n)\.pill\{/);
+  });
+
+  it("leaves at-rules that carry no selectors alone", () => {
+    const css = scopeCss('@font-face{font-family:"X";src:url(x.woff2)}a{color:red}', ".frame");
+    expect(css).toContain('@font-face{font-family:"X";src:url(x.woff2)}');
+    expect(css).toContain(".frame a{color:red}");
+  });
+
+  it("passes a bare fragment through untouched", () => {
+    const { content, css, bodyStyle } = embedEmail("<div>just a fragment</div>");
+    expect(content).toBe("<div>just a fragment</div>");
+    expect(css).toBe("");
+    expect(bodyStyle).toBe("");
+  });
+
+  it("isolates the real rendered issue, both directions", () => {
+    const config = withCompleteBrand();
+    const threats = [threatItem({ id: "t", knownRansomware: true, dueDate: "2026-09-01" })];
+    const { html } = compileMjml({
+      brand: config.brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x",
+      llm: fixtureSummarize([], threats, [], NOW),
+      posts: [],
+      threats,
+      briefs: [],
+      now: NOW,
+    });
+    const { css, content, bodyStyle } = embedEmail(html, ".frame");
+    expect(content).not.toMatch(/<body/i);
+    expect(bodyStyle).toContain(config.brand.backgroundColor);
+    // MJML's own resets must not be able to reach the review chrome.
+    for (const line of css.split("\n").map((l) => l.trim()).filter(Boolean)) {
+      // At-rule preludes carry no selector; a bare brace closes a group.
+      if (line.startsWith("@") || line === "}" || line === "{") continue;
+      expect(line.startsWith(".frame")).toBe(true);
+    }
   });
 });

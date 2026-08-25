@@ -2,7 +2,7 @@
   {
     "theme": "light",
     "htmlPath": "/home/user/Aspire_Newsletter_automation_office_work/docs/demo/aspire-weekly-demo-light.html",
-    "artifactDir": "/home/user/Aspire_Newsletter_automation_office_work/artifacts/issues/aspire-America~New_York-2026-W34/r1",
+    "artifactDir": "/home/user/Aspire_Newsletter_automation_office_work/artifacts/demo/light/issues/aspire-America~New_York-2026-W34/r1",
     "qa": {
       "ok": true,
       "failures": [],
@@ -46,7 +46,7 @@
   {
     "theme": "dark",
     "htmlPath": "/home/user/Aspire_Newsletter_automation_office_work/docs/demo/aspire-weekly-demo-dark.html",
-    "artifactDir": "/home/user/Aspire_Newsletter_automation_office_work/artifacts/issues/aspire-America~New_York-2026-W34/r1",
+    "artifactDir": "/home/user/Aspire_Newsletter_automation_office_work/artifacts/demo/dark/issues/aspire-America~New_York-2026-W34/r1",
     "qa": {
       "ok": true,
       "failures": [],
