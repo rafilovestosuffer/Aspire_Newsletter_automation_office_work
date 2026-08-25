@@ -9,9 +9,34 @@ postalAddress: "TODO: valid physical postal address (CAN-SPAM)"
 fromName: "TODO: from display name"
 fromEmail: "newsletter@TODO.example.invalid"
 replyTo: "hello@TODO.example.invalid"
-primaryColor: "#4F8CFF"
-backgroundColor: "#0B1220"
-textColor: "#F4F7FB"
+# Light is the recommended default: classic Outlook on Windows applies no dark
+# transform, so a light palette is the one that renders correctly everywhere.
+# Dark-mode clients are served by the prefers-color-scheme block in
+# templates/brand-shell.mjml, not by inverting these values.
+primaryColor: "#1F4E9C"
+backgroundColor: "#FFFFFF"
+textColor: "#12181F"
+
+# Optional design tokens. Omit any of them to take the defaults in
+# src/render/theme.ts; the palette below matches the strategy document so the
+# email and the review PDF read as one family.
+mutedColor: "#6B7885"
+borderColor: "#D7DDE4"
+cardBackgroundColor: "#F7F9FB"
+
+# Severity pill fill on the patch board.
+severityColors:
+  critical: "#B03A3A"
+  high: "#C8912A"
+  medium: "#3D4A58"
+  low: "#6B7885"
+
+# Remediation-deadline pill fill. overdue = past the CISA date,
+# soon = within three days, ok = everything else.
+urgencyColors:
+  overdue: "#B03A3A"
+  soon: "#C8912A"
+  ok: "#6B7885"
 logoUrl: "https://cdn.TODO.example.invalid/logo.png"
 siteUrl: "https://TODO.example.invalid"
 archiveBaseUrl: "http://localhost:8787/archive"
@@ -21,6 +46,15 @@ preferenceUrl: "https://TODO.example.invalid/preferences"
 ghlUnsubscribeMergeTag: "{{unsubscribe_link}}"
 advertisementNotice: "TODO: advertisement identification if primary purpose is commercial"
 cdnHost: "cdn.TODO.example.invalid"
+
+# Brand-hosted images only. Any src rendered into the HTML is gated against
+# these values and cdnHost by src/qa/gates.ts, exactly like hrefs are —
+# third-party or feed-supplied art fails QA by design.
+# heroImageUrl: "https://cdn.TODO.example.invalid/newsletter/hero.png"
+# sectionIcons:
+#   threats: "https://cdn.TODO.example.invalid/newsletter/icon-threats.png"
+#   briefs: "https://cdn.TODO.example.invalid/newsletter/icon-briefs.png"
+#   posts: "https://cdn.TODO.example.invalid/newsletter/icon-posts.png"
 
 # Optional native promo block, rendered mid-issue (research: in-voice native
 # ads outperform banner-style placements). Leave heading blank to render

@@ -3,6 +3,10 @@ import { llmCanaryFail } from "../llm/schema";
 
 const CVE_RE = /CVE-\d{4}-\d{4,}/gi;
 const HREF_RE = /href\s*=\s*(?:"([^"]*)"|'([^']*)')/gi;
+// Anchored on a preceding delimiter so `data-src=` is a distinct attribute
+// rather than a substring match on this one.
+const SRC_RE = /(?:^|[\s"'])src\s*=\s*(?:"([^"]*)"|'([^']*)')/gi;
+const CSS_URL_RE = /url\(\s*['"]?([^'")]+)['"]?\s*\)/gi;
 
 export function extractHrefs(html: string): string[] {
   const out: string[] = [];
@@ -13,6 +17,46 @@ export function extractHrefs(html: string): string[] {
     if (href) out.push(href);
   }
   return out;
+}
+
+/**
+ * Every URL the rendered HTML would make the reader's client fetch.
+ *
+ * `extractHrefs` deliberately does not cover these: an href is a link the
+ * reader chooses to follow, while a `src` or a CSS `url()` is fetched on open.
+ * That makes an un-gated one a tracking pixel or an SSRF-adjacent egress
+ * channel, so it is held to a stricter list than an href — brand-hosted
+ * assets only, never an ingested item URL.
+ */
+export function extractImageSrcs(html: string): string[] {
+  const out: string[] = [];
+  for (const re of [new RegExp(SRC_RE), new RegExp(CSS_URL_RE)]) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(html))) {
+      const src = (m[1] ?? m[2] ?? "").replaceAll("&amp;", "&").trim();
+      if (src) out.push(src);
+    }
+  }
+  return out;
+}
+
+/**
+ * Brand-hosted image origins. Unlike the href list this is not seeded from
+ * ingested content: third-party art is unsupported by design, because
+ * hotlinking it would leak reader IPs to hosts we do not control.
+ */
+export function imageSrcAllowList(brand: BrandConfig): Set<string> {
+  const set = new Set<string>();
+  for (const u of [
+    brand.logoUrl,
+    brand.heroImageUrl,
+    brand.sectionIcons?.threats,
+    brand.sectionIcons?.briefs,
+    brand.sectionIcons?.posts,
+  ]) {
+    if (u && u.trim()) set.add(u.trim());
+  }
+  return set;
 }
 
 export function hrefAllowList(opts: {
@@ -231,6 +275,31 @@ export function runQa(opts: {
       void hostOf;
       failures.push(`href not on ingest/config allow-list: ${href}`);
     }
+  }
+
+  // Image sources are gated separately and more strictly than hrefs, because
+  // the reader's client fetches them on open without any action from them.
+  const imageAllow = imageSrcAllowList(opts.brand);
+  const cdnHost = (opts.brand.cdnHost ?? "").trim().toLowerCase();
+  for (const src of extractImageSrcs(opts.html)) {
+    if (src.startsWith("{{") || src.startsWith("%")) continue;
+    if (imageAllow.has(src)) continue;
+    let url: URL;
+    try {
+      url = new URL(src);
+    } catch {
+      failures.push(`invalid image src ${src}`);
+      continue;
+    }
+    if (url.protocol !== "https:") {
+      // Covers data:, javascript: and cleartext http: in one rule. A data:
+      // image would also defeat the allow-list by carrying its own payload.
+      failures.push(`image src must be https: ${src}`);
+      continue;
+    }
+    const host = url.hostname.toLowerCase();
+    if (cdnHost && (host === cdnHost || host.endsWith(`.${cdnHost}`))) continue;
+    failures.push(`image src not on brand allow-list: ${src}`);
   }
 
   for (const err of opts.renderErrors ?? []) {

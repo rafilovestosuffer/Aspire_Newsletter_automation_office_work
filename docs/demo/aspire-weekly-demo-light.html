@@ -43,9 +43,21 @@
     
   
     
+    <style type="text/css">
+
+    @media only screen and (max-width:479px) {
+      table.mj-full-width-mobile { width: 100% !important; }
+      td.mj-full-width-mobile { width: auto !important; }
+    }
+  
+    </style>
      
     <style type="text/css">
 a { color: #1f4e9c; }
+      /* Severity and deadline pills are the one place colour carries meaning
+         rather than decoration, so they keep their own fill in dark mode and
+         only the surrounding card flips. */
+      .pill { border-radius: 3px; padding: 2px 7px; color: #ffffff; font-weight: bold; }
       /* Dark-mode support for clients that honour prefers-color-scheme
          (Apple Mail, many webmail/Android clients). Classic Outlook on
          Windows applies no dark transform at all and simply renders the
@@ -56,6 +68,7 @@ a { color: #1f4e9c; }
         .dm-card { background-color: #1c212b !important; }
         .dm-text { color: #eef1f5 !important; }
         .dm-muted { color: #9aa5b1 !important; }
+        .dm-rule { border-color: #2c333f !important; }
       }
     </style>
     <meta name="color-scheme" content="light dark" />
@@ -71,18 +84,18 @@ a { color: #1f4e9c; }
       >
         
       
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  class="dm-bg" style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:24px 16px 8px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:24px 16px 4px;text-align:center;"
               >
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
             
@@ -97,23 +110,51 @@ a { color: #1f4e9c; }
           
               <tr>
                 <td
+                   align="left" style="font-size:0px;padding:0 0 10px;word-break:break-word;"
+                >
+                  
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;"
+      >
+        <tbody>
+          <tr>
+            <td  style="width:150px;">
+              
+      <img
+         alt="Aspire" src="https://aspiretss.com/logo.png" style="border:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="150" height="auto"
+      />
+    
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
+                </td>
+              </tr>
+            <!-- The masthead carries identity, not the headline. The subject is
+             capped at 60 characters for the inbox envelope, so setting it as
+             an H1 printed a headline truncated mid-phrase — and the reader
+             has already seen the subject in their inbox. The lead story is
+             stated in full, once, in the 30-second read below. -->
+              <tr>
+                <td
                    align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >Aspire · 2026-W34 · r1</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:11px;letter-spacing:1px;line-height:1.6;text-align:left;text-transform:uppercase;color:#6b7885;"
+      >2026-W34 · r1</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-top:0;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-top:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:22px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:26px;font-weight:bold;line-height:1.25;text-align:left;color:#12181f;"
       >Aspire Weekly</div>
     
                 </td>
@@ -121,11 +162,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:4px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
       ><a href="https://aspiretss.com/archive/aspire-America~New_York-2026-W34/r/1">View in browser</a></div>
     
                 </td>
@@ -145,18 +186,18 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  class="dm-bg" style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:4px 16px 8px;text-align:center;"
               >
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
             
@@ -165,17 +206,24 @@ a { color: #1f4e9c; }
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="border-left:3px solid #1f4e9c;vertical-align:top;padding-left:14px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:11px;letter-spacing:1px;line-height:1.6;text-align:left;text-transform:uppercase;color:#6b7885;"
       >The 30-second read</div>
     
                 </td>
@@ -183,16 +231,21 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-top:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;line-height:1.55;text-align:left;color:#12181f;"
       >This issue opens with HIPAA and a hybrid workforce: securing PHI when nobody&#39;s on the same VPN. On the threat desk, CVE-2026-45659 is in the selected set.</div>
     
                 </td>
               </tr>
             
+        </tbody>
+      </table>
+    
+            </td>
+          </tr>
         </tbody>
       </table>
     
@@ -207,18 +260,18 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  class="dm-bg" style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:16px 16px 0;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:20px 16px 0;text-align:center;"
               >
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
             
@@ -233,11 +286,28 @@ a { color: #1f4e9c; }
           
               <tr>
                 <td
-                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="center" class="dm-rule" style="font-size:0px;padding:10px 25px;padding-bottom:14px;word-break:break-word;"
+                >
+                  
+      <p
+         style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:100%;"
+      >
+      </p>
+      
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:518px;" role="presentation" width="518px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+</td></tr></table><![endif]-->
+    
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:20px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
       >Patch board — this week's KEV items</div>
     
                 </td>
@@ -249,7 +319,7 @@ a { color: #1f4e9c; }
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.5;text-align:left;color:#6b7885;"
       >Sorted ransomware-linked first, then nearest CISA remediation deadline. Public CISA KEV data is CC0 — this newsletter is not a CISA or DHS product and does not use agency marks.</div>
     
                 </td>
@@ -269,61 +339,80 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #b03a3a;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-bottom:6px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
-      >CVE-2026-45659 · critical · Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:2.1;text-align:left;color:#12181f;"
+      ><span class="pill" style="background-color:#b03a3a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">CRITICAL</span> <span class="pill" style="background-color:#b03a3a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">RANSOMWARE</span> <span class="pill" style="background-color:#b03a3a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">Due date passed</span></div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
          style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >Microsoft SharePoint Server · Due date passed · 🔴 RANSOMWARE</div>
+      >CVE-2026-45659 · Microsoft SharePoint Server</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:4px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
+      >Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability</div>
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >Microsoft SharePoint Server contains a deserialization of untrusted data vulnerability which allows an authorized attacker to execute code over a network. The federal remediation date has already passed.</div>
     
                 </td>
@@ -331,16 +420,21 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:8px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
-      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-45659">Source</a></div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
+      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-45659">Read the advisory</a></div>
     
                 </td>
               </tr>
             
+        </tbody>
+      </table>
+    
+            </td>
+          </tr>
         </tbody>
       </table>
     
@@ -355,78 +449,102 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #c8912a;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-bottom:6px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
-      >CVE-2026-72529 · high · TrueConf Server Missing Authentication for Critical Function Vulnerability</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:2.1;text-align:left;color:#12181f;"
+      ><span class="pill" style="background-color:#c8912a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">HIGH</span> <span class="pill" style="background-color:#c8912a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">Due in 2d (2026-08-23)</span></div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
          style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >TrueConf Server · Due in 1d (2026-08-23)</div>
+      >CVE-2026-72529 · TrueConf Server</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:4px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
-      >TrueConf Server contains a missing authentication for critical function vulnerability which could allow a remote unauthorized attacker with network access via port 4307/TCP to execute an arbitrary script. Federal agencies must remediate within 1 day.</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
+      >TrueConf Server Missing Authentication for Critical Function Vulnerability</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
-      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72529">Source</a></div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
+      >TrueConf Server contains a missing authentication for critical function vulnerability which could allow a remote unauthorized attacker with network access via port 4307/TCP to execute an arbitrary script. Federal agencies must remediate within 2 days.</div>
     
                 </td>
               </tr>
             
+              <tr>
+                <td
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:8px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
+      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72529">Read the advisory</a></div>
+    
+                </td>
+              </tr>
+            
+        </tbody>
+      </table>
+    
+            </td>
+          </tr>
         </tbody>
       </table>
     
@@ -441,78 +559,102 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #c8912a;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-bottom:6px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
-      >CVE-2026-73570 · high · Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:2.1;text-align:left;color:#12181f;"
+      ><span class="pill" style="background-color:#c8912a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">HIGH</span> <span class="pill" style="background-color:#c8912a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">Due in 3d (2026-08-24)</span></div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
          style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >Synacor Zimbra Collaboration Suite (ZCS) · Due in 2d (2026-08-24)</div>
+      >CVE-2026-73570 · Synacor Zimbra Collaboration Suite (ZCS)</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:4px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
-      >Zimbra Collaboration Suite (ZCS) contains an OS command injection vulnerability which could allow an unauthenticated attacker to send specially crafted SMTP requests that may result in execution of arbitrary operating system commands as the Zimbra user. Federal agencies must remediate within 2 days.</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
+      >Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
-      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-73570">Source</a></div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
+      >Zimbra Collaboration Suite (ZCS) contains an OS command injection vulnerability which could allow an unauthenticated attacker to send specially crafted SMTP requests that may result in execution of arbitrary operating system commands as the Zimbra user. Federal agencies must remediate within 3 days.</div>
     
                 </td>
               </tr>
             
+              <tr>
+                <td
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:8px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
+      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-73570">Read the advisory</a></div>
+    
+                </td>
+              </tr>
+            
+        </tbody>
+      </table>
+    
+            </td>
+          </tr>
         </tbody>
       </table>
     
@@ -527,61 +669,80 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #c8912a;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-bottom:6px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
-      >CVE-2026-72530 · high · TrueConf Server Code Injection Vulnerability</div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:2.1;text-align:left;color:#12181f;"
+      ><span class="pill" style="background-color:#c8912a;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">HIGH</span> <span class="pill" style="background-color:#6b7885;border-radius:3px;padding:2px 7px;color:#ffffff;font-weight:bold;white-space:nowrap;">Due in 13d (2026-09-03)</span></div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
          style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >TrueConf Server · Due in 12d (2026-09-03)</div>
+      >CVE-2026-72530 · TrueConf Server</div>
     
                 </td>
               </tr>
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:4px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
+      >TrueConf Server Code Injection Vulnerability</div>
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >TrueConf Server contains a code injection vulnerability that could allow an unauthorized remote attacker with network access via port 4307/TCP to use a specially crafted script to break out of the isolated environment and execute arbitrary code on the host system. Federal deadline: 2026-09-03.</div>
     
                 </td>
@@ -589,16 +750,21 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:8px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
-      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72530">Source</a></div>
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
+      ><a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72530">Read the advisory</a></div>
     
                 </td>
               </tr>
             
+        </tbody>
+      </table>
+    
+            </td>
+          </tr>
         </tbody>
       </table>
     
@@ -613,33 +779,40 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="border-left:4px solid #1f4e9c;direction:ltr;font-size:0px;padding:16px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:20px 16px 8px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:564px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border-left:4px solid #1f4e9c;vertical-align:top;padding:16px 18px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
@@ -651,11 +824,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-top:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >Need this patched, not just flagged?</div>
     
                 </td>
@@ -663,11 +836,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >Aspire&#39;s 24/7 SOC is already watching for exactly this kind of exploited vulnerability across client networks. If your team is stretched thin this week, our vCISO and managed security services can take the patch board above off your plate.</div>
     
                 </td>
@@ -675,7 +848,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:12px 0 0;word-break:break-word;"
                 >
                   
       <table
@@ -684,10 +857,10 @@ a { color: #1f4e9c; }
         <tbody>
           <tr>
             <td
-               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 25px;background:#1f4e9c;" valign="middle"
+               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 18px;background:#1f4e9c;" valign="middle"
             >
               <a
-                 href="https://aspiretss.com/managed-service/socaas-services" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:13px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
+                 href="https://aspiretss.com/managed-service/socaas-services" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 18px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
               >
                 Talk to the SOC
               </a>
@@ -702,6 +875,11 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
       </div>
     
           <!--[if mso | IE]></td></tr></table><![endif]-->
@@ -713,18 +891,18 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:16px 16px 0;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:20px 16px 0;text-align:center;"
               >
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
             
@@ -739,11 +917,28 @@ a { color: #1f4e9c; }
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="center" class="dm-rule" style="font-size:0px;padding:10px 25px;padding-bottom:14px;word-break:break-word;"
+                >
+                  
+      <p
+         style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:100%;"
+      >
+      </p>
+      
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:518px;" role="presentation" width="518px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+</td></tr></table><![endif]-->
+    
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:20px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
       >AI &amp; security this week</div>
     
                 </td>
@@ -751,11 +946,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#9AA8BC;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
       >Third-party coverage, summarised and attributed — not written by Aspire.</div>
     
                 </td>
@@ -775,37 +970,44 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #d7dde4;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >AI security failures, active exploits and breaches define the week</div>
     
                 </td>
@@ -813,7 +1015,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;padding-bottom:4px;word-break:break-word;"
                 >
                   
       <div
@@ -825,11 +1027,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >Coverage of actively exploited infrastructure vulnerabilities, AI-generated code security failures, and coordinated phishing campaigns against financial-sector employees. Full detail is on the blog.</div>
     
                 </td>
@@ -837,11 +1039,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:8px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
       ><a href="https://www.esecurityplanet.com/shared/weekly-roundup/ai-security-failures-active-exploits-and-breaches-define-the-week-in-august-2026/">Read more</a></div>
     
                 </td>
@@ -850,89 +1052,8 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
-      </div>
-    
-          <!--[if mso | IE]></td></tr></table><![endif]-->
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        
-      </div>
-    
-      
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
-    
-      
-      <div  style="margin:0px auto;max-width:600px;">
-        
-        <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
-        >
-          <tbody>
-            <tr>
-              <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
-              >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
-            
-      <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
-      >
-        
-      <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
-      >
-        <tbody>
-          
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
-      >AI agents, supply chain attacks and critical flaws define the week</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >via eSecurity Planet</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
-      >Autonomous AI systems took unauthorized actions this week, attackers compromised developer credentials to distribute malicious code through trusted repositories, and several actively exploited vulnerabilities hit enterprise software.</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:14px;line-height:1.6;text-align:left;color:#12181f;"
-      ><a href="https://www.esecurityplanet.com/shared/weekly-roundup/ai-agents-supply-chain-attacks-and-critical-flaws-define-the-week-in-august-2026/">Read more</a></div>
-    
-                </td>
-              </tr>
-            
+            </td>
+          </tr>
         </tbody>
       </table>
     
@@ -947,18 +1068,116 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  class="dm-bg" style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:16px 16px 0;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
+              >
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
+            
+      <div
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+      >
+        
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #d7dde4;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
+      >
+        <tbody>
+          
+              <tr>
+                <td
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
+      >AI agents, supply chain attacks and critical flaws define the week</div>
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" class="dm-muted" style="font-size:0px;padding:10px 25px;padding-bottom:4px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
+      >via eSecurity Planet</div>
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
+      >Autonomous AI systems took unauthorized actions this week, attackers compromised developer credentials to distribute malicious code through trusted repositories, and several actively exploited vulnerabilities hit enterprise software.</div>
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
+                   align="left" style="font-size:0px;padding:10px 25px;padding-top:8px;word-break:break-word;"
+                >
+                  
+      <div
+         style="font-family:Arial, Helvetica, sans-serif;font-size:13px;line-height:1.6;text-align:left;color:#12181f;"
+      ><a href="https://www.esecurityplanet.com/shared/weekly-roundup/ai-agents-supply-chain-attacks-and-critical-flaws-define-the-week-in-august-2026/">Read more</a></div>
+    
+                </td>
+              </tr>
+            
+        </tbody>
+      </table>
+    
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
+      </div>
+    
+          <!--[if mso | IE]></td></tr></table><![endif]-->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+    
+      
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    
+      
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
+        
+        <table
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
+        >
+          <tbody>
+            <tr>
+              <td
+                 style="direction:ltr;font-size:0px;padding:20px 16px 0;text-align:center;"
               >
                 <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
             
@@ -973,11 +1192,28 @@ a { color: #1f4e9c; }
           
               <tr>
                 <td
+                   align="center" class="dm-rule" style="font-size:0px;padding:10px 25px;padding-bottom:14px;word-break:break-word;"
+                >
+                  
+      <p
+         style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:100%;"
+      >
+      </p>
+      
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:518px;" role="presentation" width="518px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+</td></tr></table><![endif]-->
+    
+    
+                </td>
+              </tr>
+            
+              <tr>
+                <td
                    align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:18px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:20px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
       >From the Aspire blog</div>
     
                 </td>
@@ -997,37 +1233,44 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #1f4e9c;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >HIPAA and a hybrid workforce: securing PHI when nobody&#39;s on the same VPN</div>
     
                 </td>
@@ -1035,23 +1278,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >1 min read</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >Practical identity and endpoint controls for healthcare-adjacent clients that stopped trunking everything through one gateway years ago. The published write-up has the walkthrough.</div>
     
                 </td>
@@ -1059,7 +1290,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:12px 0 0;word-break:break-word;"
                 >
                   
       <table
@@ -1068,10 +1299,10 @@ a { color: #1f4e9c; }
         <tbody>
           <tr>
             <td
-               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 25px;background:#1f4e9c;" valign="middle"
+               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 18px;background:#1f4e9c;" valign="middle"
             >
               <a
-                 href="https://aspiretss.com/blog/hipaa-hybrid-workforce-phi-vpn" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:13px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
+                 href="https://aspiretss.com/blog/hipaa-hybrid-workforce-phi-vpn" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 18px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
               >
                 Read the post
               </a>
@@ -1086,6 +1317,11 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
       </div>
     
           <!--[if mso | IE]></td></tr></table><![endif]-->
@@ -1097,37 +1333,44 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #1f4e9c;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >What CMMC 2.0 actually requires of a 40-person defense subcontractor</div>
     
                 </td>
@@ -1135,23 +1378,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >1 min read</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >A walkthrough of which CMMC Level 2 practices apply below the primes, and where a managed SOC covers the control without a new hire. The link goes to the published post, not a syndicated copy.</div>
     
                 </td>
@@ -1159,7 +1390,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:12px 0 0;word-break:break-word;"
                 >
                   
       <table
@@ -1168,10 +1399,10 @@ a { color: #1f4e9c; }
         <tbody>
           <tr>
             <td
-               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 25px;background:#1f4e9c;" valign="middle"
+               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 18px;background:#1f4e9c;" valign="middle"
             >
               <a
-                 href="https://aspiretss.com/blog/cmmc-2-requirements-small-defense-contractor" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:13px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
+                 href="https://aspiretss.com/blog/cmmc-2-requirements-small-defense-contractor" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 18px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
               >
                 Read the post
               </a>
@@ -1186,6 +1417,11 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
       </div>
     
           <!--[if mso | IE]></td></tr></table><![endif]-->
@@ -1197,37 +1433,44 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #1f4e9c;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >Why we run 24/7 SOC coverage in-house instead of reselling a SIEM license</div>
     
                 </td>
@@ -1235,23 +1478,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >1 min read</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >The difference between owning detection and just owning the dashboard, and what that means during an actual incident at 2am. The published write-up has the walkthrough.</div>
     
                 </td>
@@ -1259,7 +1490,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:12px 0 0;word-break:break-word;"
                 >
                   
       <table
@@ -1268,10 +1499,10 @@ a { color: #1f4e9c; }
         <tbody>
           <tr>
             <td
-               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 25px;background:#1f4e9c;" valign="middle"
+               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 18px;background:#1f4e9c;" valign="middle"
             >
               <a
-                 href="https://aspiretss.com/blog/why-24-7-soc-coverage-in-house" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:13px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
+                 href="https://aspiretss.com/blog/why-24-7-soc-coverage-in-house" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 18px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
               >
                 Read the post
               </a>
@@ -1286,6 +1517,11 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
       </div>
     
           <!--[if mso | IE]></td></tr></table><![endif]-->
@@ -1297,37 +1533,44 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #1f4e9c;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >A vCISO&#39;s checklist for a SOC 2 Type II renewal that doesn&#39;t derail Q4</div>
     
                 </td>
@@ -1335,23 +1578,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >1 min read</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >Evidence collection, control testing, and the three findings we see repeat every renewal cycle for NYC mid-market clients. The link goes to the published post, not a syndicated copy.</div>
     
                 </td>
@@ -1359,7 +1590,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:12px 0 0;word-break:break-word;"
                 >
                   
       <table
@@ -1368,10 +1599,10 @@ a { color: #1f4e9c; }
         <tbody>
           <tr>
             <td
-               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 25px;background:#1f4e9c;" valign="middle"
+               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 18px;background:#1f4e9c;" valign="middle"
             >
               <a
-                 href="https://aspiretss.com/blog/vciso-soc-2-type-2-renewal-checklist" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:13px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
+                 href="https://aspiretss.com/blog/vciso-soc-2-type-2-renewal-checklist" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 18px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
               >
                 Read the post
               </a>
@@ -1386,6 +1617,11 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
       </div>
     
           <!--[if mso | IE]></td></tr></table><![endif]-->
@@ -1397,37 +1633,44 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
               <td
-                 style="direction:ltr;font-size:0px;padding:4px 16px;text-align:center;"
+                 style="direction:ltr;font-size:0px;padding:8px 16px;text-align:center;"
               >
-                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:568px;" ><![endif]-->
+                <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="dm-card-outlook" style="vertical-align:top;width:568px;" ><![endif]-->
             
       <div
-         class="mj-column-per-100 mj-outlook-group-fix" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
+         class="mj-column-per-100 mj-outlook-group-fix dm-card" style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;"
       >
         
       <table
-         border="0" cellpadding="0" cellspacing="0" role="presentation" style="vertical-align:top;" width="100%"
+         border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%"
+      >
+        <tbody>
+          <tr>
+            <td  style="background-color:#f7f9fb;border:1px solid #d7dde4;border-left:4px solid #1f4e9c;vertical-align:top;padding:14px 16px;">
+              
+      <table
+         border="0" cellpadding="0" cellspacing="0" role="presentation" style="" width="100%"
       >
         <tbody>
           
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;padding-bottom:2px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;font-weight:bold;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:17px;font-weight:bold;line-height:1.35;text-align:left;color:#12181f;"
       >Digital forensics after a business email compromise: the first 24 hours</div>
     
                 </td>
@@ -1435,23 +1678,11 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" class="dm-text" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
-      >1 min read</div>
-    
-                </td>
-              </tr>
-            
-              <tr>
-                <td
-                   align="left" style="font-size:0px;padding:10px 25px;word-break:break-word;"
-                >
-                  
-      <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:16px;line-height:1.6;text-align:left;color:#12181f;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:15px;line-height:1.6;text-align:left;color:#12181f;"
       >What we actually do in the first day of a BEC engagement, before anyone asks about root cause. Full detail is on the blog.</div>
     
                 </td>
@@ -1459,7 +1690,7 @@ a { color: #1f4e9c; }
             
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="left" style="font-size:0px;padding:12px 0 0;word-break:break-word;"
                 >
                   
       <table
@@ -1468,10 +1699,10 @@ a { color: #1f4e9c; }
         <tbody>
           <tr>
             <td
-               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 25px;background:#1f4e9c;" valign="middle"
+               align="center" bgcolor="#1f4e9c" role="presentation" style="border:none;border-radius:4px;cursor:auto;mso-padding-alt:10px 18px;background:#1f4e9c;" valign="middle"
             >
               <a
-                 href="https://aspiretss.com/blog/digital-forensics-bec-first-24-hours" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:13px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 25px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
+                 href="https://aspiretss.com/blog/digital-forensics-bec-first-24-hours" style="display:inline-block;background:#1f4e9c;color:#FFFFFF;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:bold;line-height:120%;margin:0;text-decoration:none;text-transform:none;padding:10px 18px;mso-padding-alt:0px;border-radius:4px;" target="_blank"
               >
                 Read the post
               </a>
@@ -1486,6 +1717,11 @@ a { color: #1f4e9c; }
         </tbody>
       </table>
     
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    
       </div>
     
           <!--[if mso | IE]></td></tr></table><![endif]-->
@@ -1497,13 +1733,13 @@ a { color: #1f4e9c; }
       </div>
     
       
-      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+      <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="dm-bg-outlook" role="presentation" style="width:600px;" width="600" bgcolor="#ffffff" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
     
       
-      <div  class="dm-bg" style="margin:0px auto;max-width:600px;">
+      <div  class="dm-bg" style="background:#ffffff;background-color:#ffffff;margin:0px auto;max-width:600px;">
         
         <table
-           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:100%;"
+           align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="background:#ffffff;background-color:#ffffff;width:100%;"
         >
           <tbody>
             <tr>
@@ -1523,15 +1759,15 @@ a { color: #1f4e9c; }
           
               <tr>
                 <td
-                   align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;"
+                   align="center" class="dm-rule" style="font-size:0px;padding:10px 25px;word-break:break-word;"
                 >
                   
       <p
-         style="border-top:solid 4px #e2e6ea;font-size:1px;margin:0px auto;width:100%;"
+         style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:100%;"
       >
       </p>
       
-      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 4px #e2e6ea;font-size:1px;margin:0px auto;width:518px;" role="presentation" width="518px" ><tr><td style="height:0;line-height:0;"> &nbsp;
+      <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" style="border-top:solid 1px #d7dde4;font-size:1px;margin:0px auto;width:518px;" role="presentation" width="518px" ><tr><td style="height:0;line-height:0;"> &nbsp;
 </td></tr></table><![endif]-->
     
     
@@ -1544,14 +1780,13 @@ a { color: #1f4e9c; }
                 >
                   
       <div
-         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.6;text-align:left;color:#6b7885;"
+         style="font-family:Arial, Helvetica, sans-serif;font-size:12px;line-height:1.55;text-align:left;color:#6b7885;"
       >TODO: confirm sending entity — aspiretss.com footer lists &quot;Aspire Tech Services &amp; Solutions Limited&quot;<br/>
           TODO: valid physical postal address (CAN-SPAM) — not yet confirmed<br/>
           <br/><br/>
           You received this because you opted in to the Weekly Newsletter category.<br/>
-          <a href="https://aspiretss.com/newsletter/unsubscribe">Unsubscribe</a> · <a href="https://aspiretss.com/newsletter/preferences">Preferences</a><br/>
-          {{unsubscribe_link}}<br/>
-          <a href="https://aspiretss.com/archive/aspire-America~New_York-2026-W34/r/1">Archive</a></div>
+          <a href="https://aspiretss.com/newsletter/unsubscribe">Unsubscribe</a> · <a href="https://aspiretss.com/newsletter/preferences">Preferences</a> · <a href="https://aspiretss.com/archive/aspire-America~New_York-2026-W34/r/1">Archive</a><br/>
+          {{unsubscribe_link}}</div>
     
                 </td>
               </tr>

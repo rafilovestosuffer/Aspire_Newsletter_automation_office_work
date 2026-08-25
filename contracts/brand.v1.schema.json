@@ -4,26 +4,147 @@
   "title": "BrandKit",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "slug", "displayName"],
+  "required": [
+    "schemaVersion",
+    "slug",
+    "displayName"
+  ],
   "properties": {
-    "schemaVersion": { "type": "string", "const": "1.0.0" },
-    "slug": { "type": "string" },
-    "displayName": { "type": "string" },
-    "legalName": { "type": "string" },
-    "postalAddress": { "type": "string" },
-    "fromName": { "type": "string" },
-    "fromEmail": { "type": "string" },
-    "replyTo": { "type": "string" },
-    "primaryColor": { "type": "string" },
-    "backgroundColor": { "type": "string" },
-    "textColor": { "type": "string" },
-    "logoUrl": { "type": "string" },
-    "siteUrl": { "type": "string" },
-    "archiveBaseUrl": { "type": "string" },
-    "unsubscribeUrl": { "type": "string" },
-    "preferenceUrl": { "type": "string" },
-    "ghlUnsubscribeMergeTag": { "type": "string" },
-    "advertisementNotice": { "type": "string" },
-    "cdnHost": { "type": "string" }
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "slug": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "legalName": {
+      "type": "string"
+    },
+    "postalAddress": {
+      "type": "string"
+    },
+    "fromName": {
+      "type": "string"
+    },
+    "fromEmail": {
+      "type": "string"
+    },
+    "replyTo": {
+      "type": "string"
+    },
+    "primaryColor": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "logoUrl": {
+      "type": "string"
+    },
+    "siteUrl": {
+      "type": "string"
+    },
+    "archiveBaseUrl": {
+      "type": "string"
+    },
+    "unsubscribeUrl": {
+      "type": "string"
+    },
+    "preferenceUrl": {
+      "type": "string"
+    },
+    "ghlUnsubscribeMergeTag": {
+      "type": "string"
+    },
+    "advertisementNotice": {
+      "type": "string"
+    },
+    "cdnHost": {
+      "type": "string"
+    },
+    "promo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "ctaLabel": {
+          "type": "string"
+        },
+        "ctaUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "mutedColor": {
+      "type": "string"
+    },
+    "borderColor": {
+      "type": "string"
+    },
+    "cardBackgroundColor": {
+      "type": "string"
+    },
+    "severityColors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "critical": {
+          "type": "string"
+        },
+        "high": {
+          "type": "string"
+        },
+        "medium": {
+          "type": "string"
+        },
+        "low": {
+          "type": "string"
+        }
+      }
+    },
+    "urgencyColors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "overdue": {
+          "type": "string"
+        },
+        "soon": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "string"
+        }
+      }
+    },
+    "heroImageUrl": {
+      "type": "string"
+    },
+    "sectionIcons": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "threats": {
+          "type": "string"
+        },
+        "briefs": {
+          "type": "string"
+        },
+        "posts": {
+          "type": "string"
+        }
+      }
+    }
   }
 }

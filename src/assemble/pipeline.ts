@@ -76,7 +76,7 @@ export async function assembleFromItems(opts: {
   if (!selected.posts.length && !selected.threats.length && !selected.briefs.length) {
     const empty: AssembleResult = {
       issue: { ...opts.issue, status: "skipped", postIds: [], threatIds: [], briefIds: [] },
-      llm: fixtureSummarize([], [], []),
+      llm: fixtureSummarize([], [], [], opts.now),
       html: "",
       text: "",
       qa: { ok: false, failures: ["empty issue"], warnings: [] },
@@ -93,6 +93,7 @@ export async function assembleFromItems(opts: {
     provider: opts.llmProvider,
     apiKey: opts.llmApiKey,
     model: opts.llmModel,
+    now: opts.now,
   });
   const untrustedPrompt = untrustedDataRegion(selected.posts, selected.threats, selected.briefs);
   const issueLabel = `${opts.issue.isoWeek} · r${opts.issue.revision}`;
@@ -104,6 +105,7 @@ export async function assembleFromItems(opts: {
     posts: selected.posts,
     threats: selected.threats,
     briefs: selected.briefs,
+    now: opts.now,
   });
   const text = compilePlaintext({
     brand: opts.config.brand,
@@ -113,6 +115,7 @@ export async function assembleFromItems(opts: {
     posts: selected.posts,
     threats: selected.threats,
     briefs: selected.briefs,
+    now: opts.now,
   });
   const qa = runQa({
     llm,

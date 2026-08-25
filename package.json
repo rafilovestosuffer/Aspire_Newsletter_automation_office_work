@@ -2,7 +2,7 @@
   "name": "e02-weekly-authority-newsletter",
   "version": "1.0.0",
   "private": true,
-  "description": "E-02 Weekly Authority Newsletter — control plane, assemble pipeline, GHL adapter (DRY_RUN default).",
+  "description": "E-02 Weekly Authority Newsletter \u2014 control plane, assemble pipeline, GHL adapter (DRY_RUN default).",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -17,6 +17,8 @@
     "lint": "tsc --noEmit",
     "migrate": "tsx src/db/migrate.ts",
     "assemble:fixture": "tsx src/cli/assemble-fixture.ts",
+    "demo:issue": "tsx scripts/demo-issue.ts",
+    "render:pdf": "node scripts/render-issue-pdf.mjs",
     "approve:dummy": "tsx src/cli/dummy-approve.ts",
     "ghl:spike": "tsx scripts/ghl-spike.ts",
     "build": "node scripts/build.mjs",

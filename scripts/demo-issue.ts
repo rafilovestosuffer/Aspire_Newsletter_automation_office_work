@@ -11,9 +11,11 @@
  * Legal brand fields (name, address) are deliberately left as TODO markers
  * and shown as warnings, not filled with invented facts.
  */
+import { spawnSync } from "node:child_process";
 import { mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadConfig, artifactsRoot, configRoot } from "../src/config";
+import { appRoot } from "../src/paths";
 import { loadEnv } from "../src/env";
 import { assembleFromItems } from "../src/assemble/pipeline";
 import { parseRssPosts } from "../src/ingest/rss";
@@ -61,6 +63,15 @@ function brandVariant(theme: "light" | "dark"): BrandConfig {
     primaryColor: "#1f4e9c",
     backgroundColor: theme === "light" ? "#ffffff" : "#0f1420",
     textColor: theme === "light" ? "#12181f" : "#f0f2f5",
+    // The dark variant is a preview of what a prefers-color-scheme client
+    // shows, so its tokens mirror the .dm-* overrides in
+    // templates/brand-shell.mjml. Without these the cards would render as
+    // light panels on a dark page.
+    mutedColor: theme === "light" ? "#6b7885" : "#9aa5b1",
+    borderColor: theme === "light" ? "#d7dde4" : "#2c333f",
+    cardBackgroundColor: theme === "light" ? "#f7f9fb" : "#1c212b",
+    severityColors: { critical: "#b03a3a", high: "#c8912a", medium: "#3d4a58", low: "#6b7885" },
+    urgencyColors: { overdue: "#b03a3a", soon: "#c8912a", ok: "#6b7885" },
     logoUrl: "https://aspiretss.com/logo.png",
     siteUrl: "https://aspiretss.com",
     archiveBaseUrl: "https://aspiretss.com/newsletter/archive",
@@ -116,7 +127,14 @@ async function buildVariant(theme: "light" | "dark") {
   const htmlPath = join(outDir, `aspire-weekly-demo-${theme}.html`);
   writeFileSync(htmlPath, result.html);
   writeFileSync(join(outDir, `aspire-weekly-demo-${theme}.txt`), result.text);
-  return { theme, htmlPath, qa: result.qa, htmlBytes: Buffer.byteLength(result.html, "utf8"), issue: result.issue };
+  return {
+    theme,
+    htmlPath,
+    artifactDir: result.artifactDir,
+    qa: result.qa,
+    htmlBytes: Buffer.byteLength(result.html, "utf8"),
+    issue: result.issue,
+  };
 }
 
 async function main() {
@@ -128,6 +146,19 @@ async function main() {
     if (r.qa.failures.length) console.log("  FAILURES:", r.qa.failures);
   }
   writeFileSync(join(outDir, "demo-manifest.json"), JSON.stringify(results, null, 2));
+
+  // The review PDF is built from the LIGHT variant only, and from its frozen
+  // artifact rather than the HTML above. Dark is a client render mode, not a
+  // second issue — printing both produced an 11-page document in which the
+  // reader read the same issue twice.
+  if (process.argv.includes("--pdf")) {
+    const light = results.find((r) => r.theme === "light");
+    if (!light) throw new Error("no light variant to render");
+    const out = join(appRoot(), "Aspire-Weekly-Newsletter-Demo.pdf");
+    const script = join(appRoot(), "scripts", "render-issue-pdf.mjs");
+    const proc = spawnSync(process.execPath, [script, light.artifactDir, out], { stdio: "inherit" });
+    if (proc.status !== 0) throw new Error(`render-issue-pdf.mjs exited ${proc.status}`);
+  }
 }
 
 main().catch((err) => {

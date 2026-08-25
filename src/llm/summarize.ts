@@ -70,9 +70,9 @@ const THREAT_FRAMES_RANSOMWARE = [
   (cve: string, vp: string) => `${cve}${vp ? ` on ${vp}` : ""} is tied to active ransomware campaigns.`,
 ];
 
-function dueDateNote(dueDate?: string): string {
+function dueDateNote(dueDate: string | undefined, now: number): string {
   if (!dueDate) return "";
-  const days = Math.ceil((Date.parse(`${dueDate}T00:00:00.000Z`) - Date.now()) / 86_400_000);
+  const days = Math.ceil((Date.parse(`${dueDate}T00:00:00.000Z`) - now) / 86_400_000);
   if (Number.isNaN(days)) return "";
   if (days < 0) return " The federal remediation date has already passed.";
   if (days === 0) return " Federal remediation is due today.";
@@ -89,7 +89,7 @@ function dueDateNote(dueDate?: string): string {
  * beyond the CVE id, otherwise vary the framing by stableIndex so ransomware
  * and routine items read differently and repeated items do not collide.
  */
-function threatWhyItMatters(item: ContentItem): string {
+function threatWhyItMatters(item: ContentItem, now: number): string {
   const cve = item.cveIds[0] ?? item.title;
   const vp = (item.vendorProduct ?? "").trim();
   const pool = item.knownRansomware ? THREAT_FRAMES_RANSOMWARE : THREAT_FRAMES_ROUTINE;
@@ -99,7 +99,7 @@ function threatWhyItMatters(item: ContentItem): string {
     excerpt && excerpt.toUpperCase() !== cve.toUpperCase() && excerpt.length > 12
       ? excerpt
       : frame(cve, vp);
-  return `${base}${dueDateNote(item.dueDate)}`.trim();
+  return `${base}${dueDateNote(item.dueDate, now)}`.trim();
 }
 
 /**
@@ -128,6 +128,10 @@ export function fixtureSummarize(
   posts: ContentItem[],
   threats: ContentItem[],
   briefs: ContentItem[] = [],
+  // Deadline wording is relative to a clock, and the HTML it lands in is
+  // hashed and frozen. Callers that need a reproducible artifact pass the
+  // same `now` the rest of the pipeline is pinned to.
+  now: Date = new Date(),
 ): LlmOutput {
   const leadPost = posts[0];
   const leadThreat = threats[0];
@@ -151,7 +155,7 @@ export function fixtureSummarize(
     })),
     threats: threats.map((t) => ({
       id: t.id,
-      whyItMatters: threatWhyItMatters(t),
+      whyItMatters: threatWhyItMatters(t, now.getTime()),
       severity: t.knownRansomware ? "critical" : "high",
     })),
     briefs: briefs.map((b) => ({
@@ -289,10 +293,11 @@ export async function summarizeSelected(opts: {
   apiKey: string;
   model?: string;
   client?: Anthropic;
+  now?: Date;
 }): Promise<LlmOutput> {
   const briefs = opts.briefs ?? [];
   if (opts.provider === "fixture" || !opts.apiKey) {
-    return fixtureSummarize(opts.posts, opts.threats, briefs);
+    return fixtureSummarize(opts.posts, opts.threats, briefs, opts.now);
   }
   return claudeSummarize({
     posts: opts.posts,

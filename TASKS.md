@@ -243,3 +243,63 @@ regardless.
 
 **Risk:** A row marked verified without a real capture would open the gate —
 which is why the captures are committed as evidence.
+
+---
+
+## Block 10 — Newsletter design system + review PDF
+
+**Goal:** Make the issue readable at a glance in an inbox, and make the demo
+PDF a document an approver can decide from in one pass.
+
+**Why:** The previous demo PDF was 11 pages of which pages 2–6 and 7–11 were
+the same issue in two themes; it carried no images at all (`brand.logoUrl` was
+validated by QA but never interpolated into the template); the `🔴` in the
+ransomware tag had no glyph in the fonts the print pipeline embeds and printed
+as tofu; `{{unsubscribe_link}}` printed literally; and severity and the CISA
+remediation deadline — the two things a security reader scans for — were plain
+grey text in a `·`-joined run.
+
+**Files:** `src/render/theme.ts` (new), `src/render/compile.ts`,
+`templates/brand-shell.mjml`, `src/qa/gates.ts`, `src/types.ts`,
+`contracts/brand.v1.schema.json`, `config/brand.yaml.example`,
+`scripts/render-issue-pdf.mjs` (new), `scripts/demo-issue.ts`,
+`src/llm/summarize.ts`, `src/assemble/pipeline.ts`,
+`tests/newsletter-redesign.test.ts`.
+
+* [x] Design tokens moved into `BrandConfig` — all optional, all defaulted in
+      `src/render/theme.ts`, so a `brand.yaml` written before them renders
+      unchanged
+* [x] Patch board rebuilt as cards: severity-coloured left rule, severity pill,
+      plain-text `RANSOMWARE` pill (no emoji), deadline pill coloured by how
+      much time the reader actually has
+* [x] `brand.logoUrl` rendered for the first time; optional `heroImageUrl` and
+      `sectionIcons`, brand-hosted only
+* [x] **`src` gate added before any image could be rendered** — `extractImageSrcs`
+      covers `src=` and CSS `url()`, and holds them to a stricter list than
+      hrefs: brand assets and `cdnHost` only, https only, never an ingest URL
+* [x] Reading-time label dropped when the excerpt is too short for the estimate
+      to mean anything — five cards reading "1 min read" is boilerplate
+* [x] Deadline wording made deterministic: `now` threaded through
+      `fixtureSummarize` → `compileMjml` / `compilePlaintext`, because this
+      output is hashed and frozen (also fixed a time-bomb test that had gone red)
+* [x] `scripts/render-issue-pdf.mjs` prints a review PDF from a **frozen**
+      artifact dir, verifying `htmlSha256` first and refusing on mismatch:
+      cover, pre-send QA summary, the email at 600px, plaintext appendix
+* [x] Merge tokens annotated in the review render only; frozen bytes untouched
+* [x] Demo regenerated: 9 pages, one theme, `npm run demo:issue -- --pdf`
+* [x] `templates/issue.mjml` deleted — a stub pointing at a path that no longer
+      existed
+
+**Test:** `npm test` (255), `npm run typecheck`, `npm run assemble:fixture`,
+`npm run demo:issue -- --pdf`. Both demo themes checked by rendering them.
+
+**Not in this block:** the LLM prompt. The repeated summary tails ("Full detail
+is on the blog.") and the thin `editorBlurb` are content problems, not design
+ones, and need a prompt + schema change.
+
+**Risk:** Any template byte changes `htmlSha256`, which archive signatures bind
+to. Already-frozen issues keep their old hash and stay verifiable; only new
+issues get the new design. Card markup grew the demo issue from 61,743 to
+74,477 bytes against an 81,920-byte warn threshold and a 102KB Gmail clip —
+a test now pins the fixture under the warn threshold, but the margin is
+narrower and worth watching as item caps rise.

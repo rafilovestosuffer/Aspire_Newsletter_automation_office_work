@@ -6,6 +6,7 @@
       <mj-all font-family="Arial, Helvetica, sans-serif" />
       <mj-text color="{{textColor}}" font-size="16px" line-height="1.6" />
       <mj-button background-color="{{primaryColor}}" color="#FFFFFF" font-weight="bold" border-radius="4px" />
+      <mj-section background-color="{{backgroundColor}}" />
     </mj-attributes>
     <mj-raw>
       <meta name="color-scheme" content="light dark" />
@@ -13,6 +14,10 @@
     </mj-raw>
     <mj-style>
       a { color: {{primaryColor}}; }
+      /* Severity and deadline pills are the one place colour carries meaning
+         rather than decoration, so they keep their own fill in dark mode and
+         only the surrounding card flips. */
+      .pill { border-radius: 3px; padding: 2px 7px; color: #ffffff; font-weight: bold; }
       /* Dark-mode support for clients that honour prefers-color-scheme
          (Apple Mail, many webmail/Android clients). Classic Outlook on
          Windows applies no dark transform at all and simply renders the
@@ -23,29 +28,39 @@
         .dm-card { background-color: #1c212b !important; }
         .dm-text { color: #eef1f5 !important; }
         .dm-muted { color: #9aa5b1 !important; }
+        .dm-rule { border-color: #2c333f !important; }
       }
     </mj-style>
   </mj-head>
   <mj-body background-color="{{backgroundColor}}" width="600px" css-class="dm-bg">
-    <mj-section padding="24px 16px 8px" css-class="dm-bg">
+    <mj-section padding="24px 16px 4px" css-class="dm-bg">
       <mj-column>
-        <mj-text font-size="12px" color="#6b7885" css-class="dm-muted">{{displayName}} · {{issueLabel}}</mj-text>
-        <mj-text font-size="22px" font-weight="bold" padding-top="0" css-class="dm-text">{{displayName}} Weekly</mj-text>
-        <mj-text font-size="14px"><a href="{{archiveUrl}}">View in browser</a></mj-text>
+        {{logoBlock}}
+        <!-- The masthead carries identity, not the headline. The subject is
+             capped at 60 characters for the inbox envelope, so setting it as
+             an H1 printed a headline truncated mid-phrase — and the reader
+             has already seen the subject in their inbox. The lead story is
+             stated in full, once, in the 30-second read below. -->
+        <mj-text font-size="11px" color="{{mutedColor}}" letter-spacing="1px" text-transform="uppercase" css-class="dm-muted">{{issueLabel}}</mj-text>
+        <mj-text font-size="26px" font-weight="bold" line-height="1.25" padding-top="2px" css-class="dm-text">{{displayName}} Weekly</mj-text>
+        <mj-text font-size="13px" padding-top="4px"><a href="{{archiveUrl}}">View in browser</a></mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="8px 16px" css-class="dm-bg">
-      <mj-column>
-        <mj-text font-size="17px" font-weight="bold" css-class="dm-text">The 30-second read</mj-text>
-        <mj-text css-class="dm-text">{{editorBlurb}}</mj-text>
+    {{heroBlock}}
+
+    <mj-section padding="4px 16px 8px" css-class="dm-bg">
+      <mj-column border-left="3px solid {{primaryColor}}" padding-left="14px">
+        <mj-text font-size="11px" color="{{mutedColor}}" letter-spacing="1px" text-transform="uppercase" css-class="dm-muted">The 30-second read</mj-text>
+        <mj-text font-size="17px" line-height="1.55" padding-top="2px" css-class="dm-text">{{editorBlurb}}</mj-text>
       </mj-column>
     </mj-section>
 
-    <mj-section padding="16px 16px 0" css-class="dm-bg">
+    <mj-section padding="20px 16px 0" css-class="dm-bg">
       <mj-column>
-        <mj-text font-size="18px" font-weight="bold" css-class="dm-text">Patch board — this week's KEV items</mj-text>
-        <mj-text font-size="12px" color="#6b7885" css-class="dm-muted">Sorted ransomware-linked first, then nearest CISA remediation deadline. Public CISA KEV data is CC0 — this newsletter is not a CISA or DHS product and does not use agency marks.</mj-text>
+        <mj-divider border-color="{{borderColor}}" border-width="1px" padding-bottom="14px" css-class="dm-rule" />
+        <mj-text font-size="20px" font-weight="bold" padding-bottom="2px" css-class="dm-text">Patch board — this week's KEV items</mj-text>
+        <mj-text font-size="12px" line-height="1.5" color="{{mutedColor}}" css-class="dm-muted">Sorted ransomware-linked first, then nearest CISA remediation deadline. Public CISA KEV data is CC0 — this newsletter is not a CISA or DHS product and does not use agency marks.</mj-text>
       </mj-column>
     </mj-section>
     {{threatBlocks}}
@@ -54,24 +69,24 @@
 
     {{briefsSection}}
 
-    <mj-section padding="16px 16px 0" css-class="dm-bg">
+    <mj-section padding="20px 16px 0" css-class="dm-bg">
       <mj-column>
-        <mj-text font-size="18px" font-weight="bold" css-class="dm-text">From the {{displayName}} blog</mj-text>
+        <mj-divider border-color="{{borderColor}}" border-width="1px" padding-bottom="14px" css-class="dm-rule" />
+        <mj-text font-size="20px" font-weight="bold" css-class="dm-text">From the {{displayName}} blog</mj-text>
       </mj-column>
     </mj-section>
     {{postBlocks}}
 
     <mj-section padding="24px 16px 32px" css-class="dm-bg">
       <mj-column>
-        <mj-divider border-color="#e2e6ea" />
-        <mj-text font-size="12px" color="#6b7885" css-class="dm-muted">
+        <mj-divider border-color="{{borderColor}}" border-width="1px" css-class="dm-rule" />
+        <mj-text font-size="12px" line-height="1.55" color="{{mutedColor}}" css-class="dm-muted">
           {{legalName}}<br/>
           {{postalAddress}}<br/>
           {{advertisementNotice}}<br/><br/>
           You received this because you opted in to the Weekly Newsletter category.<br/>
-          <a href="{{unsubscribeUrl}}">Unsubscribe</a> · <a href="{{preferenceUrl}}">Preferences</a><br/>
-          {{ghlUnsubscribeMergeTag}}<br/>
-          <a href="{{archiveUrl}}">Archive</a>
+          <a href="{{unsubscribeUrl}}">Unsubscribe</a> · <a href="{{preferenceUrl}}">Preferences</a> · <a href="{{archiveUrl}}">Archive</a><br/>
+          {{ghlUnsubscribeMergeTag}}
         </mj-text>
       </mj-column>
     </mj-section>

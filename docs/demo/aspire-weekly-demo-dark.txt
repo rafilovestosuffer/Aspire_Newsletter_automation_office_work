@@ -6,20 +6,20 @@ This issue opens with HIPAA and a hybrid workforce: securing PHI when nobody's o
 
 PATCH BOARD — This week in threats
 Public KEV data is CC0. This is not a CISA or DHS product.
-CVE-2026-45659 Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability (critical)
-Microsoft SharePoint Server · due 2026-07-04 · RANSOMWARE
+CVE-2026-45659 Microsoft SharePoint Server Deserialization of Untrusted Data Vulnerability
+CRITICAL · RANSOMWARE · Due date passed · Microsoft SharePoint Server
 Microsoft SharePoint Server contains a deserialization of untrusted data vulnerability which allows an authorized attacker to execute code over a network. The federal remediation date has already passed.
 https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-45659
-CVE-2026-72529 TrueConf Server Missing Authentication for Critical Function Vulnerability (high)
-TrueConf Server · due 2026-08-23
-TrueConf Server contains a missing authentication for critical function vulnerability which could allow a remote unauthorized attacker with network access via port 4307/TCP to execute an arbitrary script. Federal agencies must remediate within 1 day.
+CVE-2026-72529 TrueConf Server Missing Authentication for Critical Function Vulnerability
+HIGH · Due in 2d (2026-08-23) · TrueConf Server
+TrueConf Server contains a missing authentication for critical function vulnerability which could allow a remote unauthorized attacker with network access via port 4307/TCP to execute an arbitrary script. Federal agencies must remediate within 2 days.
 https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72529
-CVE-2026-73570 Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability (high)
-Synacor Zimbra Collaboration Suite (ZCS) · due 2026-08-24
-Zimbra Collaboration Suite (ZCS) contains an OS command injection vulnerability which could allow an unauthenticated attacker to send specially crafted SMTP requests that may result in execution of arbitrary operating system commands as the Zimbra user. Federal agencies must remediate within 2 days.
+CVE-2026-73570 Zimbra Collaboration Suite (ZCS) OS Command Injection Vulnerability
+HIGH · Due in 3d (2026-08-24) · Synacor Zimbra Collaboration Suite (ZCS)
+Zimbra Collaboration Suite (ZCS) contains an OS command injection vulnerability which could allow an unauthenticated attacker to send specially crafted SMTP requests that may result in execution of arbitrary operating system commands as the Zimbra user. Federal agencies must remediate within 3 days.
 https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-73570
-CVE-2026-72530 TrueConf Server Code Injection Vulnerability (high)
-TrueConf Server · due 2026-09-03
+CVE-2026-72530 TrueConf Server Code Injection Vulnerability
+HIGH · Due in 13d (2026-09-03) · TrueConf Server
 TrueConf Server contains a code injection vulnerability that could allow an unauthorized remote attacker with network access via port 4307/TCP to use a specially crafted script to break out of the isolated environment and execute arbitrary code on the host system. Federal deadline: 2026-09-03.
 https://www.cisa.gov/known-exploited-vulnerabilities-catalog?search=CVE-2026-72530
 

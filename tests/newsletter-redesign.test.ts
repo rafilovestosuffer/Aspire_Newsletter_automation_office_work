@@ -4,7 +4,9 @@ import { parseKevJson } from "../src/ingest/kev";
 import { parseRssPosts } from "../src/ingest/rss";
 import { selectContent } from "../src/select/score";
 import { fixtureSummarize } from "../src/llm/summarize";
-import { runQa } from "../src/qa/gates";
+import { extractImageSrcs, runQa } from "../src/qa/gates";
+import { compileMjml } from "../src/render/compile";
+import { resolveTheme, severityColor, urgencyBucket } from "../src/render/theme";
 import { loadConfig } from "../src/config";
 import { withCompleteBrand } from "./support/config";
 
@@ -164,7 +166,7 @@ describe("deterministic threat copy no longer repeats verbatim", () => {
 
   it("appends a due-date note distinct from the base sentence", () => {
     const soon = threatItem({ id: "soon", excerpt: "", dueDate: new Date(NOW.getTime() + 2 * 86_400_000).toISOString().slice(0, 10) });
-    const out = fixtureSummarize([], [soon]);
+    const out = fixtureSummarize([], [soon], [], NOW);
     expect(out.threats[0]?.whyItMatters).toMatch(/day/i);
   });
 });
@@ -249,5 +251,261 @@ describe("promo block CTA is allow-listed", () => {
     });
     expect(report.failures.some((f) => f.includes("promo") || f.includes(brand.promo.ctaUrl))).toBe(false);
     expect(report.failures.filter((f) => f.includes("href not on ingest/config allow-list"))).toHaveLength(0);
+  });
+});
+
+
+// ---------------------------------------------------------------------------
+// Design system: severity / urgency colour, brand-hosted images, and the
+// `src` gate that has to exist before any image may be rendered at all.
+// ---------------------------------------------------------------------------
+describe("design tokens resolve from brand config", () => {
+  it("falls back to the shipped palette when a brand supplies no tokens", () => {
+    const theme = resolveTheme(withCompleteBrand().brand);
+    expect(theme.muted).toBe("#6B7885");
+    expect(theme.card).toBe("#F7F9FB");
+    expect(severityColor(theme, "critical")).toBe("#B03A3A");
+  });
+
+  it("prefers a brand's own severity colour over the default", () => {
+    const brand = { ...withCompleteBrand().brand, severityColors: { critical: "#123456" } };
+    expect(severityColor(resolveTheme(brand), "critical")).toBe("#123456");
+  });
+
+  it("gives an unrecognised severity a real colour rather than an empty fill", () => {
+    // `severity` is LLM-supplied and not enum-pinned, so this must not be "".
+    const theme = resolveTheme(withCompleteBrand().brand);
+    expect(severityColor(theme, "catastrophic")).toBe(theme.severityFallback);
+    expect(severityColor(theme, "catastrophic")).toMatch(/^#[0-9a-fA-F]{6}$/);
+  });
+
+  it("buckets a KEV deadline by how much time the reader actually has", () => {
+    const at = (days: number) =>
+      urgencyBucket(new Date(NOW.getTime() + days * 86_400_000).toISOString().slice(0, 10), NOW.getTime());
+    expect(at(-5)).toBe("overdue");
+    expect(at(2)).toBe("soon");
+    expect(at(30)).toBe("ok");
+    // No due date means no pill at all, rather than a misleading neutral one.
+    expect(urgencyBucket(undefined, NOW.getTime())).toBeUndefined();
+    expect(urgencyBucket("not-a-date", NOW.getTime())).toBeUndefined();
+  });
+});
+
+describe("rendered HTML carries the visual signal, not an emoji", () => {
+  const config = withCompleteBrand();
+  function render(threats: ContentItem[], brand = config.brand) {
+    const llm = fixtureSummarize([], threats, [], NOW);
+    return compileMjml({
+      brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x",
+      llm,
+      posts: [],
+      threats,
+      briefs: [],
+      now: NOW,
+    });
+  }
+
+  it("marks a ransomware-linked item with a text pill and no astral-plane codepoint", () => {
+    const { html } = render([threatItem({ id: "r", knownRansomware: true })]);
+    expect(html).toContain("RANSOMWARE");
+    // The previous "🔴 RANSOMWARE" had no glyph in the fonts the print
+    // pipeline embeds and printed as a missing-glyph box.
+    expect([...html].some((ch) => (ch.codePointAt(0) ?? 0) > 0xffff)).toBe(false);
+  });
+
+  it("colours the card by severity and the deadline by urgency", () => {
+    const overdue = threatItem({
+      id: "o",
+      knownRansomware: true,
+      dueDate: new Date(NOW.getTime() - 4 * 86_400_000).toISOString().slice(0, 10),
+    });
+    const { html } = render([overdue]);
+    const theme = resolveTheme(config.brand);
+    // fixtureSummarize marks a ransomware item "critical".
+    expect(html).toContain(`border-left:4px solid ${theme.severity.critical}`);
+    expect(html).toContain(theme.urgency.overdue);
+    expect(html).toContain("Due date passed");
+  });
+
+  it("omits the deadline pill entirely when the item has no due date", () => {
+    const { html } = render([threatItem({ id: "n" })]);
+    expect(html).not.toContain("Due in");
+    expect(html).not.toContain("Due date passed");
+  });
+
+  it("renders the brand logo, which the previous template validated but never used", () => {
+    const { html, errors } = render([threatItem({ id: "l" })]);
+    expect(errors).toEqual([]);
+    expect(html).toContain(config.brand.logoUrl);
+    expect(html).toContain("<img");
+  });
+
+  it("renders a hero image only when the brand supplies one", () => {
+    const without = render([threatItem({ id: "h" })]).html;
+    expect(without).not.toContain("/hero.png");
+    const withHero = render([threatItem({ id: "h" })], {
+      ...config.brand,
+      heroImageUrl: "https://cdn.aspire.test/hero.png",
+    }).html;
+    expect(withHero).toContain("https://cdn.aspire.test/hero.png");
+  });
+
+  it("drops the reading-time label when the excerpt is too short to estimate from", () => {
+    // Five cards all claiming "1 min read" is boilerplate, not information.
+    const post: ContentItem = {
+      schemaVersion: CONTENT_SCHEMA_VERSION,
+      id: "post:short",
+      kind: "post",
+      sourceId: "cms",
+      canonicalUrl: "https://aspire.test/blog/one",
+      title: "A post",
+      excerpt: "A short teaser.",
+      publishedAt: "2026-08-19T00:00:00.000Z",
+      cveIds: [],
+      rawHash: "c".repeat(64),
+    };
+    const llm = fixtureSummarize([post], [], [], NOW);
+    const { html } = compileMjml({
+      brand: config.brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x",
+      llm,
+      posts: [post],
+      threats: [],
+      briefs: [],
+      now: NOW,
+    });
+    expect(html).not.toContain("min read");
+
+    const long = { ...post, excerpt: "word ".repeat(400) };
+    const longHtml = compileMjml({
+      brand: config.brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x",
+      llm: fixtureSummarize([long], [], [], NOW),
+      posts: [long],
+      threats: [],
+      briefs: [],
+      now: NOW,
+    }).html;
+    expect(longHtml).toContain("min read");
+  });
+
+  it("is deterministic for a pinned clock, because the output is hashed and frozen", () => {
+    const a = render([threatItem({ id: "d", dueDate: "2026-09-01" })]).html;
+    const b = render([threatItem({ id: "d", dueDate: "2026-09-01" })]).html;
+    expect(a).toBe(b);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The `src` gate. An href is a link the reader chooses to follow; a `src` is
+// fetched the moment the message is opened. Before this existed, adding one
+// image to the template would have opened an un-inspected egress channel.
+// ---------------------------------------------------------------------------
+describe("QA gates image sources as strictly as hrefs", () => {
+  const config = withCompleteBrand();
+
+  function qaWithImage(src: string, brand = config.brand) {
+    const llm = fixtureSummarize([], [], [], NOW);
+    return runQa({
+      llm,
+      html: `<html><body><img src="${src}"><a href="${brand.unsubscribeUrl}">Unsubscribe</a></body></html>`,
+      text: "A plaintext alternative long enough to satisfy the semantic plaintext gate for this issue.",
+      posts: [],
+      threats: [],
+      briefs: [],
+      brand,
+      relevance: { ...config.relevance, allowThreatOnly: true, allowPostsOnly: true },
+      archiveUrl: "https://aspire.test/archive/x/r/1",
+      requireCompleteBrand: true,
+    });
+  }
+  const imageFailures = (r: { failures: string[] }) => r.failures.filter((f) => f.includes("image src"));
+
+  it("finds a src and a CSS url(), not just an href", () => {
+    const found = extractImageSrcs(
+      `<img src="https://a.test/1.png"><td background="x" style="background:url('https://b.test/2.png')">`,
+    );
+    expect(found).toContain("https://a.test/1.png");
+    expect(found).toContain("https://b.test/2.png");
+  });
+
+  it("does not mistake a different attribute ending in -src for a src", () => {
+    expect(extractImageSrcs(`<img data-src="https://a.test/lazy.png" src="https://b.test/real.png">`)).toEqual([
+      "https://b.test/real.png",
+    ]);
+  });
+
+  it("accepts the brand logo", () => {
+    expect(imageFailures(qaWithImage(config.brand.logoUrl))).toHaveLength(0);
+  });
+
+  it("accepts any asset on the brand's own CDN host", () => {
+    expect(imageFailures(qaWithImage("https://cdn.aspire.test/newsletter/icon.png"))).toHaveLength(0);
+  });
+
+  it("accepts a configured hero image and section icon", () => {
+    const brand = {
+      ...config.brand,
+      heroImageUrl: "https://assets.elsewhere.test/hero.png",
+      sectionIcons: { threats: "https://assets.elsewhere.test/threats.png" },
+    };
+    expect(imageFailures(qaWithImage(brand.heroImageUrl, brand))).toHaveLength(0);
+    expect(imageFailures(qaWithImage(brand.sectionIcons.threats, brand))).toHaveLength(0);
+  });
+
+  it("fails a third-party image host — the tracking-pixel case", () => {
+    const report = qaWithImage("https://tracker.evil.test/open.gif");
+    expect(report.ok).toBe(false);
+    expect(imageFailures(report).length).toBeGreaterThan(0);
+  });
+
+  it("fails a host that merely looks like the CDN", () => {
+    expect(imageFailures(qaWithImage("https://cdn.aspire.test.evil.test/logo.png")).length).toBeGreaterThan(0);
+  });
+
+  it("fails a data: image, which would carry its own payload past the allow-list", () => {
+    expect(imageFailures(qaWithImage("data:image/gif;base64,R0lGODlhAQABAAAAACw=")).length).toBeGreaterThan(0);
+  });
+
+  it("fails a cleartext http: image", () => {
+    expect(imageFailures(qaWithImage("http://cdn.aspire.test/logo.png")).length).toBeGreaterThan(0);
+  });
+
+  it("leaves ESP merge tokens alone", () => {
+    expect(imageFailures(qaWithImage("{{tracking_pixel}}"))).toHaveLength(0);
+  });
+
+  it("passes the real rendered issue, logo and all", () => {
+    const threats = [threatItem({ id: "t", knownRansomware: true, dueDate: "2026-09-01" })];
+    const llm = fixtureSummarize([], threats, [], NOW);
+    const { html } = compileMjml({
+      brand: config.brand,
+      issueLabel: "2026-W34 · r1",
+      archiveUrl: "https://aspire.test/archive/x/r/1",
+      llm,
+      posts: [],
+      threats,
+      briefs: [],
+      now: NOW,
+    });
+    const report = runQa({
+      llm,
+      html,
+      text: "A plaintext alternative long enough to satisfy the semantic plaintext gate for this issue.",
+      posts: [],
+      threats,
+      briefs: [],
+      brand: config.brand,
+      relevance: { ...config.relevance, allowThreatOnly: true, allowPostsOnly: true },
+      archiveUrl: "https://aspire.test/archive/x/r/1",
+      requireCompleteBrand: true,
+    });
+    expect(report.failures).toEqual([]);
+    // The redesign added card markup; the Gmail clip budget still has to hold.
+    expect(Buffer.byteLength(html, "utf8")).toBeLessThan(config.relevance.gmailWarnBytes);
   });
 });

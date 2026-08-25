@@ -141,6 +141,28 @@ export interface BrandConfig {
   cdnHost: string;
   /** Optional native promo block. Absent or blank heading means no block renders. */
   promo?: { heading: string; body: string; ctaLabel: string; ctaUrl: string };
+  /**
+   * Optional design tokens. Every field is optional and falls back to the
+   * defaults in `src/render/theme.ts`, so a brand.yaml written before these
+   * existed keeps rendering exactly as it did.
+   */
+  mutedColor?: string;
+  borderColor?: string;
+  cardBackgroundColor?: string;
+  /** Fill colour per KEV severity label, used for the severity pill. */
+  severityColors?: { critical?: string; high?: string; medium?: string; low?: string };
+  /**
+   * Fill colour per remediation-deadline bucket. `overdue` is past the CISA
+   * date, `soon` is within `urgencySoonDays`, `ok` is everything else.
+   */
+  urgencyColors?: { overdue?: string; soon?: string; ok?: string };
+  /**
+   * Brand-hosted images only. Third-party art is deliberately unsupported:
+   * hotlinking would leak reader IPs and bypass the host allow-list, and
+   * `src/ingest/sanitize.ts` strips markup from feed text before it is seen.
+   */
+  heroImageUrl?: string;
+  sectionIcons?: { threats?: string; briefs?: string; posts?: string };
 }
 
 export interface FeedConfig {
